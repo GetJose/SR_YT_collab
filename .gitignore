@@ -3,7 +3,7 @@ venv/
 ENV/
 env/
 .venv/
-
+.env
 # Arquivos e diretórios do sistema operacional
 *.DS_Store
 *.swp
@@ -14,6 +14,7 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # Arquivos de log
 *.log
