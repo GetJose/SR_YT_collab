@@ -1,0 +1,70 @@
+# Arquivos do ambiente virtual (venv)
+venv/
+ENV/
+env/
+.venv/
+
+# Arquivos e diretórios do sistema operacional
+*.DS_Store
+*.swp
+*.swo
+Thumbs.db
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de log
+*.log
+
+# Arquivos de banco de dados local
+db.sqlite3
+*.sqlite3
+
+# Migrations do Django (se você não quiser versionar)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Arquivos de configurações de IDEs
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Arquivos gerados por testes
+.coverage
+htmlcov/
+
+# Arquivos de cache do pytest
+.cache/
+
+# Arquivos do mypy
+.mypy_cache/
+
+# Arquivos do pytest
+.pytest_cache/
+
+# Arquivos do tox
+.tox/
+
+# Documentação gerada
+/docs/_build/
+
+# Configurações de dependências locais
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Arquivos do Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Node (caso use npm ou yarn no projeto)
+node_modules/
+
+# Arquivos do Static e Media (gerados)
+staticfiles/
+media/
+
+# Arquivos de backup
+*.bak
+*.tmp
