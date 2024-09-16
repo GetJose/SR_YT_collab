@@ -15,7 +15,7 @@ import os
 
 load_dotenv()
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default-secret-key')
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY ')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -109,9 +109,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 

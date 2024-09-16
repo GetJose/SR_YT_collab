@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial - Busca de Vídeos</title>
+</head>
+<body>
+    <h1>Bem-vindo ao Recomendador de Vídeos Educacionais</h1>
+    <p>Digite o termo de busca para encontrar vídeos no YouTube.</p>
+    
+    <form action="{% url 'video_search' %}" method="GET">
+        <input type="text" name="query" placeholder="Digite o termo de busca" required>
+        <button type="submit">Buscar</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Vídeos</title>
+</head>
+<body>
+    <h1>Buscar Vídeos no YouTube</h1>
+    
+    <form method="GET">
+        <input type="text" name="query" placeholder="Digite o termo de busca" value="{{ query }}">
+        <button type="submit">Buscar</button>
+    </form>
+    
+    <hr>
+
+    {% if videos %}
+        <h2>Resultados da Busca:</h2>
+        <ul>
+            {% for video in videos %}
+                <li>
+                    <h3>{{ video.snippet.title }}</h3>
+                    <p>{{ video.snippet.description }}</p>
+                    <a href="https://www.youtube.com/watch?v={{ video.id.videoId }}" target="_blank">
+                        <img src="{{ video.snippet.thumbnails.default.url }}" alt="{{ video.snippet.title }}">
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nenhum vídeo encontrado.</p>
+    {% endif %}
+</body>
+</html>
