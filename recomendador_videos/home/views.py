@@ -5,13 +5,13 @@ from django.conf import settings
 import os
 
 class HomeView(View):
-    template_name = 'index.html'
+    template_name = 'apps/home/index.html'
 
     def get(self, request):
         return render(request, self.template_name)
 
 class VideoSearchView(View):
-    template_name = 'video_search.html'
+    template_name = 'apps/home/video_search.html'
     
     def get(self, request):
         query = request.GET.get('query')  # Obtém o termo de busca do usuário
