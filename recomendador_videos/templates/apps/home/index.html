@@ -13,5 +13,11 @@
         <input type="text" name="query" placeholder="Digite o termo de busca" required>
         <button type="submit">Buscar</button>
     </form>
+    <br>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    
 </body>
 </html>

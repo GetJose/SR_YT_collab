@@ -1,9 +1,13 @@
+from cProfile import Profile
 from django.shortcuts import render
 from django.views import View
 from googleapiclient.discovery import build
 from django.conf import settings
 import os
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
+@method_decorator(login_required, name='dispatch')
 class HomeView(View):
     template_name = 'apps/home/index.html'
 
@@ -35,3 +39,5 @@ class VideoSearchView(View):
             videos = response.get('items', [])
 
         return render(request, self.template_name, {'videos': videos, 'query': query})
+
+
