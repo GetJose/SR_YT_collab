@@ -21,7 +21,7 @@ class HomeView(View):
         
         for interest in interests:
             # Faz a busca para cada interesse do usuário
-            videos += busca_YT(interest.name)
+            videos += busca_YT(interest.name, 3)
 
         return render(request, self.template_name, {'videos': videos})
 
