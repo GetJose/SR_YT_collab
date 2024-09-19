@@ -1,5 +1,5 @@
 from django.contrib import admin
+from .models import Interest, UserProfile
 
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user',)  # Exibe o nome do usuário na lista
-
+admin.site.register(Interest)
+admin.site.register(UserProfile)
