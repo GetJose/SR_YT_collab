@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('recomendador_videos.home.urls')),
     path('accounts/', include('recomendador_videos.accounts.urls')),
+    path('youtube/', include('recomendador_videos.youtube_integration.urls')),
 ]

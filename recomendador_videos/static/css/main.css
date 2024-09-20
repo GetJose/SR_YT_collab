@@ -45,7 +45,8 @@ header nav ul li a {
     background-color: #fff;
     padding: 1rem;
     border: 1px solid #ddd;
-    width: calc(33.333% - 2rem);
+    /*width: calc(33.333% - 2rem);*/
+    width: 580px;
     box-sizing: border-box;
 }
 

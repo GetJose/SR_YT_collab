@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Vídeos no YouTube</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/accounts/logout/">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section>
+        <h2>Buscar Vídeos Educacionais no YouTube</h2>
+        <!-- Formulário de pesquisa -->
+        <form method="GET" action="{% url 'video_search' %}">
+            <input type="text" name="query" placeholder="Digite o termo de busca" value="{{ query }}">
+            <button type="submit">Buscar</button>
+        </form>
+    </section>
+    
+    <hr>
+    
+    <!-- Resultados da Busca -->
+    <section>
+        {% if videos %}
+        <div class="video-list">
+            {% for video in videos %}
+                <div class="video-item">
+                    <h3>{{ video.title }}</h3>
+                    <p>{{ video.description }}</p>
+                    <iframe width="560" height="315" 
+                        src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
+                        frameborder="0" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Nenhum vídeo encontrado para "{{ query }}".</p>
+    {% endif %}
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2024 Recomendador de Vídeos</p>
+    </footer>
+</body>
+</html>
