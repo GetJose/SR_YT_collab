@@ -1,4 +1,6 @@
+from pyexpat.errors import messages
 import random
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.decorators import login_required
@@ -6,6 +8,8 @@ from django.utils.decorators import method_decorator
 from recomendador_videos.home.models import VideoRating
 from recomendador_videos.youtube_integration.models import Video
 from recomendador_videos.youtube_integration.services import busca_YT 
+from django.contrib import messages
+
 
 @method_decorator(login_required, name='dispatch')
 class HomeView(View):
@@ -28,16 +32,21 @@ class HomeView(View):
             videos = random.sample(videos, 6)
 
         return render(request, self.template_name, {'videos': videos})
-    
 @method_decorator(login_required, name='dispatch')
 class RateVideoView(View):
     def post(self, request, video_id):
-        rating_value = int(request.POST.get('rating'))
+        rating_value = int(request.POST.get('rating'))  # 1 para curtir, -1 para não curtir
+        
+        try:
+            # Busca o vídeo no banco de dados com base no youtube_id
+            video = Video.objects.get(youtube_id=video_id)
+        except Video.DoesNotExist:
+            return JsonResponse({'message': "Vídeo não encontrado."}, status=404)
         
         # Verifica se o usuário já avaliou o vídeo
         video_rating, created = VideoRating.objects.get_or_create(
             user=request.user,
-            video_id=video_id,
+            video=video,
             defaults={'rating': rating_value}
         )
         
@@ -45,6 +54,6 @@ class RateVideoView(View):
             # Se já existe uma avaliação, atualiza a nota
             video_rating.rating = rating_value
             video_rating.save()
-
-        return redirect('home')
-
+            return JsonResponse({'message': f"Avaliação atualizada: {'Curtido' if rating_value == 1 else 'Não Curtido'}."})
+        else:
+            return JsonResponse({'message': f"Você avaliou o vídeo como: {'Curtido' if rating_value == 1 else 'Não Curtido'}."})
