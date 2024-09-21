@@ -58,6 +58,23 @@
             <p>Nenhum vídeo encontrado com base nos seus interesses.</p>
         {% endif %}
     </section>
+        <h2>Recomendações Personalizadas</h2>
+
+            {% if videos_recomendados %}
+                <div class="video-list">
+                    {% for video_r in videos_recomendados %}
+                        <div class="video-item">
+                            <h3>{{ video_r.title }}</h3>
+                            <iframe width="560" height="315" 
+                                    src="https://www.youtube.com/embed/{{ video_r.youtube_id }}" 
+                                    frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Nenhuma recomendação disponível no momento.</p>
+            {% endif %}
+
 
     <footer>
         <p>&copy; 2024 Recomendador de Vídeos. Todos os direitos reservados.</p>

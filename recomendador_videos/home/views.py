@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from recomendador_videos.recomendacao.services import recomendar_videos
 from recomendador_videos.youtube_integration.models import Video
 from recomendador_videos.youtube_integration.services import busca_YT
 from .models import VideoRating
@@ -33,9 +34,14 @@ class HomeView(View):
         user_ratings = VideoRating.objects.filter(user=request.user, video__in=videos)
         user_ratings_dict = {rating.video.youtube_id: rating.rating for rating in user_ratings}
 
+        recommended_videos = recomendar_videos(request.user)
+        if len(recommended_videos) > 6:
+            recommended_videos = random.sample(list(recommended_videos), 6)
+
         return render(request, self.template_name, {
             'videos': videos,
-            'user_ratings': user_ratings_dict  # Passa o dicionário de avaliações para o template
+            'user_ratings': user_ratings_dict,
+            'videos_recomendados': recommended_videos,
         })
 
 

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'recomendador_videos.home',
     'recomendador_videos.accounts', 
     'recomendador_videos.youtube_integration',
+    'recomendador_videos.recomendacao',
 ]
 
 MIDDLEWARE = [
