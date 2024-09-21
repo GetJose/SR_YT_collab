@@ -1,15 +1,12 @@
-from pyexpat.errors import messages
 import random
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from recomendador_videos.home.models import VideoRating
 from recomendador_videos.youtube_integration.models import Video
-from recomendador_videos.youtube_integration.services import busca_YT 
-from django.contrib import messages
-
+from recomendador_videos.youtube_integration.services import busca_YT
+from .models import VideoRating
 
 @method_decorator(login_required, name='dispatch')
 class HomeView(View):
@@ -18,12 +15,13 @@ class HomeView(View):
     def get(self, request):
         user_profile = request.user.userprofile
         
+        # Verifica se o usuário tem pelo menos 3 áreas de interesse
         if user_profile.interests.count() < 3:
             return redirect('areas_interesse')
-        
+
+        # Busca vídeos com base nos interesses do usuário
         interests = user_profile.interests.all()
         videos = []
-
         for interest in interests:
             videos += busca_YT(interest.name)
 
@@ -31,7 +29,16 @@ class HomeView(View):
         if len(videos) > 6:
             videos = random.sample(videos, 6)
 
-        return render(request, self.template_name, {'videos': videos})
+        # Busca as avaliações feitas pelo usuário nos vídeos retornados
+        user_ratings = VideoRating.objects.filter(user=request.user, video__in=videos)
+        user_ratings_dict = {rating.video.youtube_id: rating.rating for rating in user_ratings}
+
+        return render(request, self.template_name, {
+            'videos': videos,
+            'user_ratings': user_ratings_dict  # Passa o dicionário de avaliações para o template
+        })
+
+
 @method_decorator(login_required, name='dispatch')
 class RateVideoView(View):
     def post(self, request, video_id):
