@@ -2,15 +2,11 @@ from django.shortcuts import render
 from django.views import View
 from .services import busca_YT
 
-# Função de busca, mantendo a integração com a model
-
-
-# A view que utiliza a nova função de busca com integração à model Video
 class VideoSearchView(View):
     template_name = 'apps/youtube/video_search.html'
 
     def get(self, request):
-        query = request.GET.get('query')  # Obtém o termo de busca do usuário
+        query = request.GET.get('query')  
         videos = []
 
         if query:

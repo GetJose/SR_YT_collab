@@ -15,25 +15,20 @@ class HomeView(View):
 
     def get(self, request):
         user_profile = request.user.userprofile
-        
-        # Verifica se o usuário tem pelo menos 3 áreas de interesse
         if user_profile.interests.count() < 3:
             return redirect('areas_interesse')
 
-        # Busca vídeos com base nos interesses do usuário
         interests = user_profile.interests.all()
         videos = []
         for interest in interests:
             videos += busca_YT(interest.name)
 
-        # Seleciona 6 vídeos aleatórios
         if len(videos) > 6:
             videos = random.sample(videos, 6)
 
-        # Busca as avaliações feitas pelo usuário nos vídeos retornados
         user_ratings = VideoRating.objects.filter(user=request.user, video__in=videos)
         user_ratings_dict = {rating.video.youtube_id: rating.rating for rating in user_ratings}
-
+        
         recommended_videos = recomendar_videos(request.user)
         if len(recommended_videos) > 6:
             recommended_videos = random.sample(list(recommended_videos), 6)
@@ -51,12 +46,10 @@ class RateVideoView(View):
         rating_value = int(request.POST.get('rating'))  # 1 para curtir, -1 para não curtir
         
         try:
-            # Busca o vídeo no banco de dados com base no youtube_id
             video = Video.objects.get(youtube_id=video_id)
         except Video.DoesNotExist:
             return JsonResponse({'message': "Vídeo não encontrado."}, status=404)
         
-        # Verifica se o usuário já avaliou o vídeo
         video_rating, created = VideoRating.objects.get_or_create(
             user=request.user,
             video=video,
@@ -64,7 +57,6 @@ class RateVideoView(View):
         )
         
         if not created:
-            # Se já existe uma avaliação, atualiza a nota
             video_rating.rating = rating_value
             video_rating.save()
             return JsonResponse({'message': f"Avaliação atualizada: {'Curtido' if rating_value == 1 else 'Não Curtido'}."})

@@ -28,10 +28,8 @@ class SelectInterestsView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('home')
 
     def get_object(self):
-        # Retorna o perfil do usuário logado
         return self.request.user.userprofile
 
     def form_valid(self, form):
-        # Valida o formulário e salva os dados
         response = super().form_valid(form)
         return response

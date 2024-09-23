@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Busca de Vídeos no YouTube</title>
     <link rel="stylesheet" href="/static/css/main.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Carregando o jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
 </head>
 <body>
     <header>
@@ -19,7 +19,7 @@
     
     <section>
         <h2>Buscar Vídeos Educacionais no YouTube</h2>
-        <!-- Formulário de pesquisa -->
+
         <form method="GET" action="{% url 'video_search' %}">
             <input type="text" name="query" placeholder="Digite o termo de busca" value="{{ query }}">
             <button type="submit">Buscar</button>
@@ -27,8 +27,7 @@
     </section>
     
     <hr>
-    
-    <!-- Resultados da Busca -->
+
     <section>
         {% if videos %}
         <div class="video-list">
@@ -42,11 +41,9 @@
                         allowfullscreen>
                     </iframe>
 
-                    <!-- Botões de curtir e não curtir -->
                     <button class="rate-button" data-video-id="{{ video.youtube_id }}" data-rating="1">Curtir</button>
                     <button class="rate-button" data-video-id="{{ video.youtube_id }}" data-rating="-1">Não Curtir</button>
 
-                    <!-- Div para mostrar a mensagem de sucesso ou erro -->
                     <div class="rating-message"></div>
                 </div>
             {% endfor %}
@@ -55,8 +52,6 @@
             <p>Nenhum vídeo encontrado para "{{ query }}".</p>
         {% endif %}
     </section>
-
-    <!-- Rodapé -->
     <footer>
         <p>&copy; 2024 Recomendador de Vídeos</p>
     </footer>
@@ -68,9 +63,7 @@
 
             var videoId = $(this).data('video-id');
             var rating = $(this).data('rating');
-            var csrfToken = '{{ csrf_token }}'; // Pegando o token CSRF do Django
-
-            // Requisição AJAX para enviar a avaliação
+            var csrfToken = '{{ csrf_token }}'; 
             $.ajax({
                 url: "{% url 'rate_video' 'video_id_placeholder' %}".replace('video_id_placeholder', videoId),
                 method: 'POST',
@@ -79,7 +72,6 @@
                     'rating': rating
                 },
                 success: function(response) {
-                    // Exibe mensagem de sucesso ou erro
                     $('#video-' + videoId + ' .rating-message').text(response.message);
                 },
                 error: function(xhr) {

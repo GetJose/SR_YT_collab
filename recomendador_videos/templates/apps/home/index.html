@@ -13,13 +13,10 @@
     <header>
         <h1>Bem-vindo ao Recomendador de Vídeos</h1>
 
-        <!-- Formulário de logout -->
         <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit">Logout</button>
         </form>
-
-        <!-- Formulário de busca de vídeos -->
         <p>Digite o termo de busca para encontrar vídeos no YouTube.</p>
         <form action="{% url 'video_search' %}" method="GET">
             <input type="text" name="query" placeholder="Digite o termo de busca" required>
@@ -48,8 +45,6 @@
 <button class="rate-button {% if user_ratings|get_item:video.youtube_id == -1 %}disliked{% endif %}"
         data-video-id="{{ video.youtube_id }}" data-rating="-1">Não Curtir</button>
 
-
-                    <!-- Div para mostrar a mensagem de sucesso ou erro -->
                     <div class="rating-message"></div>
                 </div>
                 {% endfor %}
@@ -81,15 +76,13 @@
     </footer>
 
     <script>
-        // Adiciona evento de clique nos botões de curtir e não curtir
         $(document).on('click', '.rate-button', function(e) {
             e.preventDefault();
 
             var videoId = $(this).data('video-id');
             var rating = $(this).data('rating');
-            var csrfToken = '{{ csrf_token }}'; // Pegando o token CSRF do Django
+            var csrfToken = '{{ csrf_token }}'; 
 
-            // Requisição AJAX para enviar a avaliação
             $.ajax({
                 url: "{% url 'rate_video' 'video_id_placeholder' %}".replace('video_id_placeholder', videoId),
                 method: 'POST',
@@ -98,7 +91,6 @@
                     'rating': rating
                 },
                 success: function(response) {
-                    // Atualiza a UI com base na avaliação
                     if (rating === 1) {
                         $('#video-' + videoId + ' .rate-button').removeClass('liked disliked');
                         $('#video-' + videoId + ' .rate-button[data-rating="1"]').addClass('liked');
