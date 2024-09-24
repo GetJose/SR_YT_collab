@@ -1,0 +1,6 @@
+<h2>Usuários mais similares a {{ user.username }}:</h2>
+<ul>
+    {% for user_id, score in similaridade.items %}
+        <li>Usuário ID: {{ user_id }}, Similaridade: {{ score }}</li>
+    {% endfor %}
+</ul>
