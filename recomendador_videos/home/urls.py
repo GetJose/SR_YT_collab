@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HomeView, RateVideoView
+from recomendador_videos.home.views import HomeView, RateVideoView
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
