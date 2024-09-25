@@ -38,24 +38,26 @@ class UserCorrelationView(View):
 def calcular_similaridade_cosseno(request):
     user = request.user
     all_ratings = VideoRating.objects.all()
-    
+
     data = {
         'user_id': [rating.user_id for rating in all_ratings],
         'video_id': [rating.video_id for rating in all_ratings],
         'rating': [rating.rating for rating in all_ratings],
     }
     df_ratings = pd.DataFrame(data)
-    
+
     ratings_matrix = df_ratings.pivot_table(index='user_id', columns='video_id', values='rating').fillna(0)
 
     if user.id not in ratings_matrix.index:
         return pd.Series(dtype='float64')
-    
+
     user_ratings = ratings_matrix.loc[user.id].values.reshape(1, -1)
+
     similarities = cosine_similarity(user_ratings, ratings_matrix.values).flatten()
-    
+
     similar_users = pd.Series(similarities, index=ratings_matrix.index).sort_values(ascending=False)
+    similaridade = similar_users.drop(user.id)
+    similaridade_com_nomes = similaridade.index.map(lambda user_id: User.objects.get(id=user_id).username)
 
-    similaridade = similar_users.drop(user.id)  # Retorna a similaridade sem o próprio usuário
-
-    return render(request, 'apps/recomendacao/similaridade.html', {'similaridade': similaridade})
+    similaridade_dict = dict(zip(similaridade_com_nomes, similaridade.values))
+    return render(request, 'apps/recomendacao/similaridade.html', {'similaridade': similaridade_dict})
