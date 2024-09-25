@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from .services import busca_YT
+from recomendador_videos.home.services import obter_avaliacoes_do_usuario
 
 class VideoSearchView(View):
     template_name = 'apps/youtube/video_search.html'
@@ -10,7 +11,12 @@ class VideoSearchView(View):
         videos = []
 
         if query:
-            # Chama a função busca_YT para realizar a busca e integrar com a model Video
             videos = busca_YT(query)
 
-        return render(request, self.template_name, {'videos': videos, 'query': query})
+        user_ratings = obter_avaliacoes_do_usuario(request.user, videos)
+
+        return render(request, self.template_name, {
+            'videos': videos,
+            'user_ratings': user_ratings,
+            'query': query,
+        })
