@@ -1,110 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    {% load custom_filters %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>Home - Recomendador de Vídeos</title>
-</head>
-<body>
-    <header>
-        <h1>Bem-vindo ao Recomendador de Vídeos</h1>
+{% extends 'base.html' %}
 
-        <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
+{% block title %}
+    Home - Recomendador de Vídeos
+{% endblock %}
+
+{% block content %}
+    <section class="search-section">
         <p>Digite o termo de busca para encontrar vídeos no YouTube.</p>
         <form action="{% url 'video_search' %}" method="GET">
             <input type="text" name="query" placeholder="Digite o termo de busca" required>
             <button type="submit">Buscar</button>
         </form>
-    </header>
-
-    <section class="search-section">
-        <h2>Recomendações Baseadas nos Seus Interesses</h2>
-
-        <section>
-            {% if videos %}
-            <div class="video-list">
-                {% for video in videos %}
-                <div class="video-item" id="video-{{ video.youtube_id }}">
-                    <h3>{{ video.title }}</h3>
-                    <p>{{ video.description }}</p>
-                    <iframe width="560" height="315" 
-                            src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
-                            frameborder="0" 
-                            allowfullscreen>
-                    </iframe>
-                
-                    <button class="rate-button {% if user_ratings|get_item:video.youtube_id == 1 %}liked{% endif %}"
-        data-video-id="{{ video.youtube_id }}" data-rating="1">Curtir</button>
-<button class="rate-button {% if user_ratings|get_item:video.youtube_id == -1 %}disliked{% endif %}"
-        data-video-id="{{ video.youtube_id }}" data-rating="-1">Não Curtir</button>
-
-                    <div class="rating-message"></div>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>Nenhum vídeo encontrado com base nos seus interesses.</p>
-        {% endif %}
     </section>
+
+    <section>
+        <h2>Recomendações Baseadas nos Seus Interesses</h2>
+        {% include 'apps/youtube/video_list.html' with videos=videos %}
+    </section>
+    <br>
+    <section>
         <h2>Recomendações Personalizadas</h2>
-
-            {% if videos_recomendados %}
-                <div class="video-list">
-                    {% for video_r in videos_recomendados %}
-                        <div class="video-item">
-                            <h3>{{ video_r.title }}</h3>
-                            <iframe width="560" height="315" 
-                                    src="https://www.youtube.com/embed/{{ video_r.youtube_id }}" 
-                                    frameborder="0" allowfullscreen></iframe>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>Nenhuma recomendação disponível no momento.</p>
-            {% endif %}
-
-
-    <footer>
-        <p>&copy; 2024 Recomendador de Vídeos. Todos os direitos reservados.</p>
-    </footer>
-
-    <script>
-        $(document).on('click', '.rate-button', function(e) {
-            e.preventDefault();
-
-            var videoId = $(this).data('video-id');
-            var rating = $(this).data('rating');
-            var csrfToken = '{{ csrf_token }}'; 
-
-            $.ajax({
-                url: "{% url 'rate_video' 'video_id_placeholder' %}".replace('video_id_placeholder', videoId),
-                method: 'POST',
-                data: {
-                    'csrfmiddlewaretoken': csrfToken,
-                    'rating': rating
-                },
-                success: function(response) {
-                    if (rating === 1) {
-                        $('#video-' + videoId + ' .rate-button').removeClass('liked disliked');
-                        $('#video-' + videoId + ' .rate-button[data-rating="1"]').addClass('liked');
-                    } else {
-                        $('#video-' + videoId + ' .rate-button').removeClass('liked disliked');
-                        $('#video-' + videoId + ' .rate-button[data-rating="-1"]').addClass('disliked');
-                    }
-                    $('#video-' + videoId + ' .rating-message').text(response.message);
-                },
-                error: function(xhr) {
-                    $('#video-' + videoId + ' .rating-message').text('Erro ao avaliar o vídeo.');
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+        {% include 'apps/youtube/video_list.html' with videos=videos_recomendados %}
+    </section>
+{% endblock %}
