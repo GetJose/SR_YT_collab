@@ -1,21 +1,22 @@
 {% load custom_filters %}
 {% csrf_token %}
-
 <div class="video-list">
     {% if videos %}
         {% for video in videos %}
             <div class="video-item" id="video-{{ video.youtube_id }}">
                 <h3>{{ video.title }}</h3>
                 <p>{{ video.description }}</p>
-                <iframe width="560" height="315" 
+                <iframe class="video-iframe" 
+                        width="560" height="315" 
                         src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
-                        frameborder="0" allowfullscreen></iframe>
+                        frameborder="0" allowfullscreen
+                        data-video-id="{{ video.youtube_id }}"></iframe>
 
-                    <button class="rate-button {% if user_ratings|get_item:video.youtube_id == 1 %}liked{% endif %}"
+                <button class="rate-button {% if user_ratings|get_item:video.youtube_id == 1 %}liked{% endif %}"
                         data-url="{% url 'rate_video' video.youtube_id %}"
                         data-video-id="{{ video.youtube_id }}" 
                         data-rating="1">Curtir</button>
-                    <button class="rate-button {% if user_ratings|get_item:video.youtube_id == -1 %}disliked{% endif %}"
+                <button class="rate-button {% if user_ratings|get_item:video.youtube_id == -1 %}disliked{% endif %}"
                         data-url="{% url 'rate_video' video.youtube_id %}"
                         data-video-id="{{ video.youtube_id }}" 
                         data-rating="-1">Não Curtir</button>

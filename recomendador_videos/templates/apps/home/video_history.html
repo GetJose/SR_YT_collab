@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Histórico de Vídeos Assistidos
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'video_history' %}" method="GET">
+        <input type="text" name="query" placeholder="Pesquisar no histórico">
+        <button type="submit">Pesquisar</button>
+    </form>
+
+    <section>
+        <h2>Seu Histórico de Vídeos</h2>
+        {% include 'apps/youtube/video_list.html' with videos=videos_history %}
+    </section>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if videos_history.has_previous %}
+                <a href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">&laquo; primeira</a>
+                <a href="?page={{ videos_history.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ videos_history.number }} de {{ videos_history.paginator.num_pages }}
+            </span>
+
+            {% if videos_history.has_next %}
+                <a href="?page={{ videos_history.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">próxima</a>
+                <a href="?page={{ videos_history.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
