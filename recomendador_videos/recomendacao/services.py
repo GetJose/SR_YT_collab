@@ -2,6 +2,7 @@ import pandas as pd
 from recomendador_videos.home.models import VideoRating
 from django.contrib.auth.models import User
 from recomendador_videos.recomendacao.models import UserSimilarity
+
 def calcular_correlacao_pearson(user):
     all_ratings = VideoRating.objects.all()
     data = {
@@ -21,9 +22,18 @@ def calcular_correlacao_pearson(user):
 
     correlations = ratings_matrix.corrwith(user_ratings, axis=1, method='pearson')
     correlations = correlations.dropna().sort_values(ascending=False)
-    print("Matriz de avaliações:", ratings_matrix)
+
+    # Preencher a tabela UserSimilarity
+    for similar_user_id, similarity_score in correlations.items():
+        if similar_user_id != user.id:  # Evitar inserir similaridade do próprio usuário
+            UserSimilarity.objects.update_or_create(
+                user=user,
+                similar_user_id=similar_user_id,
+                defaults={'score': similarity_score}  # Corrigido para usar 'score'
+            )
 
     return correlations
+
 
 def recomendar_videos(user):
     user_correlations = calcular_correlacao_pearson(user)
