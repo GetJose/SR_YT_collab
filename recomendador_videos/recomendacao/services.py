@@ -4,20 +4,23 @@ from django.contrib.auth.models import User
 from recomendador_videos.recomendacao.models import UserSimilarity
 def calcular_correlacao_pearson(user):
     all_ratings = VideoRating.objects.all()
-
     data = {
         'user_id': [rating.user_id for rating in all_ratings],
         'video_id': [rating.video_id for rating in all_ratings],
         'rating': [rating.rating for rating in all_ratings],
     }
+    
     df_ratings = pd.DataFrame(data)
-
     ratings_matrix = df_ratings.pivot_table(index='user_id', columns='video_id', values='rating')
 
+    if user.id not in ratings_matrix.index:
+        print(f"Usuário com ID {user.id} não possui avaliações suficientes.")
+        return pd.Series()  
+
     user_ratings = ratings_matrix.loc[user.id]
+
     correlations = ratings_matrix.corrwith(user_ratings, axis=1, method='pearson')
     correlations = correlations.dropna().sort_values(ascending=False)
-
     print("Matriz de avaliações:", ratings_matrix)
 
     return correlations
