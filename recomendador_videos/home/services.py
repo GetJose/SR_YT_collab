@@ -2,6 +2,8 @@ import random
 from recomendador_videos.youtube_integration.services import busca_YT
 from recomendador_videos.youtube_integration.models import Video
 from recomendador_videos.recomendacao.services import recomendar_videos
+from .models import VideoRating
+    
 
 def buscar_videos_por_interesses(user_profile):
     interests = user_profile.interests.all()
@@ -28,9 +30,7 @@ def obter_avaliacoes_do_usuario(user, videos):
 
 
 def avaliar_video(video_id, user, rating_value):
-    from recomendador_videos.youtube_integration.models import Video
-    from .models import VideoRating
-    
+
     try:
         video = Video.objects.get(youtube_id=video_id)
     except Video.DoesNotExist:
@@ -48,3 +48,15 @@ def avaliar_video(video_id, user, rating_value):
         return video_rating, f"Avaliação atualizada: {'Curtido' if rating_value == 1 else 'Não Curtido'}."
     else:
         return video_rating, f"Você avaliou o vídeo como: {'Curtido' if rating_value == 1 else 'Não Curtido'}."
+    
+def avaliacao_inicial(user, video_id):
+    try:
+        video = Video.objects.get(youtube_id=video_id)
+        avaliacao, created = VideoRating.objects.get_or_create(
+            user=user,  
+            video=video,
+            defaults={'rating': 0} 
+        )
+        return created 
+    except Video.DoesNotExist:
+        return False

@@ -3,6 +3,7 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from recomendador_videos.home.services import avaliar_video
+from django.http import JsonResponse
 
 @method_decorator(login_required, name='dispatch')
 class RateVideoView(View):
