@@ -9,11 +9,24 @@
 </head>
 <body>
     <header>
-        <h1>Bem-vindo ao Recomendador de Vídeos</h1>
-        <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
+        <h1> Recomendador de Vídeos</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'video_history' %}">Histórico</a></li>
+              
+                {% if user.is_superuser %}
+                    <li><a href="{% url 'similaridade' %}">Similaridade</a></li>
+                    <li><a href="{% url 'correlacao' %}">Correlação Pearson</a></li>
+                {% endif %}
+                <li>
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
     </header>
 
     <main>
@@ -21,11 +34,4 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Recomendador de Vídeos. Todos os direitos reservados.</p>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-    {% block scripts %}{% endblock %}
-</body>
-</html>
+        <p>&copy; 2024 Recomendador de Vídeos. Todos os direitos
