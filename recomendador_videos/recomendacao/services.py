@@ -23,13 +23,12 @@ def calcular_correlacao_pearson(user):
     correlations = ratings_matrix.corrwith(user_ratings, axis=1, method='pearson')
     correlations = correlations.dropna().sort_values(ascending=False)
 
-    # Preencher a tabela UserSimilarity
     for similar_user_id, similarity_score in correlations.items():
-        if similar_user_id != user.id:  # Evitar inserir similaridade do próprio usuário
+        if similar_user_id != user.id:  
             UserSimilarity.objects.update_or_create(
                 user=user,
                 similar_user_id=similar_user_id,
-                defaults={'score': similarity_score}  # Corrigido para usar 'score'
+                defaults={'score': similarity_score} 
             )
 
     return correlations
