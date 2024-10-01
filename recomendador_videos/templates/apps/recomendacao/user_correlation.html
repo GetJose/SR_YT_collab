@@ -1,37 +1,39 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Correlação de Usuários</title>
-</head>
-<body>
-    <h1>Correlação de Pearson entre Usuários</h1>
+{% extends 'base.html' %}
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Usuário</th>
-                <th>Usuário Semelhante</th>
-                <th>Correlação</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user, correlations in correlations.items %}
-                {% for similar_user, score in correlations.items %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ similar_user }}</td>
-                        <td>{{ score }}</td>
-                    </tr>
+{% block title %}
+    Similaridades de Usuário
+{% endblock %}
+
+{% block content %}
+<h1>Correlação de Pearson entre Usuários</h1>
+    {% if correlations %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Usuário Semelhante</th>
+                    <th>Correlação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, correlations in correlations.items %}
+                    {% for similar_user, score in correlations.items %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ similar_user }}</td>
+                            <td>{{ score }}</td>
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p>Nenhum usuário semelhante encontrado com base na Correlação de Pearson.</p>
+    {% endif %}
 
     <!-- Formulário para exportar a tabela em CSV -->
     <form method="post">
         {% csrf_token %}
         <button type="submit">Exportar CSV</button>
     </form>
-</body>
-</html>
+{% endblock %}

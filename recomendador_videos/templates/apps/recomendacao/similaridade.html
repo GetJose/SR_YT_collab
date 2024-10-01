@@ -1,6 +1,51 @@
-<h2>Usuários mais similares a {{ user.username }}:</h2>
-<ul>
-    {% for user_id, score in similaridade.items %}
-        <li>{{ user_id }}, Similaridade: {{ score }}</li>
-    {% endfor %}
-</ul>
+{% extends 'base.html' %}
+
+{% block title %}
+    Similaridades de Usuário
+{% endblock %}
+
+{% block content %}
+    <h2>Similaridade por Cosseno</h2>
+    {% if similaridade_cosseno %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Similaridade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, similarity in similaridade_cosseno.items %}
+                    <tr>
+                        <td>{{ user }}</td>
+                        <td>{{ similarity|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhum usuário semelhante encontrado com base na Similaridade por Cosseno.</p>
+    {% endif %}
+
+    <h2>Correlação de Pearson</h2>
+    {% if similaridade_pearson %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Correlação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, similarity in similaridade_pearson.items %}
+                    <tr>
+                        <td>{{ user }}</td>
+                        <td>{{ similarity|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhum usuário semelhante encontrado com base na Correlação de Pearson.</p>
+    {% endif %}
+{% endblock %}
