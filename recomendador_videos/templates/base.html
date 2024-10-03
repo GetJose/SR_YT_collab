@@ -17,7 +17,6 @@
               
                 {% if user.is_superuser %}
                     <li><a href="{% url 'similaridade' %}">Similaridade</a></li>
-                    <li><a href="{% url 'correlacao' %}">Correlação Pearson</a></li>
                 {% endif %}
                 <li>
                     <form method="POST" action="{% url 'logout' %}">

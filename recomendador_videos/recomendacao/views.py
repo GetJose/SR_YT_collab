@@ -1,22 +1,28 @@
-import pandas as pd
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
-from recomendador_videos.recomendacao.services import calcular_correlacao_pearson
-from recomendador_videos.home.models import VideoRating
+import pandas as pd
+from recomendador_videos.recomendacao.services import calcular_similaridade_cosseno, calcular_correlacao_pearson
 from django.contrib.auth.models import User
-from sklearn.metrics.pairwise import cosine_similarity
 
 class UserCorrelationView(View):
     template_name = 'apps/recomendacao/user_correlation.html'
 
     def get(self, request):
-        correlations = {}
-        users = User.objects.all()
-        for user in users:
-            user_correlations = calcular_correlacao_pearson(user)
-            correlations[user] = user_correlations
-        return render(request, self.template_name, {'correlations': correlations})
+        user = request.user
+        similaridade_cosseno = calcular_similaridade_cosseno(user)
+        similaridade_pearson = calcular_correlacao_pearson(user)
+
+        similaridade_com_nomes_cosseno = similaridade_cosseno.index.map(lambda user_id: User.objects.get(id=user_id).username)
+        similaridade_cosseno_dict = dict(zip(similaridade_com_nomes_cosseno, similaridade_cosseno.values))
+
+        similaridade_com_nomes_pearson = similaridade_pearson.index.map(lambda user_id: User.objects.get(id=user_id).username)
+        similaridade_pearson_dict = dict(zip(similaridade_com_nomes_pearson, similaridade_pearson.values))
+
+        return render(request, self.template_name, {
+            'similaridade_cosseno': similaridade_cosseno_dict,
+            'similaridade_pearson': similaridade_pearson_dict,
+        })
 
     def post(self, request):
         users = User.objects.all()
@@ -34,43 +40,3 @@ class UserCorrelationView(View):
         df.to_csv(path_or_buf=response, index=False)
         
         return response
-    
-
-def calcular_similaridade_cosseno_pearson(request):
-    user = request.user
-    all_ratings = VideoRating.objects.all()
-
-    data = {
-        'user_id': [rating.user_id for rating in all_ratings],
-        'video_id': [rating.video_id for rating in all_ratings],
-        'rating': [rating.rating for rating in all_ratings],
-    }
-    df_ratings = pd.DataFrame(data)
-
-    ratings_matrix = df_ratings.pivot_table(index='user_id', columns='video_id', values='rating').fillna(0)
-
-    if user.id not in ratings_matrix.index:
-        return render(request, 'apps/recomendacao/similaridade.html', {
-            'similaridade_cosseno': {},
-            'similaridade_pearson': {}
-        })
-
-    user_ratings = ratings_matrix.loc[user.id].values.reshape(1, -1)
-    similarities = cosine_similarity(user_ratings, ratings_matrix.values).flatten()
-
-    similar_users_cosseno = pd.Series(similarities, index=ratings_matrix.index).sort_values(ascending=False)
-    similaridade_cosseno = similar_users_cosseno.drop(user.id)
-    similaridade_com_nomes_cosseno = similaridade_cosseno.index.map(lambda user_id: User.objects.get(id=user_id).username)
-    similaridade_cosseno_dict = dict(zip(similaridade_com_nomes_cosseno, similaridade_cosseno.values))
-
-    # Correlação de Pearson (chamada da função do serviço)
-    similaridade_pearson = calcular_correlacao_pearson(user)
-
-    # Mapeando IDs para nomes de usuários (para Pearson)
-    similaridade_com_nomes_pearson = similaridade_pearson.index.map(lambda user_id: User.objects.get(id=user_id).username)
-    similaridade_pearson_dict = dict(zip(similaridade_com_nomes_pearson, similaridade_pearson.values))
-
-    return render(request, 'apps/recomendacao/similaridade.html', {
-        'similaridade_cosseno': similaridade_cosseno_dict,
-        'similaridade_pearson': similaridade_pearson_dict,
-    })

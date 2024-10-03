@@ -1,39 +1,60 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Similaridades de Usuário
+    Similaridade de Usuários
 {% endblock %}
 
 {% block content %}
-<h1>Correlação de Pearson entre Usuários</h1>
-    {% if correlations %}
+<h1>Similaridade entre Usuários</h1>
+
+<h2>Similaridade por Cosseno</h2>
+    {% if similaridade_cosseno %}
         <table border="1">
             <thead>
                 <tr>
                     <th>Usuário</th>
-                    <th>Usuário Semelhante</th>
-                    <th>Correlação</th>
+                    <th>Similaridade (Cosseno)</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user, correlations in correlations.items %}
-                    {% for similar_user, score in correlations.items %}
-                        <tr>
-                            <td>{{ user.username }}</td>
-                            <td>{{ similar_user }}</td>
-                            <td>{{ score }}</td>
-                        </tr>
-                    {% endfor %}
+                {% for username, score in similaridade_cosseno.items %}
+                    <tr>
+                        <td>{{ username }}</td>
+                        <td>{{ score }}</td>
+                    </tr>
                 {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhum usuário semelhante encontrado com base na Similaridade por Cosseno.</p>
+    {% endif %}
+
+<h2>Correlação de Pearson</h2>
+    {% if similaridade_pearson %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Similaridade (Pearson)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for username, score in similaridade_pearson.items %}
+                    <tr>
+                        <td>{{ username }}</td>
+                        <td>{{ score }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <p>Nenhum usuário semelhante encontrado com base na Correlação de Pearson.</p>
     {% endif %}
 
-    <!-- Formulário para exportar a tabela em CSV -->
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Exportar CSV</button>
-    </form>
+<!-- Formulário para exportar a tabela em CSV -->
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Exportar CSV</button>
+</form>
+
 {% endblock %}
