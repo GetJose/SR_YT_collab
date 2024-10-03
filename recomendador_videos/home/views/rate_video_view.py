@@ -8,7 +8,7 @@ from django.http import JsonResponse
 @method_decorator(login_required, name='dispatch')
 class RateVideoView(View):
     def post(self, request, video_id):
-        rating_value = int(request.POST.get('rating'))  # 1 para curtir, -1 para não curtir
+        rating_value = int(request.POST.get('rating')) 
         video_rating, message = avaliar_video(video_id, request.user, rating_value)
 
         if video_rating is None:
