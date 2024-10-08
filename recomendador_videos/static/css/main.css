@@ -1,10 +1,15 @@
+/* Estilo geral */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
+/* Cabeçalho */
 header {
     background-color: #333;
     color: #fff;
@@ -13,47 +18,228 @@ header {
 }
 
 header h1 {
-    margin: 0;
+    margin: 5px;
 }
 
 header nav ul {
     list-style: none;
-    padding: 0;
+    padding: 10px;
+    margin: 10px;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    gap: 1rem; 
 }
 
 header nav ul li {
-    display: inline;
-    margin-right: 1rem;
+    display: inline-block;
 }
 
-header nav ul li a {
+header nav ul li a, 
+header nav ul li form button {
     color: #fff;
+    background: none;
+    border: none;
     text-decoration: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease; 
 }
 
+header nav ul li a:hover, 
+header nav ul li form button:hover {
+    background-color: #555; 
+    border-radius: 5px;
+}
+
+header nav ul li form {
+    display: inline-block;
+    margin: 0; 
+    padding: 0; 
+}
+
+/* Seção de pesquisa */
 .search-section {
     padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 80px;
 }
 
+.search-section p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.search-section input[type="text"] {
+    padding: 10px;
+    font-size: 1rem;
+    width: 500px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-section button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-section button:hover {
+    background-color: #0056b3;
+}
+
+/* Lista de vídeos */
 .video-list {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    justify-content: left;
+    margin: 10px;
 }
 
 .video-item {
     background-color: #fff;
     padding: 1rem;
     border: 1px solid #ddd;
-    /*width: calc(33.333% - 2rem);*/
-    width: 580px;
+    width: 600px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease;
+}
+
+.video-item:hover {
+    transform: translateY(-5px);
 }
 
 .video-item img {
     max-width: 100%;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
 }
 
+.video-item h3 {
+    font-size: 1rem;
+    margin: 0;
+    height: 2.5rem;
+    line-height: 1.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.video-item p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    min-height: 40px;
+}
+
+/* Botões de curtir e não curtir */
+.like-dislike-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 560px;
+    gap: 5px; 
+    margin-top: 5px;
+}
+
+button.liked, button.disliked , button.rate-button{
+    border: none;
+    padding: 0.9rem 2rem; 
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px;
+    display: inline-block;
+    width: 50%; 
+}
+
+button.rate-button {
+    background-color: rgb(207, 203, 203);
+    color: #333;
+}
+
+button.liked {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+}
+
+button.disliked {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+
+button.rate-button:hover{
+    background-color: rgb(145, 142, 142);
+}
+
+button.liked:hover {
+    background-color: darkgreen;
+}
+
+button.disliked:hover {
+    background-color: darkred;
+}
+/* Estilo para paginação */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-size: 1rem;
+}
+
+.pagination .step-links {
+    display: flex;
+    gap: 10px; /* Espaçamento entre os links de navegação */
+}
+
+.pagination .step-links a {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination .step-links a:hover {
+    background-color: #0056b3;
+}
+
+.pagination .step-links .current {
+    font-weight: bold;
+    color: #333;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.pagination .step-links a[disabled] {
+    pointer-events: none;
+    background-color: #ddd;
+}
+
+.pagination .step-links span {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+/* Rodapé */
 footer {
     background-color: #333;
     color: #fff;
@@ -61,15 +247,16 @@ footer {
     padding: 1rem;
     position: relative;
     width: 100%;
-    bottom: 0;
+    margin-top: auto;
 }
 
-button.liked {
-    background-color: green;
-    color: white;
-}
+/* Responsividade */
+@media (max-width: 768px) {
+    .video-item {
+        width: 100%;
+    }
 
-button.disliked {
-    background-color: red;
-    color: white;
+    .search-section input[type="text"] {
+        width: 100%;
+    }
 }
