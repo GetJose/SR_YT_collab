@@ -14,7 +14,7 @@ class HomeView(View):
 
     def get(self, request):
         user_profile = request.user.userprofile
-        if user_profile.interests.count() < 3:
+        if user_profile.interests.count() < 1:
             return redirect('areas_interesse')
 
         videos = buscar_videos_por_interesses(user_profile)
