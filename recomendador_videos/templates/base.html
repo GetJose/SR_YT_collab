@@ -14,6 +14,7 @@
             <ul>
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'video_history' %}">Histórico</a></li>
+                <li><a href="{% url 'profile' %}"> Perfil</a></li> 
               
                 {% if user.is_superuser %}
                     <li><a href="{% url 'similaridade' %}">Similaridade</a></li>

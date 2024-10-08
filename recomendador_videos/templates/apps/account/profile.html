@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Perfil de {{ user.username }}
+{% endblock %}
+
+{% block content %}
+    <h1>Perfil de {{ user.username }}</h1>
+    <p><strong>Data de criação:</strong> {{ user.date_joined }}</p>
+    
+    <h3>Áreas de Interesse:</h3>
+    <ul>
+        {% for interest in user.userprofile.interests.all %}
+            <li>{{ interest.name }}</li>
+        {% empty %}
+            <li>Você ainda não selecionou áreas de interesse.</li>
+        {% endfor %}
+    </ul>
+
+    <button><a href="{% url 'areas_interesse' %}">Editar Perfil</a></button>
+    
+    <hr>
+    
+    <form method="get" action="{% url 'delete_profile' %}">
+        <button type="submit" class="btn btn-danger">Deletar Perfil</button>
+    </form>
+{% endblock %}
