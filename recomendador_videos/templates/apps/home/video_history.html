@@ -5,13 +5,18 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'video_history' %}" method="GET">
-        <input type="text" name="query" placeholder="Pesquisar no histórico">
-        <button type="submit">Pesquisar</button>
-    </form>
 
+
+    <section class="search-section">
+        <h3>Seu Histórico de Vídeos</h3>
+      
+        <form action="{% url 'video_history' %}" method="GET">
+            <input type="text" name="query" placeholder="Pesquisar no histórico">
+            <button type="submit">Pesquisar</button>
+        </form>
+    </section>
+    <hr>
     <section>
-        <h2>Seu Histórico de Vídeos</h2>
         {% include 'apps/youtube/video_list.html' with videos=videos_history %}
     </section>
 

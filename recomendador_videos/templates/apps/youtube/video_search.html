@@ -7,8 +7,8 @@ Busca de Vídeos no YouTube
    <a href="{% url 'home' %}">Home</a>
 </nav>
 {% block content %}
-<section>
-    <h2>Buscar Vídeos Educacionais no YouTube</h2>
+<section class="search-section">
+    <h3>Buscar Vídeos Educacionais no YouTube</h3>
 
     <form method="GET" action="{% url 'video_search' %}">
         <input type="text" name="query" placeholder="Digite o termo de busca" value="{{ query }}">
@@ -19,7 +19,7 @@ Busca de Vídeos no YouTube
 <hr>
 
 <section>
-    <h2>Resultado da busca no YouTube</h2>
+    <h2>Resultado da busca no YouTube por: {{ query }}</h2>
     {% include 'apps/youtube/video_list.html' with videos=videos %}
 </section>
 {% endblock %}

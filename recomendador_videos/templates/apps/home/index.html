@@ -6,13 +6,13 @@
 
 {% block content %}
     <section class="search-section">
-        <p>Digite o termo de busca para encontrar vídeos no YouTube.</p>
+        <h3>Digite o termo de busca para encontrar vídeos no YouTube.</h3>
         <form action="{% url 'video_search' %}" method="GET">
             <input type="text" name="query" placeholder="Digite o termo de busca" required>
             <button type="submit">Buscar</button>
         </form>
     </section>
-
+    <hr>
     <section>
         <h2>Recomendações Baseadas nos Seus Interesses</h2>
         {% include 'apps/youtube/video_list.html' with videos=videos %}
