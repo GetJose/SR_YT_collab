@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login</h1>
+{% extends 'base_account.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Entrar na sua conta</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Login</button>
+        <button type="submit" class="btn">Login</button>
     </form>
-    <p>Não tem uma conta? <a href="{% url 'register' %}">Registre-se aqui</a></p>
-</body>
-</html>
+    <p>Não tem uma conta? <a href="{% url 'register' %}">Cadastre-se</a></p>
+</div>
+{% endblock %}

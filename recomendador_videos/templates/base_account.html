@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Conta{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+</head>
+<body>
+    <div class="account-container">
+        <main>
+            {% block content %}
+            <!-- Conteúdo das páginas de conta -->
+            {% endblock content %}
+        </main>
+
+        <footer>
+            <p>© 2024 Minha Aplicação</p>
+        </footer>
+    </div>
+</body>
+</html>
