@@ -1,9 +1,17 @@
+from .models import Video, YouTubeCategory
 from googleapiclient.discovery import build
 from django.core.cache import cache
 from django.utils.text import slugify
-from .models import Video
 import os
 import isodate
+
+def obter_nome_categoria(category_id):
+    try:
+        category = YouTubeCategory.objects.get(category_id=category_id)
+        return category.name
+    except YouTubeCategory.DoesNotExist:
+        return 'Unknown'
+
 
 def converter_duracao_iso_para_segundos(iso_duration):
     try:
@@ -11,6 +19,22 @@ def converter_duracao_iso_para_segundos(iso_duration):
         return int(duration.total_seconds())
     except isodate.ISO8601Error:
         return 0
+def atualizar_categoria(youtube, category_id):
+    categories_request = youtube.videoCategories().list(
+        part="snippet",
+        id=category_id  
+    )
+    categories_response = categories_request.execute()
+
+    if categories_response.get('items'):
+        category_name = categories_response['items'][0]['snippet']['title']
+
+        YouTubeCategory.objects.get_or_create(
+            category_id=category_id,
+            defaults={'name': category_name}
+        )
+        return category_name
+    return 'Unknown'
 
 def busca_YT(query, max_results=10):
     cache_key = slugify(f"yt_search_{query}")
@@ -35,28 +59,37 @@ def busca_YT(query, max_results=10):
     videos = []
 
     for item in response.get('items', []):
+        video_id = item['id']['videoId']
+
         video_details = youtube.videos().list(
-            part='contentDetails,statistics',
-            id=item['id']['videoId']
+            part='contentDetails,statistics,snippet',
+            id=video_id
         ).execute()
+
         duration_iso = video_details['items'][0]['contentDetails']['duration']
         duration_in_seconds = converter_duracao_iso_para_segundos(duration_iso)
 
+        category_id = video_details['items'][0]['snippet'].get('categoryId', 'Unknown')
+        category_name = obter_nome_categoria(category_id)
+        
+        if category_name == 'Unknown': 
+            category_name = atualizar_categoria(youtube, category_id)
+
         video, created = Video.objects.get_or_create(
-            youtube_id=item['id']['videoId'],
+            youtube_id=video_id,
             defaults={
                 'title': item['snippet']['title'],
                 'description': item['snippet']['description'],
                 'thumbnail_url': item['snippet']['thumbnails']['default']['url'],
-                'video_url': f"https://www.youtube.com/watch?v={item['id']['videoId']}",
+                'video_url': f"https://www.youtube.com/watch?v={video_id}",
                 'duration': duration_in_seconds,  
                 'view_count': video_details['items'][0]['statistics'].get('viewCount', 0),
-                'category': 'Unknown',  
+                'category': category_name, 
                 'published_at': item['snippet']['publishedAt'],
             }
         )
         videos.append(video)
 
-    cache.set(cache_key, videos, timeout=3600)
+    cache.set(cache_key, videos, timeout=9600)
 
     return videos
