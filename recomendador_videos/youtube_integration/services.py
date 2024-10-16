@@ -12,6 +12,29 @@ def obter_nome_categoria(category_id):
     except YouTubeCategory.DoesNotExist:
         return 'Unknown'
 
+def filtrar_e_ranquear_videos(videos):
+    categorias_permitidas = ['Education', 'Science & Technology', 'Unknown']
+    videos_filtrados = [video for video in videos if video.category in categorias_permitidas]
+
+    def calcular_ranking(video):
+        likes = int(video.like_count) if video.like_count else 0
+        dislikes = int(video.dislike_count) if video.dislike_count else 0
+        total_views = int(video.view_count) if video.view_count else 0
+
+        if likes + dislikes > 0:
+             percentual_likes = likes / (likes + dislikes)  
+        else:
+            percentual_likes = 0 
+
+        percentual_views = total_views
+
+        return (percentual_likes * 1) + (percentual_views * (2/3))
+
+    videos_ranqueados = sorted(videos_filtrados, key=calcular_ranking, reverse=True)
+
+    return videos_ranqueados
+
+
 
 def converter_duracao_iso_para_segundos(iso_duration):
     try:
@@ -71,9 +94,9 @@ def busca_YT(query, max_results=10):
 
         category_id = video_details['items'][0]['snippet'].get('categoryId', 'Unknown')
         category_name = obter_nome_categoria(category_id)
-        
-        if category_name == 'Unknown': 
-            category_name = atualizar_categoria(youtube, category_id)
+
+        like_count = video_details['items'][0]['statistics'].get('likeCount', 0)
+        dislike_count = video_details['items'][0]['statistics'].get('dislikeCount', 0)
 
         video, created = Video.objects.get_or_create(
             youtube_id=video_id,
@@ -82,9 +105,11 @@ def busca_YT(query, max_results=10):
                 'description': item['snippet']['description'],
                 'thumbnail_url': item['snippet']['thumbnails']['default']['url'],
                 'video_url': f"https://www.youtube.com/watch?v={video_id}",
-                'duration': duration_in_seconds,  
+                'duration': duration_in_seconds,
                 'view_count': video_details['items'][0]['statistics'].get('viewCount', 0),
-                'category': category_name, 
+                'like_count': like_count,  
+                'dislike_count': dislike_count, 
+                'category': category_name,
                 'published_at': item['snippet']['publishedAt'],
             }
         )
@@ -93,3 +118,4 @@ def busca_YT(query, max_results=10):
     cache.set(cache_key, videos, timeout=9600)
 
     return videos
+
