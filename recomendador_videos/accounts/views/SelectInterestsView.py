@@ -14,13 +14,9 @@ class SelectInterestsView(LoginRequiredMixin, UpdateView):
         return self.request.user.userprofile 
 
     def form_valid(self, form):
-        # Adiciona nova área de interesse se fornecida
         new_interest = form.cleaned_data.get('new_interest')
         if new_interest:
-            # Cria uma nova instância de Interest se ela não existir
             interest, created = Interest.objects.get_or_create(name=new_interest)
-            # Adiciona a nova área de interesse ao perfil do usuário
             form.instance.interests.add(interest)
 
-        # Salva as áreas de interesse selecionadas
         return super().form_valid(form)

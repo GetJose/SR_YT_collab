@@ -2,9 +2,15 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 import pandas as pd
-from recomendador_videos.recomendacao.services import calcular_similaridade_cosseno, calcular_correlacao_pearson
+from recomendador_videos.home.models import VideoRating
+from recomendador_videos.recomendacao.services import calcular_similaridade_cosseno, calcular_correlacao_pearson, recomendar_videos_fusao, recomendar_videos_hibrido
 from django.contrib.auth.models import User
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from recomendador_videos.youtube_integration.models import Video
+from django.contrib.auth.decorators import user_passes_test
 
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
 class UserCorrelationView(View):
     template_name = 'apps/recomendacao/user_correlation.html'
 
@@ -40,3 +46,19 @@ class UserCorrelationView(View):
         df.to_csv(path_or_buf=response, index=False)
         
         return response
+
+    
+@method_decorator(login_required, name='dispatch')
+class VideoRecommendationByItem(View):
+    template_name = 'apps/recomendacao/item_recommendation.html'
+
+    def get(self, request):
+        user = request.user
+        recomendacoes_hibridas = recomendar_videos_fusao(user)
+
+        videos_curtidos = VideoRating.objects.filter(user=user, rating=1).values_list('video_id', flat=True)
+
+        return render(request, self.template_name, {
+            'videos': recomendacoes_hibridas,
+            'rated_videos': videos_curtidos,
+        })
