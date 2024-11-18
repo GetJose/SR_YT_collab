@@ -1,0 +1,15 @@
+<div class="interest-category">
+    <label>
+      <input type="checkbox" name="interests" value="{{ interest.id }}"
+             {% if interest in selected_interests %}checked{% endif %}>
+      {{ interest.name }}
+    </label>
+    {% if interest.sub_interests.exists %}
+      <div class="sub-interests" style="margin-left: 20px; display: none;">
+        {% for sub_interest in interest.sub_interests.all %}
+          {% include 'interest_recursive.html' with interest=sub_interest selected_interests=selected_interests %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  

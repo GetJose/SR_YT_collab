@@ -25,12 +25,11 @@ class CustomUserCreationForm(UserCreationForm):
             'placeholder': 'Confirme a senha'
         })
 
-
 class InterestForm(forms.ModelForm):
     interests = forms.ModelMultipleChoiceField(
         queryset=Interest.objects.all(),
         widget=forms.CheckboxSelectMultiple,
-        required=True,
+        required=False,
     )
     
     new_interests = forms.CharField(
@@ -40,7 +39,13 @@ class InterestForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['interests']  
+        fields = ['interests']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Carrega os interesses existentes do usuário para serem exibidos como selecionados
+        if self.instance and self.instance.pk:
+            self.fields['interests'].initial = self.instance.interests.all()
 
     def clean_interests(self):
         interests = self.cleaned_data.get('interests')
