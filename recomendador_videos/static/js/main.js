@@ -84,3 +84,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+document.addEventListener("DOMContentLoaded", function() {
+    const recommendationMenu = document.getElementById("recommendationMenu");
+    const recommendationSubmenu = document.getElementById("recommendationSubmenu");
+
+    // Mostrar/ocultar submenu ao clicar
+    recommendationMenu.addEventListener("click", function(event) {
+        event.preventDefault(); // Previne a navegação do link
+        recommendationSubmenu.style.display =
+            recommendationSubmenu.style.display === "block" ? "none" : "block";
+    });
+
+    // Ocultar submenu ao clicar fora dele
+    document.addEventListener("click", function(event) {
+        if (!recommendationMenu.contains(event.target) && !recommendationSubmenu.contains(event.target)) {
+            recommendationSubmenu.style.display = "none";
+        }
+    });
+});

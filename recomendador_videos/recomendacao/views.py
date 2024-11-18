@@ -3,12 +3,59 @@ from django.shortcuts import render
 from django.views import View
 import pandas as pd
 from recomendador_videos.home.models import VideoRating
-from recomendador_videos.recomendacao.services import calcular_similaridade_cosseno, calcular_correlacao_pearson, recomendar_videos_fusao, recomendar_videos_hibrido
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from recomendador_videos.youtube_integration.models import Video
 from django.contrib.auth.decorators import user_passes_test
+
+from .services import (
+    recomendar_videos_user_based,
+    recomendar_videos_itens_based,
+    recomendar_videos_hibrido,
+    calcular_similaridade_cosseno,
+    calcular_correlacao_pearson,
+    recomendar_videos_fusao
+)
+
+@method_decorator(login_required, name='dispatch')
+class ItemRecommendationView(View):
+    template_name = 'apps/recomendacao/item_recommendation.html'
+
+    def get(self, request):
+        videos_recomendados = recomendar_videos_itens_based(request.user)
+        
+        return render(request, self.template_name, {
+            'videos': videos_recomendados,
+        })
+
+@method_decorator(login_required, name='dispatch')
+class UserRecommendationView(View):
+    template_name = 'apps/recomendacao/user_recommendation.html'
+
+    def get(self, request):
+        videos_recomendados = recomendar_videos_user_based(request.user)
+        
+        return render(request, self.template_name, {
+            'videos': videos_recomendados,
+        })
+
+@method_decorator(login_required, name='dispatch')
+class HybridRecommendationView(View):
+    template_name = 'apps/recomendacao/hybrid_recommendation.html'
+
+    def get(self, request):
+        metodo = request.GET.get('metodo', 'cosseno')
+        similaridade = (
+            calcular_similaridade_cosseno if metodo == 'cosseno' else calcular_correlacao_pearson
+        )
+        videos_recomendados = recomendar_videos_hibrido(request.user, similaridade)
+        
+        return render(request, self.template_name, {
+            'videos': videos_recomendados,
+            'metodo': metodo,
+        })
+
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
 class UserCorrelationView(View):
@@ -49,8 +96,8 @@ class UserCorrelationView(View):
 
     
 @method_decorator(login_required, name='dispatch')
-class VideoRecommendationByItem(View):
-    template_name = 'apps/recomendacao/item_recommendation.html'
+class VideoRecommendation(View):
+    template_name = 'apps/recomendacao/recomendacao_hibrida.html'
 
     def get(self, request):
         user = request.user

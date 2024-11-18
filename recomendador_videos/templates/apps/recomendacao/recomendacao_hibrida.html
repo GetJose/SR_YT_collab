@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Recomendador Híbrido - Recomendador de Vídeos
+    Recomendador Hibrido - Recomendador de Vídeos
 {% endblock %}
 
 {% block content %}
@@ -12,15 +12,9 @@
             <button type="submit">Buscar</button>
         </form>
     </section>
-
     <hr>
-
     <section>
-        <h2>Recomendações de videos que voce pode gostar</h2>
-        <!-- Seleção do método de cálculo de similaridade -->
-      
-
-        <!-- Inclusão da lista de vídeos recomendados -->
+        <h2>Recomendações para você aproveitar</h2>
         {% include 'apps/youtube/video_list.html' with videos=videos %}
     </section>
 {% endblock %}

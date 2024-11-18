@@ -249,6 +249,45 @@ footer {
     width: 100%;
     margin-top: auto;
 }
+/* Estilização do menu */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    position: relative;
+    padding: 10px;
+}
+
+nav ul .submenu {
+    display: none; /* Submenu invisível por padrão */
+    position: absolute;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    top: 100%;
+    left: 0;
+}
+
+nav ul .submenu li {
+    padding: 8px 12px;
+}
+
+nav ul .submenu li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+nav ul .submenu li a:hover {
+    background-color: #f0f0f0;
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {

@@ -14,11 +14,23 @@
             <ul>
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'video_history' %}">Histórico</a></li>
-                <li><a href="{% url 'profile' %}"> Perfil</a></li> 
-              
+                <li><a href="{% url 'profile' %}">Perfil</a></li>
                 {% if user.is_superuser %}
                     <li><a href="{% url 'similaridade' %}">Similaridade</a></li>
                 {% endif %}
+        
+                <!-- Menu principal de recomendações com submenu -->
+                <li class="menu-recommendations">
+                    <a href="#" id="recommendationMenu">Recomendar</a>
+                    <ul class="submenu" id="recommendationSubmenu">
+                        <li><a href="{% url 'recomendar' %}">Recomendação Geral</a></li>
+                        <li><a href="{% url 'item_recommendation' %}">Recomendação por Item</a></li>
+                        <li><a href="{% url 'user_recommendation' %}">Recomendação por Usuário</a></li>
+                        <li><a href="{% url 'hybrid_recommendation' %}">Recomendação Híbrida</a></li>
+                    </ul>
+                </li>
+        
+                <!-- Logout -->
                 <li>
                     <form method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
@@ -27,6 +39,9 @@
                 </li>
             </ul>
         </nav>
+        
+        
+        
     </header>
 
     <main>

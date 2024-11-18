@@ -11,6 +11,7 @@ from nltk.corpus import stopwords
 
 nltk.download('stopwords')
 
+#------Funções para auxiliar na recomendação por Item -----#
 def remover_stopwords(text):
    stop_words = set(stopwords.words('portuguese'))
    return ' '.join([word for word in text.split() if word.lower() not in stop_words])
@@ -20,6 +21,8 @@ def obter_dados_video(video):
    descricao = remover_stopwords(video.description or "")
    return f"{titulo} {descricao} {video.category}"
 
+
+#---- Maneiras de calcular a proximidade de dois usuarrios ----#
 def calcular_correlacao_pearson(user):
    all_ratings = VideoRating.objects.all()
    data = {
@@ -36,13 +39,6 @@ def calcular_correlacao_pearson(user):
    user_ratings = ratings_matrix.loc[user.id]
    correlations = ratings_matrix.corrwith(user_ratings, axis=1, method='pearson').dropna().sort_values(ascending=False)
 
-   for similar_user_id, similarity_score in correlations.items():
-       if similar_user_id != user.id:
-           UserSimilarity.objects.update_or_create(
-               user=user,
-               similar_user_id=similar_user_id,
-               defaults={'score': similarity_score}
-           )
    return correlations
 
 def calcular_similaridade_cosseno(user):
@@ -62,19 +58,8 @@ def calcular_similaridade_cosseno(user):
    similarities = cosine_similarity(user_ratings, ratings_matrix.values).flatten()
    return pd.Series(similarities, index=ratings_matrix.index).drop(user.id).sort_values(ascending=False)
 
-#ABORDAGEM DE RECOMENDAÇÃO HIBRIDA EM CASCATA ONDE UMA RECOMENDAÇÃO É USADA COMO BASE PRA OUTRA
-def recomendar_videos(user):
-    user_correlations = calcular_correlacao_pearson(user)
-    similar_users = sorted(user_correlations.items(), key=lambda x: x[1], reverse=True)
 
-    recommended_videos = set()
-    for similar_user, score in similar_users:
-        if score > 0:
-            similar_user_ratings = VideoRating.objects.filter(user=similar_user, rating=1)
-            for rating in similar_user_ratings:
-                if not VideoRating.objects.filter(user=user, video=rating.video).exists():
-                    recommended_videos.add(rating.video)
-    return recommended_videos
+#-----------------Funções para calcular a proximidade em relação aos itens (video)--------------------------#
 
 def calcular_similaridade_itens(user, recommended_videos):
     videos_assistidos = VideoRating.objects.filter(user=user).values_list('video', flat=True)
@@ -91,30 +76,7 @@ def calcular_similaridade_itens(user, recommended_videos):
 
     return sorted(zip(recommended_videos, similaridade.mean(axis=0)), key=lambda x: x[1], reverse=True)
 
-def recomendar_videos_hibrido(user):
-    colaborativa_recommended = recomendar_videos(user)
-
-    similaridade_filtrada = calcular_similaridade_itens(user, colaborativa_recommended)
-
-    return [video for video, _ in similaridade_filtrada[:12]]
-
-#ABORDADEM DE FUSÃO DE DUAS LISTAS 
-def recomendar_videos_user_based(user):
-    user_correlations = calcular_correlacao_pearson(user)
-    similar_users = sorted(user_correlations.items(), key=lambda x: x[1], reverse=True)
-
-    recommended_videos = set()
-    for similar_user, score in similar_users:
-        if score > 0:
-            similar_user_ratings = VideoRating.objects.filter(user=similar_user, rating=1)
-            for rating in similar_user_ratings:
-                if not VideoRating.objects.filter(user=user, video=rating.video).exists():
-                    recommended_videos.add(rating.video)
-    if len(recommended_videos) > 12:
-        recommended_videos = random.sample(list(recommended_videos), 12)
-    return recommended_videos
-
-def encontrar_videos_similares(video_alvo, top_n=10):
+def encontrar_videos_similares(video_alvo, top_n=12):
    todos_videos = Video.objects.exclude(id=video_alvo.id)
    dados_videos = [obter_dados_video(video) for video in todos_videos]
    dados_videos.insert(0, obter_dados_video(video_alvo))
@@ -125,18 +87,7 @@ def encontrar_videos_similares(video_alvo, top_n=10):
 
    return [video for video, _ in sorted(zip(todos_videos, similaridade), key=lambda x: x[1], reverse=True)[:top_n]]
 
-def recomendar_videos_itens_based(user):
-   videos_recentes = [rating.video for rating in VideoRating.objects.filter(user=user, rating=1).order_by('-updated_at')[:5]]
-   recomendados = set()
-
-   for video in videos_recentes:
-       recomendados.update([
-           video_similar for video_similar in encontrar_videos_similares(video, top_n=10)
-           if not VideoRating.objects.filter(user=user, video=video_similar).exists()
-       ])
-
-   return list(recomendados)
-
+#-------------------------ABORDADEM DE FUSÃO DE DUAS LISTAS --------------------------------------#
 def combinar_recomendacoes(user_recommendations, item_recommendations):
    user_recommendations = list(user_recommendations)
    item_recommendations = list(item_recommendations)
@@ -172,15 +123,82 @@ def filtrar_e_ranquear_videos(videos, duracao_media=None):
 
    return sorted(videos_filtrados, key=calcular_ranking, reverse=True)
 
-# Função híbrida de recomendação com junção
-def recomendar_videos_fusao(user):
-   #user_recommendations = recomendar_videos(user)
-   user_recommendations = []
-   item_recommendations = recomendar_videos_itens_based(user)
 
+# -------------------------FORMAS DE RECOMENDAR OS VIDEOS USER BASED E ITEM BASED------------------------#
+
+#recomendação baseada em usuarios, mas possibilitando selecionar o metodo de calculo
+def recomendar_videos(user, similaridade=calcular_similaridade_cosseno): 
+    user_correlations = similaridade(user)
+    similar_users = sorted(user_correlations.items(), key=lambda x: x[1], reverse=True)
+
+    recommended_videos = set()
+    for similar_user, score in similar_users:
+        if score > 0:
+            similar_user_ratings = VideoRating.objects.filter(user=similar_user, rating=1)
+            for rating in similar_user_ratings:
+                if not VideoRating.objects.filter(user=user, video=rating.video).exists():
+                    recommended_videos.add(rating.video)
+    return recommended_videos
+
+def recomendar_videos_itens_based(user):
+    videos_disliked_recentes = [rating.video for rating in VideoRating.objects.filter(user=user, rating=-1).order_by('-updated_at')[:5]]
+    videos_liked_recentes = [rating.video for rating in VideoRating.objects.filter(user=user, rating=1).order_by('-updated_at')[:5]]
+    
+    recomendados = set()
+
+    for video in videos_liked_recentes:
+        recomendados.update([
+            video_similar for video_similar in encontrar_videos_similares(video, top_n=12)
+            if not VideoRating.objects.filter(user=user, video=video_similar).exists()
+        ])
+
+    for video in videos_disliked_recentes:
+        videos_a_excluir = encontrar_videos_similares(video, top_n=6)
+        recomendados.difference_update(videos_a_excluir)
+    
+    return list(recomendados)[:12]
+
+
+def recomendar_videos_user_based(user):
+    user_correlations = calcular_correlacao_pearson(user)
+    similar_users = sorted(user_correlations.items(), key=lambda x: x[1], reverse=True)
+
+    recommended_videos = set()
+    for similar_user, score in similar_users:
+        if score > 0:
+            similar_user_ratings = VideoRating.objects.filter(user=similar_user, rating=1)
+            for rating in similar_user_ratings:
+                if not VideoRating.objects.filter(user=user, video=rating.video).exists():
+                    recommended_videos.add(rating.video)
+    if len(recommended_videos) > 12:
+        recommended_videos = random.sample(list(recommended_videos), 12)
+    return recommended_videos
+
+
+# Função de recomendação hibrida com estrategia de cascata onde uma lista é usada em outra
+def recomendar_videos_hibrido(user, similaridade=calcular_correlacao_pearson):
+    try:
+        colaborativa_recommended = recomendar_videos(user, similaridade=similaridade)
+        if not colaborativa_recommended:
+            return []  
+        similaridade_filtrada = calcular_similaridade_itens(user, colaborativa_recommended)
+        return [video for video, _ in similaridade_filtrada[:12]]
+
+    except ValueError as e:
+        if "empty vocabulary" in str(e):
+            return []  
+        else:
+            raise 
+
+
+
+# Função de recomendação hibrida com fusão das duas listas
+def recomendar_videos_fusao(user):
+   user_recommendations = recomendar_videos_user_based(user)
+   item_recommendations = recomendar_videos_itens_based(user)
 
    recomendacoes_comb = combinar_recomendacoes(user_recommendations, item_recommendations)
    duracao_media = sum(v.duration or 0 for v in user_recommendations) / len(user_recommendations) if user_recommendations else 0
   
-  # return filtrar_e_ranquear_videos(recomendacoes_comb, duracao_media=duracao_media)[:12]
+   return filtrar_e_ranquear_videos(recomendacoes_comb, duracao_media=duracao_media)[:12]
    return recomendacoes_comb[:12]

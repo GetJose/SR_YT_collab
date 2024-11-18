@@ -16,9 +16,15 @@
     <hr>
 
     <section>
-        <h2>Recomendações de videos que voce pode gostar</h2>
+        <h2>Recomendações com base nos videos que curtiu e no que os usuarios estão gostando!</h2>
         <!-- Seleção do método de cálculo de similaridade -->
-      
+        <form action="" method="get" class="method-selection-form">
+            <label for="metodo">Escolha o método de cálculo:</label>
+            <select name="metodo" id="metodo" onchange="this.form.submit()">
+                <option value="cosseno" {% if metodo == 'cosseno' %}selected{% endif %}>Similaridade Cosseno</option>
+                <option value="pearson" {% if metodo == 'pearson' %}selected{% endif %}>Correlação de Pearson</option>
+            </select>
+        </form>
 
         <!-- Inclusão da lista de vídeos recomendados -->
         {% include 'apps/youtube/video_list.html' with videos=videos %}
