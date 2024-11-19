@@ -8,8 +8,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk.corpus import stopwords
-
+from nltk.tokenize import word_tokenize
 nltk.download('stopwords')
+nltk.download('punkt')
 
 #------Funções para auxiliar na recomendação por Item -----#
 def remover_stopwords(text):
@@ -21,6 +22,19 @@ def obter_dados_video(video):
    descricao = remover_stopwords(video.description or "")
    return f"{titulo} {descricao} {video.category}"
 
+def obter_palavra_importante(titulo):
+    if not titulo:
+        return ""
+    
+    palavras = word_tokenize(titulo)
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform([' '.join(palavras)])
+    palavras_importantes = vectorizer.get_feature_names_out()
+    pesos = tfidf_matrix.toarray()[0]
+
+    # Encontrar a palavra com maior peso
+    max_indice = pesos.argmax()
+    return palavras_importantes[max_indice]
 
 #---- Maneiras de calcular a proximidade de dois usuarrios ----#
 def calcular_correlacao_pearson(user):
@@ -144,6 +158,10 @@ def recomendar_videos_itens_based(user):
     videos_disliked_recentes = [rating.video for rating in VideoRating.objects.filter(user=user, rating=-1).order_by('-updated_at')[:5]]
     videos_liked_recentes = [rating.video for rating in VideoRating.objects.filter(user=user, rating=1).order_by('-updated_at')[:5]]
     
+    # Gerar frase com os títulos dos vídeos curtidos
+    frase_importante = ' '.join([video.title for video in videos_liked_recentes])
+    print(f"Frase gerada com os vídeos curtidos: {frase_importante}")
+    
     recomendados = set()
 
     for video in videos_liked_recentes:
@@ -157,6 +175,7 @@ def recomendar_videos_itens_based(user):
         recomendados.difference_update(videos_a_excluir)
     
     return list(recomendados)[:12]
+
 
 
 def recomendar_videos_user_based(user):
@@ -193,12 +212,33 @@ def recomendar_videos_hibrido(user, similaridade=calcular_correlacao_pearson):
 
 
 # Função de recomendação hibrida com fusão das duas listas
-def recomendar_videos_fusao(user):
-   user_recommendations = recomendar_videos_user_based(user)
-   item_recommendations = recomendar_videos_itens_based(user)
+#def recomendar_videos_fusao(user):
+   #user_recommendations = recomendar_videos_user_based(user)
+   #item_recommendations = recomendar_videos_itens_based(user)
 
-   recomendacoes_comb = combinar_recomendacoes(user_recommendations, item_recommendations)
-   duracao_media = sum(v.duration or 0 for v in user_recommendations) / len(user_recommendations) if user_recommendations else 0
+   #recomendacoes_comb = combinar_recomendacoes(user_recommendations, item_recommendations)
+   #duracao_media = sum(v.duration or 0 for v in user_recommendations) / len(user_recommendations) if user_recommendations else 0
   
-   return filtrar_e_ranquear_videos(recomendacoes_comb, duracao_media=duracao_media)[:12]
-   return recomendacoes_comb[:12]
+   #return filtrar_e_ranquear_videos(recomendacoes_comb, duracao_media=duracao_media)[:12]
+   #return recomendacoes_comb[:12]
+
+def recomendar_videos_fusao(user):
+    user_recommendations = recomendar_videos_user_based(user)
+    item_recommendations = recomendar_videos_itens_based(user)
+
+    recomendacoes_comb = combinar_recomendacoes(user_recommendations, item_recommendations)
+    duracao_media = sum(v.duration or 0 for v in user_recommendations) / len(user_recommendations) if user_recommendations else 0
+
+    final_recommendations = filtrar_e_ranquear_videos(recomendacoes_comb, duracao_media=duracao_media)[:12]
+    
+    # Marcar o método de recomendação para cada vídeo (opcional: usar para logging ou análises futuras)
+    for video in final_recommendations:
+        if video in user_recommendations:
+            video.method = "user_based"
+        elif video in item_recommendations:
+            video.method = "item_based"
+        else:
+            video.method = "hybrid"
+    
+    return final_recommendations
+

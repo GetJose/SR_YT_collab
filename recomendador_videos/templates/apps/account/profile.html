@@ -17,7 +17,14 @@
         {% endfor %}
     </ul>
 
-    <button><a href="{% url 'areas_interesse' %}">Editar Perfil</a></button>
+    <h3>Filtros de Preferência:</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar Preferências</button>
+    </form>
+
+    <button><a href="{% url 'areas_interesse' %}">Editar Áreas de Interesse</a></button>
     
     <form method="get" action="{% url 'delete_profile' %}">
         <button type="submit" class="btn btn-danger">Deletar Perfil</button>

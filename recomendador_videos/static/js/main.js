@@ -61,6 +61,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const rating = $(this).data('rating');
         const url = $(this).data('url');
         const messageDiv = $(this).siblings('.rating-message');
+        // Capturar os dados do botão
+
+        const videoElement = $(this).closest('.video-item');
+        const videoTitle = videoElement.find('h3').text();
+        const method = videoElement.data('method');
+
+        // Imprimir os dados no consoleS
+        console.log(`Título do vídeo: ${videoTitle}`);
+        console.log(`ID do vídeo: ${videoId}`);
+        console.log(`Avaliação: ${rating === 1 ? "Gostei" : "Não gostei"}`);
+        console.log(`Método de recomendação: ${method}`);
 
         $.ajax({
             url: url,

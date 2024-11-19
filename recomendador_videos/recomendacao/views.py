@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
@@ -8,6 +9,9 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from recomendador_videos.youtube_integration.models import Video
 from django.contrib.auth.decorators import user_passes_test
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import VideoInteraction
 
 from .services import (
     recomendar_videos_user_based,
@@ -106,6 +110,28 @@ class VideoRecommendation(View):
         videos_curtidos = VideoRating.objects.filter(user=user, rating=1).values_list('video_id', flat=True)
 
         return render(request, self.template_name, {
-            'videos': recomendacoes_hibridas,
+            'videos': recomendacoes_hibridas,  # Cada vídeo tem o atributo 'method'
             'rated_videos': videos_curtidos,
         })
+
+    
+class VideoMarked(View):
+    @csrf_exempt
+    def register_interaction(request):
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            video_id = data.get('video_id')
+            rating = data.get('rating')
+            method = data.get('method')
+
+            if video_id and rating and method:
+                video = Video.objects.get(youtube_id=video_id)
+                interaction = VideoInteraction.objects.create(
+                    user=request.user,
+                    video=video,
+                    rating=int(rating),
+                    method=method
+                )
+                return JsonResponse({'status': 'success', 'message': 'Interação registrada com sucesso.'})
+
+        return JsonResponse({'status': 'error', 'message': 'Dados inválidos.'}, status=400)
