@@ -74,7 +74,7 @@ class UserProfileFilterForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['duracao_maxima', 'linguagens_preferidas', 'aplicar_filtros']
-    
+
     duracao_maxima = forms.IntegerField(
         required=False, 
         widget=forms.NumberInput(attrs={'placeholder': 'Duração máxima (minutos)'}),
@@ -84,7 +84,7 @@ class UserProfileFilterForm(forms.ModelForm):
     linguagens_preferidas = forms.MultipleChoiceField(
         required=False,
         choices=[('pt', 'Português'), ('en', 'Inglês')],
-        widget=forms.CheckboxSelectMultiple(attrs={'placeholder': 'Idioma preferido'})
+        widget=forms.CheckboxSelectMultiple()
     )
 
     aplicar_filtros = forms.BooleanField(
@@ -93,14 +93,12 @@ class UserProfileFilterForm(forms.ModelForm):
         widget=forms.CheckboxInput(),
         label='Aplicar filtros nas buscas de vídeos'
     )
+
     def save(self, commit=True):
         profile = super().save(commit=False)
-        
-        linguagens = self.cleaned_data.get('linguagens_preferidas')
-        if linguagens:
-            # Salvando as linguagens como uma lista de valores separados por vírgula
-            profile.linguagens_preferidas = ','.join(linguagens)  # Armazenar como uma string separada por vírgula
-        
+        linguagens = self.cleaned_data.get('linguagens_preferidas', [])
+        # Salvar as linguagens como string separada por vírgula ou string vazia
+        profile.linguagens_preferidas = ','.join(linguagens) if linguagens else ''
         if commit:
             profile.save()
         return profile

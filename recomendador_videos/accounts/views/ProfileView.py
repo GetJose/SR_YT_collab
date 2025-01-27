@@ -10,17 +10,15 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         user_profile = request.user.userprofile
-        form = UserProfileFilterForm(instance=user_profile)  # Passando a instância do perfil com dados já carregados
+        form = UserProfileFilterForm(instance=user_profile)
         
-        # Carregando as linguagens preferidas
+        # Carregar as linguagens preferidas
         linguagens_preferidas = user_profile.linguagens_preferidas
         if linguagens_preferidas:
-            # Converting the string back into a list of values (e.g. "pt,en" -> ['pt', 'en'])
             linguagens_list = linguagens_preferidas.split(',')
-            form.fields['linguagens_preferidas'].initial = linguagens_list  # Setting the initial selected values for the form
+            form.initial['linguagens_preferidas'] = linguagens_list  # Atualizar o `initial` do campo no formulário
         
         return render(request, 'apps/account/profile.html', {'form': form, 'user': request.user})
-
 
 
     def post(self, request, *args, **kwargs):

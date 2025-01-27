@@ -5,28 +5,37 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Perfil de {{ user.username }}</h1>
-    <p><strong>Data de criação:</strong> {{ user.date_joined }}</p>
-    
-    <h3>Áreas de Interesse:</h3>
-    <ul>
-        {% for interest in user.userprofile.interests.all %}
-            <li>{{ interest.name }}</li>
-        {% empty %}
-            <li>Você ainda não selecionou áreas de interesse.</li>
-        {% endfor %}
-    </ul>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Bem-vindo, {{ user.username }}</h1>
+            <p><strong>Data de criação:</strong> {{ user.date_joined|date:"d/m/Y H:i" }}</p>
+        </div>
 
-    <h3>Filtros de Preferência:</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Salvar Preferências</button>
-    </form>
-
-    <button><a href="{% url 'areas_interesse' %}">Editar Áreas de Interesse</a></button>
+        <section class="interests-section">
+            <h3>Áreas de Interesse</h3>
+            <ul class="interests-list">
+                {% for interest in user.userprofile.interests.all %}
+                    <li>{{ interest.name }}</li>
+                {% empty %}
+                    <li>Você ainda não selecionou áreas de interesse.</li>
+                {% endfor %}
+            </ul>
+        </section>
     
-    <form method="get" action="{% url 'delete_profile' %}">
-        <button type="submit" class="btn btn-danger">Deletar Perfil</button>
-    </form>
+        <section class="filters-section">
+            <h3>Filtros de Preferência</h3>
+            <form method="post" class="filters-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-save">Salvar Preferências</button>
+            </form>
+        </section>
+    
+        <div class="action-buttons">
+            <a href="{% url 'areas_interesse' %}" class="btn btn-edit">Editar Áreas de Interesse</a>
+            <form method="get" action="{% url 'delete_profile' %}" class="delete-profile-form">
+                <button type="submit" class="btn btn-danger">Deletar Perfil</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}

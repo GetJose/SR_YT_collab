@@ -42,6 +42,7 @@ def converter_duracao_iso_para_segundos(iso_duration):
         return int(duration.total_seconds())
     except isodate.ISO8601Error:
         return 0
+    
 def atualizar_categoria(youtube, category_id):
     categories_request = youtube.videoCategories().list(
         part="snippet",

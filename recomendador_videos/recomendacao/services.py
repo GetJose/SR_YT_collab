@@ -8,9 +8,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
+#from nltk.tokenize import word_tokenize
 nltk.download('stopwords')
-nltk.download('punkt')
+#nltk.download('punkt')
 
 #------Funções para auxiliar na recomendação por Item -----#
 def remover_stopwords(text):
@@ -22,19 +22,19 @@ def obter_dados_video(video):
    descricao = remover_stopwords(video.description or "")
    return f"{titulo} {descricao} {video.category}"
 
-def obter_palavra_importante(titulo):
-    if not titulo:
-        return ""
+#def obter_palavra_importante(titulo):
+    #if not titulo:
+        #return ""
     
-    palavras = word_tokenize(titulo)
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform([' '.join(palavras)])
-    palavras_importantes = vectorizer.get_feature_names_out()
-    pesos = tfidf_matrix.toarray()[0]
+    #palavras = word_tokenize(titulo)
+    #vectorizer = TfidfVectorizer()
+   #tfidf_matrix = vectorizer.fit_transform([' '.join(palavras)])
+   # palavras_importantes = vectorizer.get_feature_names_out()
+    #pesos = tfidf_matrix.toarray()[0]
 
     # Encontrar a palavra com maior peso
-    max_indice = pesos.argmax()
-    return palavras_importantes[max_indice]
+    #max_indice = pesos.argmax()
+    #return palavras_importantes[max_indice]
 
 #---- Maneiras de calcular a proximidade de dois usuarrios ----#
 def calcular_correlacao_pearson(user):
