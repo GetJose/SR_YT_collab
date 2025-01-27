@@ -69,22 +69,29 @@ class InterestForm(forms.ModelForm):
         if commit:
             profile.save()
         return profile
-
 class UserProfileFilterForm(forms.ModelForm):
+    DURATION_CHOICES = [
+        ('short', 'Curtos (até 2 minutos)'),
+        ('medium', 'Normais (até 15 minutos)'),
+        ('long', 'Longos (mais de 15 minutos)'),
+    ]
+
     class Meta:
         model = UserProfile
-        fields = ['duracao_maxima', 'linguagens_preferidas', 'aplicar_filtros']
+        fields = ['duracao_faixa', 'linguagens_preferidas', 'aplicar_filtros']
 
-    duracao_maxima = forms.IntegerField(
-        required=False, 
-        widget=forms.NumberInput(attrs={'placeholder': 'Duração máxima (minutos)'}),
-        min_value=1
+    duracao_faixa = forms.ChoiceField(
+        required=False,
+        choices=DURATION_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Faixa de Duração"
     )
-    
+
     linguagens_preferidas = forms.MultipleChoiceField(
         required=False,
-        choices=[('pt', 'Português'), ('en', 'Inglês')],
-        widget=forms.CheckboxSelectMultiple()
+        choices=[('pt', 'Português'), ('en', 'Inglês'), ('es', 'Espanhol')],
+        widget=forms.CheckboxSelectMultiple(),
+        label="Linguagens Preferidas"
     )
 
     aplicar_filtros = forms.BooleanField(

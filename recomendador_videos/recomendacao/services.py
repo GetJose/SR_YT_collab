@@ -8,6 +8,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk.corpus import stopwords
+
+from recomendador_videos.youtube_integration.services import filtrar_videos_por_usuario
 #from nltk.tokenize import word_tokenize
 nltk.download('stopwords')
 #nltk.download('punkt')
@@ -152,6 +154,7 @@ def recomendar_videos(user, similaridade=calcular_similaridade_cosseno):
             for rating in similar_user_ratings:
                 if not VideoRating.objects.filter(user=user, video=rating.video).exists():
                     recommended_videos.add(rating.video)
+    recommended_videos = filtrar_videos_por_usuario(recommended_videos, user.userprofile)
     return recommended_videos
 
 def recomendar_videos_itens_based(user):
@@ -173,7 +176,7 @@ def recomendar_videos_itens_based(user):
     for video in videos_disliked_recentes:
         videos_a_excluir = encontrar_videos_similares(video, top_n=6)
         recomendados.difference_update(videos_a_excluir)
-    
+    recomendados = filtrar_videos_por_usuario(recomendados, user.userprofile)
     return list(recomendados)[:12]
 
 
@@ -189,6 +192,7 @@ def recomendar_videos_user_based(user):
             for rating in similar_user_ratings:
                 if not VideoRating.objects.filter(user=user, video=rating.video).exists():
                     recommended_videos.add(rating.video)
+    recommended_videos = filtrar_videos_por_usuario(recommended_videos, user.userprofile)
     if len(recommended_videos) > 12:
         recommended_videos = random.sample(list(recommended_videos), 12)
     return recommended_videos

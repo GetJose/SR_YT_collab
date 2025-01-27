@@ -12,12 +12,17 @@ class Interest(models.Model):
         return self.parent is None
 
 class UserProfile(models.Model):
+    DURATION_CHOICES = [
+        ('short', 'Curtos (até 2 minutos)'),
+        ('medium', 'Normais (até 15 minutos)'),
+        ('long', 'Longos (mais de 15 minutos)'),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     interests = models.ManyToManyField(Interest, blank=True)
-    duracao_maxima = models.IntegerField(null=True, blank=True)  # Em minutos
-    linguagens_preferidas = models.CharField(max_length=200, null=True, blank=True)  # Exemplo: 'pt,en'
-
-    aplicar_filtros = models.BooleanField(default=True)  # Novo campo para ativar ou desativar filtros
+    duracao_faixa = models.CharField(max_length=10, choices=DURATION_CHOICES, null=True, blank=True)  
+    linguagens_preferidas = models.CharField(max_length=200, null=True, blank=True) 
+    aplicar_filtros = models.BooleanField(default=True)
 
     def __str__(self):
         return self.user.username

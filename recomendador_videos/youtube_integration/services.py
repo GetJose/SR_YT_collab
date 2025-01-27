@@ -1,3 +1,4 @@
+from typing import List
 from .models import Video, YouTubeCategory
 from googleapiclient.discovery import build
 from django.core.cache import cache
@@ -11,6 +12,31 @@ def obter_nome_categoria(category_id):
         return category.name
     except YouTubeCategory.DoesNotExist:
         return 'Unknown'
+
+
+def filtrar_videos_por_usuario(videos, user_profile):
+    """Filtra vídeos com base no perfil do usuário."""
+    if not user_profile.aplicar_filtros:
+        return videos
+
+    # Filtro de duração por faixa
+    faixa_duracao = user_profile.duracao_faixa
+    if faixa_duracao == 'short':
+        videos = [v for v in videos if v.duration <= 120]  # Até 2 minutos
+    elif faixa_duracao == 'medium':
+        videos = [v for v in videos if v.duration <= 900]  # Até 15 minutos
+    elif faixa_duracao == 'long':
+        videos = [v for v in videos if v.duration > 900]  # Mais de 15 minutos
+
+    # Filtro de linguagens
+    linguagens_preferidas = user_profile.linguagens_preferidas.split(',') if user_profile.linguagens_preferidas else []
+    if linguagens_preferidas:
+        videos = [
+            v for v in videos 
+            if (v.language.split('-')[0] in linguagens_preferidas) or v.language == "Unknown"
+        ]
+
+    return videos
 
 def filtrar_e_ranquear_videos(videos):
     categorias_permitidas = ['Education', 'Science & Technology', 'Unknown']
@@ -33,7 +59,6 @@ def filtrar_e_ranquear_videos(videos):
     videos_ranqueados = sorted(videos_filtrados, key=calcular_ranking, reverse=True)
 
     return videos_ranqueados
-
 
 
 def converter_duracao_iso_para_segundos(iso_duration):
@@ -60,6 +85,7 @@ def atualizar_categoria(youtube, category_id):
         return category_name
     return 'Unknown'
 
+#Função para fazer a busca no YouTube atravez da palavra pesquisada 
 def busca_YT(query, max_results=10):
     cache_key = slugify(f"yt_search_{query}")
     videos = cache.get(cache_key)
@@ -99,6 +125,8 @@ def busca_YT(query, max_results=10):
         like_count = video_details['items'][0]['statistics'].get('likeCount', 0)
         dislike_count = video_details['items'][0]['statistics'].get('dislikeCount', 0)
 
+        language = video_details['items'][0]['snippet'].get('defaultAudioLanguage', 'Unknown')
+
         video, created = Video.objects.get_or_create(
             youtube_id=video_id,
             defaults={
@@ -111,6 +139,7 @@ def busca_YT(query, max_results=10):
                 'like_count': like_count,  
                 'dislike_count': dislike_count, 
                 'category': category_name,
+                'language': language, 
                 'published_at': item['snippet']['publishedAt'],
             }
         )
