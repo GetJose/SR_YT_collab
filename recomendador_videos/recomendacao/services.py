@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk.corpus import stopwords
 
-from recomendador_videos.youtube_integration.services import filtrar_videos_por_usuario
+from recomendador_videos.youtube_integration.services import filtrar_e_ranquear_videos
 #from nltk.tokenize import word_tokenize
 nltk.download('stopwords')
 #nltk.download('punkt')
@@ -122,22 +122,22 @@ def combinar_recomendacoes(user_recommendations, item_recommendations):
    recomendacoes_hibridas = sorted(ranking_videos.items(), key=lambda x: x[1], reverse=True)
    return [video for video, score in recomendacoes_hibridas]
 
-def filtrar_e_ranquear_videos(videos, duracao_media=None):
-   categorias_permitidas = ['Education', 'Science & Technology', 'Unknown']
-   videos_filtrados = [video for video in videos if video.category in categorias_permitidas]
+# def filtrar_e_ranquear_videos(videos, duracao_media=None):
+#    categorias_permitidas = ['Education', 'Science & Technology', 'Unknown']
+#    videos_filtrados = [video for video in videos if video.category in categorias_permitidas]
 
-   def calcular_ranking(video):
-       likes = int(video.like_count or 0)
-       dislikes = int(video.dislike_count or 0)
-       total_views = int(video.view_count or 0)
-       duracao = int(video.duration or 0)
+#    def calcular_ranking(video):
+#        likes = int(video.like_count or 0)
+#        dislikes = int(video.dislike_count or 0)
+#        total_views = int(video.view_count or 0)
+#        duracao = int(video.duration or 0)
 
-       percentual_likes = likes / (likes + dislikes) if likes + dislikes > 0 else 0
-       peso_duracao = 1 - abs(duracao - duracao_media) / duracao_media if duracao_media else 0
+#        percentual_likes = likes / (likes + dislikes) if likes + dislikes > 0 else 0
+#        peso_duracao = 1 - abs(duracao - duracao_media) / duracao_media if duracao_media else 0
 
-       return percentual_likes + (total_views * 0.5) + (peso_duracao * 0.5)
+#        return percentual_likes + (total_views * 0.5) + (peso_duracao * 0.5)
 
-   return sorted(videos_filtrados, key=calcular_ranking, reverse=True)
+#    return sorted(videos_filtrados, key=calcular_ranking, reverse=True)
 
 
 # -------------------------FORMAS DE RECOMENDAR OS VIDEOS USER BASED E ITEM BASED------------------------#
@@ -154,7 +154,7 @@ def recomendar_videos(user, similaridade=calcular_similaridade_cosseno):
             for rating in similar_user_ratings:
                 if not VideoRating.objects.filter(user=user, video=rating.video).exists():
                     recommended_videos.add(rating.video)
-    recommended_videos = filtrar_videos_por_usuario(recommended_videos, user.userprofile)
+    recommended_videos = filtrar_e_ranquear_videos(recommended_videos, user.userprofile)
     return recommended_videos
 
 def recomendar_videos_itens_based(user):
@@ -176,7 +176,7 @@ def recomendar_videos_itens_based(user):
     for video in videos_disliked_recentes:
         videos_a_excluir = encontrar_videos_similares(video, top_n=6)
         recomendados.difference_update(videos_a_excluir)
-    recomendados = filtrar_videos_por_usuario(recomendados, user.userprofile)
+    recomendados = filtrar_e_ranquear_videos(recomendados, user.userprofile)
     return list(recomendados)[:12]
 
 
@@ -192,7 +192,7 @@ def recomendar_videos_user_based(user):
             for rating in similar_user_ratings:
                 if not VideoRating.objects.filter(user=user, video=rating.video).exists():
                     recommended_videos.add(rating.video)
-    recommended_videos = filtrar_videos_por_usuario(recommended_videos, user.userprofile)
+    recommended_videos = filtrar_e_ranquear_videos(recommended_videos, user.userprofile)
     if len(recommended_videos) > 12:
         recommended_videos = random.sample(list(recommended_videos), 12)
     return recommended_videos
@@ -231,9 +231,9 @@ def recomendar_videos_fusao(user):
     item_recommendations = recomendar_videos_itens_based(user)
 
     recomendacoes_comb = combinar_recomendacoes(user_recommendations, item_recommendations)
-    duracao_media = sum(v.duration or 0 for v in user_recommendations) / len(user_recommendations) if user_recommendations else 0
+    #duracao_media = sum(v.duration or 0 for v in user_recommendations) / len(user_recommendations) if user_recommendations else 0
 
-    final_recommendations = filtrar_e_ranquear_videos(recomendacoes_comb, duracao_media=duracao_media)[:12]
+    final_recommendations = filtrar_e_ranquear_videos(recomendacoes_comb, user.userprofile)[:12]
     
     # Marcar o método de recomendação para cada vídeo (opcional: usar para logging ou análises futuras)
     for video in final_recommendations:

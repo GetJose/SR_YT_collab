@@ -16,6 +16,7 @@ class UserProfile(models.Model):
         ('short', 'Curtos (até 2 minutos)'),
         ('medium', 'Normais (até 15 minutos)'),
         ('long', 'Longos (mais de 15 minutos)'),
+        ('none', 'Sem limite de tempo'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)

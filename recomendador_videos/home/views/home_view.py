@@ -7,7 +7,6 @@ from recomendador_videos.home.services import (
     buscar_recomendacoes_para_usuario, 
     obter_avaliacoes_do_usuario
 )
-from recomendador_videos.youtube_integration.services import filtrar_videos_por_usuario
 
 @method_decorator(login_required, name='dispatch')
 class HomeView(View):

@@ -13,52 +13,55 @@ def obter_nome_categoria(category_id):
     except YouTubeCategory.DoesNotExist:
         return 'Unknown'
 
+def filtrar_e_ranquear_videos(videos, user_profile):
+    """
+    Filtra e ranqueia vídeos com base no perfil do usuário e nas categorias permitidas.
+    """
+    if user_profile.aplicar_filtros:
+        # Filtro de categorias permitidas
+        categorias_permitidas = ['Education', 'Science & Technology', 'Unknown']
+        videos = [v for v in videos if v.category in categorias_permitidas]
 
-def filtrar_videos_por_usuario(videos, user_profile):
-    """Filtra vídeos com base no perfil do usuário."""
-    if not user_profile.aplicar_filtros:
-        return videos
+        # Filtro de duração por faixa
+        faixa_duracao = user_profile.duracao_faixa
+        if faixa_duracao == 'short':
+            videos = [v for v in videos if v.duration <= 120]  # Até 2 minutos
+        elif faixa_duracao == 'medium':
+            videos = [v for v in videos if 120 < v.duration <= 900]  # Entre 2 e 15 minutos
+        elif faixa_duracao == 'long':
+            videos = [v for v in videos if v.duration > 900]  # Mais de 15 minutos
+        elif faixa_duracao == 'none':
+            pass  # Sem limite de tempo
 
-    # Filtro de duração por faixa
-    faixa_duracao = user_profile.duracao_faixa
-    if faixa_duracao == 'short':
-        videos = [v for v in videos if v.duration <= 120]  # Até 2 minutos
-    elif faixa_duracao == 'medium':
-        videos = [v for v in videos if v.duration <= 900]  # Até 15 minutos
-    elif faixa_duracao == 'long':
-        videos = [v for v in videos if v.duration > 900]  # Mais de 15 minutos
+        # Filtro de linguagens
+        linguagens_preferidas = user_profile.linguagens_preferidas.split(',') if user_profile.linguagens_preferidas else []
+        if linguagens_preferidas:
+            videos = [
+                v for v in videos
+                if (v.language.split('-')[0] in linguagens_preferidas) or v.language == "Unknown"
+            ]
 
-    # Filtro de linguagens
-    linguagens_preferidas = user_profile.linguagens_preferidas.split(',') if user_profile.linguagens_preferidas else []
-    if linguagens_preferidas:
-        videos = [
-            v for v in videos 
-            if (v.language.split('-')[0] in linguagens_preferidas) or v.language == "Unknown"
-        ]
-
-    return videos
-
-def filtrar_e_ranquear_videos(videos):
-    categorias_permitidas = ['Education', 'Science & Technology', 'Unknown']
-    videos_filtrados = [video for video in videos if video.category in categorias_permitidas]
-
+    # Função de cálculo de ranking
     def calcular_ranking(video):
         likes = int(video.like_count) if video.like_count else 0
         dislikes = int(video.dislike_count) if video.dislike_count else 0
         total_views = int(video.view_count) if video.view_count else 0
 
         if likes + dislikes > 0:
-             percentual_likes = likes / (likes + dislikes)  
+            percentual_likes = likes / (likes + dislikes)
         else:
-            percentual_likes = 0 
+            percentual_likes = 0
 
         percentual_views = total_views
 
-        return (percentual_likes * 1) + (percentual_views * (2/3))
+        # Peso de 1 para likes e 2/3 para views
+        return (percentual_likes * 1) + (percentual_views * (2 / 3))
 
-    videos_ranqueados = sorted(videos_filtrados, key=calcular_ranking, reverse=True)
+    # Ranqueando os vídeos
+    videos_ranqueados = sorted(videos, key=calcular_ranking, reverse=True)
 
     return videos_ranqueados
+
 
 
 def converter_duracao_iso_para_segundos(iso_duration):

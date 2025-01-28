@@ -69,11 +69,13 @@ class InterestForm(forms.ModelForm):
         if commit:
             profile.save()
         return profile
+    
 class UserProfileFilterForm(forms.ModelForm):
     DURATION_CHOICES = [
         ('short', 'Curtos (até 2 minutos)'),
         ('medium', 'Normais (até 15 minutos)'),
         ('long', 'Longos (mais de 15 minutos)'),
+        ('none', 'Sem limite de tempo'),
     ]
 
     class Meta:
