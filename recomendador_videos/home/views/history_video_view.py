@@ -1,5 +1,6 @@
+from django.db.models import F, Max
 from django.shortcuts import render
-from django.core.paginator import Paginator 
+from django.core.paginator import Paginator
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -8,29 +9,45 @@ from ..models import VideoRating
 
 @method_decorator(login_required, name='dispatch')
 class VideoHistoryView(ListView):
-    template_name = 'apps/home/video_history.html' 
+    template_name = 'apps/home/video_history.html'
     paginate_by = 9
 
     def get(self, request):
-        user_ratings = VideoRating.objects.filter(user=request.user).order_by('-updated_at')
-        if user_ratings.exists():
-            video_ids = user_ratings.values_list('video_id', flat=True)
-            videos = Video.objects.filter(id__in=video_ids)
-            
-            query = request.GET.get('query')
-            if query:
-                videos = videos.filter(title__icontains=query) 
+        # Recuperar as últimas interações do usuário com cada vídeo
+        last_ratings = (
+            VideoRating.objects
+            .filter(user=request.user)
+            .values('video_id')
+            .annotate(last_interaction=Max('updated_at'))  # Última interação para cada vídeo
+            .order_by('-last_interaction')  # Ordena pela última interação
+        )
 
-            paginator = Paginator(videos, self.paginate_by)
-            page = request.GET.get('page')
-            videos_paginated = paginator.get_page(page)
+        # Criar um dicionário {video_id: última interação} para manter a ordem
+        last_interactions_dict = {entry['video_id']: entry['last_interaction'] for entry in last_ratings}
 
-            return render(request, self.template_name, {
-                'videos_history': videos_paginated,
-                'user_ratings': {rating.video.youtube_id: rating.rating for rating in user_ratings},
-            })
-        else:
-            return render(request, self.template_name, {
-                'videos_history': [], 
-                'user_ratings': {},
-            })
+        # Obter os vídeos na ordem correta
+        videos = Video.objects.filter(id__in=last_interactions_dict.keys())
+
+        # Aplicar ordenação manualmente preservando a ordem das interações
+        videos = sorted(videos, key=lambda v: last_interactions_dict[v.id], reverse=True)
+
+        # Filtro por pesquisa no título
+        query = request.GET.get('query')
+        if query:
+            videos = [video for video in videos if query.lower() in video.title.lower()]
+
+        # Paginação
+        paginator = Paginator(videos, self.paginate_by)
+        page = request.GET.get('page')
+        videos_paginated = paginator.get_page(page)
+
+        # Criar dicionário de avaliações do usuário
+        user_ratings = {
+            rating.video.youtube_id: rating.rating for rating in 
+            VideoRating.objects.filter(user=request.user, video_id__in=last_interactions_dict.keys())
+        }
+
+        return render(request, self.template_name, {
+            'videos_history': videos_paginated,
+            'user_ratings': user_ratings,
+        })

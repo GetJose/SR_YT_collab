@@ -13,4 +13,4 @@ class VideoRating(models.Model):
         unique_together = ('user', 'video')
 
     def __str__(self):
-        return f"{self.user} avaliou {self.video} com {self.rating}"
+        return f"{self.user} avaliou {self.video} com {self.rating}, em {self.updated_at}"

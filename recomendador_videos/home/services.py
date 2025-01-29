@@ -31,35 +31,27 @@ def obter_avaliacoes_do_usuario(user, videos):
     user_ratings = VideoRating.objects.filter(user=user, video__in=videos)
     return {rating.video.youtube_id: rating.rating for rating in user_ratings}
 
-
 def avaliar_video(video_id, user, rating_value):
-
+    """
+    Avalia ou cria um registro de avaliação para o vídeo.
+    """
     try:
         video = Video.objects.get(youtube_id=video_id)
     except Video.DoesNotExist:
         return None, "Vídeo não encontrado."
 
+    # Busca ou cria avaliação
     video_rating, created = VideoRating.objects.get_or_create(
         user=user,
         video=video,
-        defaults={'rating': rating_value}
+        defaults={'rating': rating_value}  # Cria com o valor recebido
     )
 
-    if not created:
+    # Atualiza se necessário
+    if not created and video_rating.rating != rating_value:
         video_rating.rating = rating_value
         video_rating.save()
         return video_rating, f"Avaliação atualizada: {'Curtido' if rating_value == 1 else 'Não Curtido'}."
     else:
         return video_rating, f"Você avaliou o vídeo como: {'Curtido' if rating_value == 1 else 'Não Curtido'}."
-    
-def avaliacao_inicial(user, video_id):
-    try:
-        video = Video.objects.get(youtube_id=video_id)
-        avaliacao, created = VideoRating.objects.get_or_create(
-            user=user,  
-            video=video,
-            defaults={'rating': 0} 
-        )
-        return created 
-    except Video.DoesNotExist:
-        return False
+
