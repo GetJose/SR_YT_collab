@@ -8,53 +8,96 @@
 <h1>Similaridade entre Usuários</h1>
 
 <h2>Similaridade por Cosseno</h2>
-    {% if similaridade_cosseno %}
-        <table border="1">
-            <thead>
+{% if similaridade_cosseno %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Usuário</th>
+                <th>Similaridade (Cosseno)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for username, score in similaridade_cosseno.items %}
                 <tr>
-                    <th>Usuário</th>
-                    <th>Similaridade (Cosseno)</th>
+                    <td>{{ username }}</td>
+                    <td>{{ score }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for username, score in similaridade_cosseno.items %}
-                    <tr>
-                        <td>{{ username }}</td>
-                        <td>{{ score }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Nenhum usuário semelhante encontrado com base na Similaridade por Cosseno.</p>
-    {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Nenhum usuário semelhante encontrado com base na Similaridade por Cosseno.</p>
+{% endif %}
 
 <h2>Correlação de Pearson</h2>
-    {% if similaridade_pearson %}
-        <table border="1">
-            <thead>
+{% if similaridade_pearson %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Usuário</th>
+                <th>Similaridade (Pearson)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for username, score in similaridade_pearson.items %}
                 <tr>
-                    <th>Usuário</th>
-                    <th>Similaridade (Pearson)</th>
+                    <td>{{ username }}</td>
+                    <td>{{ score }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for username, score in similaridade_pearson.items %}
-                    <tr>
-                        <td>{{ username }}</td>
-                        <td>{{ score }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Nenhum usuário semelhante encontrado com base na Correlação de Pearson.</p>
-    {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Nenhum usuário semelhante encontrado com base na Correlação de Pearson.</p>
+{% endif %}
 
-<!-- Formulário para exportar a tabela em CSV -->
 <form method="post">
     {% csrf_token %}
     <button type="submit">Exportar CSV</button>
 </form>
+
+<h2>Comparação de Vídeos Assistidos entre Usuários</h2>
+
+<form method="get">
+    <label for="selected_user_1">Selecione o primeiro usuário:</label>
+    <select name="selected_user_1" id="selected_user_1">
+        <option value="">-- Escolha um usuário --</option>
+        {% for user in users %}
+            <option value="{{ user.id }}" {% if selected_user_1 and user.id == selected_user_1.id %}selected{% endif %}>
+                {{ user.username }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label for="selected_user_2">Selecione o segundo usuário:</label>
+    <select name="selected_user_2" id="selected_user_2">
+        <option value="">-- Escolha um usuário --</option>
+        {% for user in users %}
+            <option value="{{ user.id }}" {% if selected_user_2 and user.id == selected_user_2.id %}selected{% endif %}>
+                {{ user.username }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Comparar</button>
+</form>
+
+{% if total_videos_assistidos_user_1 %}
+    <h3>Dados de {{ selected_user_1.username }}</h3>
+    <p>Total de vídeos assistidos: {{ total_videos_assistidos_user_1 }}</p>
+{% endif %}
+
+{% if total_videos_assistidos_user_2 %}
+    <h3>Dados de {{ selected_user_2.username }}</h3>
+    <p>Total de vídeos assistidos: {{ total_videos_assistidos_user_2 }}</p>
+{% endif %}
+
+{% if common_videos %}
+    <h3>Comparação</h3>
+    <p>Total de vídeos em comum entre os dois: {{ common_videos|length }}</p>
+    <p>Total de vídeos avaliados positivamente por ambos: {{ common_positive_ratings|length }}</p>
+{% else %}
+    <p>Não há vídeos em comum entre os dois usuários selecionados.</p>
+{% endif %}
 
 {% endblock %}

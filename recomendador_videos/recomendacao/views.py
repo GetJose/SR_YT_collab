@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import VideoInteraction
+from django.db.models import F, Max
 
 from .services import (
     recomendar_videos_user_based,
@@ -67,6 +68,33 @@ class UserCorrelationView(View):
 
     def get(self, request):
         user = request.user
+      
+        selected_user_id_1 = request.GET.get('selected_user_1')
+        selected_user_id_2 = request.GET.get('selected_user_2')
+
+        total_videos_assistidos_user_1 = total_videos_assistidos_user_2 = 0
+        common_videos = common_positive_ratings = None
+        selected_user_1 = selected_user_2 = None
+
+        if selected_user_id_1 and selected_user_id_2:
+            try:
+                selected_user_1 = User.objects.get(id=selected_user_id_1)
+                selected_user_2 = User.objects.get(id=selected_user_id_2)
+
+                ratings_user_1 = VideoRating.objects.filter(user=selected_user_1).values('video_id')
+                ratings_user_2 = VideoRating.objects.filter(user=selected_user_2).values('video_id')
+
+                total_videos_assistidos_user_1 = ratings_user_1.count()
+                total_videos_assistidos_user_2 = ratings_user_2.count()
+
+                common_videos = set(ratings_user_1.values_list('video_id', flat=True)) & set(ratings_user_2.values_list('video_id', flat=True))
+
+                positive_ratings_user_1 = set(ratings_user_1.filter(rating=1).values_list('video_id', flat=True))
+                positive_ratings_user_2 = set(ratings_user_2.filter(rating=1).values_list('video_id', flat=True))
+                common_positive_ratings = positive_ratings_user_1 & positive_ratings_user_2
+            except User.DoesNotExist:
+                pass  
+
         similaridade_cosseno = calcular_similaridade_cosseno(user)
         similaridade_pearson = calcular_correlacao_pearson(user)
 
@@ -79,6 +107,13 @@ class UserCorrelationView(View):
         return render(request, self.template_name, {
             'similaridade_cosseno': similaridade_cosseno_dict,
             'similaridade_pearson': similaridade_pearson_dict,
+            'total_videos_assistidos_user_1': total_videos_assistidos_user_1,
+            'total_videos_assistidos_user_2': total_videos_assistidos_user_2,
+            'common_videos': common_videos,
+            'common_positive_ratings': common_positive_ratings,
+            'users': User.objects.all(), 
+            'selected_user_1': selected_user_1,  
+            'selected_user_2': selected_user_2,
         })
 
     def post(self, request):
