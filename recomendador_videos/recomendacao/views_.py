@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import VideoInteraction
 from django.db.models import F, Max
 
-from .services import (
+from .services_ import (
     recomendar_videos_user_based,
     recomendar_videos_itens_based,
     recomendar_videos_hibrido,

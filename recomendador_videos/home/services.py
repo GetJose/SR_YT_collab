@@ -1,7 +1,7 @@
 import random
 from recomendador_videos.youtube_integration.services import busca_YT, filtrar_e_ranquear_videos
 from recomendador_videos.youtube_integration.models import Video
-from recomendador_videos.recomendacao.services import recomendar_videos
+from recomendador_videos.recomendacao.services.recomendacao import recomendar_videos_user_based
 from .models import VideoRating
     
 
@@ -19,7 +19,7 @@ def buscar_videos_por_interesses(user_profile):
 
 
 def buscar_recomendacoes_para_usuario(user):
-    recommended_videos = recomendar_videos(user)
+    recommended_videos = recomendar_videos_user_based(user)
     recommended_videos = filtrar_e_ranquear_videos(recommended_videos, user.userprofile)
     if len(recommended_videos) > 6:
         recommended_videos = random.sample(list(recommended_videos), 6)
