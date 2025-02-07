@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Recomendação por Objeto</h2>
+
+    <!-- Formulário para selecionar o vídeo base -->
+    <form method="post">
+        {% csrf_token %}
+        <label for="video_id">Escolha um vídeo:</label>
+        <select name="video_id" id="video_id">
+            {% for video in videos %}
+                <option value="{{ video.id }}">{{ video.title }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if video_base %}
+    <h3>Vídeo Base: {{ video_base.title }}</h3>
+    <ul>
+        {% for item in similar_videos %}
+            <li>{{ item.video.title }} - Similaridade: {{ item.similarity|floatformat:2 }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <h2>Clusters de Vídeos</h2>
+    <div id="cluster-chart"></div>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var clusterData = JSON.parse('{{ cluster_data|escapejs }}');
+
+        var data = [{
+            x: clusterData.map(d => d.x),
+            y: clusterData.map(d => d.y),
+            mode: 'markers',
+            text: clusterData.map(d => d.title),
+            marker: { size: 10 }
+        }];
+        
+        var layout = {
+            title: 'Distribuição de Clusters',
+            xaxis: { title: 'PCA Component 1' },
+            yaxis: { title: 'PCA Component 2' }
+        };
+        
+        Plotly.newPlot('cluster-chart', data, layout);
+    </script>
+{% endblock %}

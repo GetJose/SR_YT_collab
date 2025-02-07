@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserRecommendationView, HybridRecommendationView, HybridCascateRecommendationView, UserCorrelationView, ItemRecommendationView
+from .views import UserRecommendationView, HybridRecommendationView, HybridCascateRecommendationView, UserCorrelationView, ItemRecommendationView, ObjectRecommendationView
 
 
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
     path('recomendacao/item/', ItemRecommendationView.as_view(), name='item_recommendation'),
     path('recomendacao/usuario/', UserRecommendationView.as_view(), name='user_recommendation'),
     path('recomendacao/hibrida/', HybridCascateRecommendationView.as_view(), name='hybrid_recommendation'),
+    path('recomendacao/objeto/', ObjectRecommendationView.as_view(), name='object_recommendation'),
 ]

@@ -3,3 +3,4 @@ from .user_based import UserRecommendationView
 from .hybrid_fusion import HybridRecommendationView
 from .hybrid_cascate import HybridCascateRecommendationView
 from .correlation import UserCorrelationView
+from .object_recomendation import ObjectRecommendationView
