@@ -8,10 +8,11 @@ from recomendador_videos.home.services import avaliar_video
 class InitialRateVideoView(View):
     def post(self, request):
         video_id = request.POST.get('video_id')
+        method = request.POST.get('method', 'desconhecido')
         user = request.user
 
         if video_id:
-            _, message = avaliar_video(video_id, user, rating_value=0)  # Salva como avaliação inicial
+            _, message = avaliar_video(video_id, user, rating_value=0, method=method) # Salva como avaliação inicial
             return JsonResponse({'message': message}, status=200)
 
         return JsonResponse({'message': 'Dados inválidos.'}, status=400)

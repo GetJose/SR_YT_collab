@@ -3,7 +3,7 @@
 <div class="video-list">
     {% if videos %}
         {% for video in videos %}
-            <div class="video-item" id="video-{{ video.youtube_id }}">
+            <div class="video-item" id="video-{{ video.youtube_id }}" data-method="{{video.method}}">
                 <h3>{{ video.title }}</h3>
                 <p>{{ video.description }}</p>
                 <iframe class="video-iframe" 

@@ -10,12 +10,17 @@ class UserSimilarity(models.Model):
     def __str__(self):
         return f"Similaridade entre {self.user} e {self.similar_user}: {self.score}"
 
+
 class VideoInteraction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     rating = models.IntegerField()  # 1 para curtir, -1 para não curtir
     method = models.CharField(max_length=20)  # user_based, item_based, hybrid
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)  # Data da primeira interação
+    updated_at = models.DateTimeField(auto_now=True)  # Atualiza quando a interação muda
+
+    class Meta:
+        unique_together = ('user', 'video') 
 
     def __str__(self):
-        return f"{self.user.username} - {self.video.title} - {self.method} - {self.rating}"
+        return f"{self.user.username} avaliou {self.video.title} do metdodo {self.method} com {self.rating} em {self.updated_at}"

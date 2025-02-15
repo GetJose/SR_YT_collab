@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from recomendador_videos.youtube_integration.models import Video
-from ..models import VideoRating
+from recomendador_videos.recomendacao.models import VideoInteraction
 
 @method_decorator(login_required, name='dispatch')
 class VideoHistoryView(ListView):
@@ -13,23 +13,31 @@ class VideoHistoryView(ListView):
     paginate_by = 9
 
     def get(self, request):
-        # Recuperar as últimas interações do usuário com cada vídeo
+        # Recuperar as últimas interações do usuário com cada vídeo e seu método de recomendação
         last_ratings = (
-            VideoRating.objects
+            VideoInteraction.objects
             .filter(user=request.user)
             .values('video_id')
-            .annotate(last_interaction=Max('updated_at'))  # Última interação para cada vídeo
-            .order_by('-last_interaction')  # Ordena pela última interação
+            .annotate(
+                last_interaction=Max('updated_at'),
+                method=F('method')  # Recupera o método de recomendação
+            )
+            .order_by('-last_interaction')
         )
 
-        # Criar um dicionário {video_id: última interação} para manter a ordem
+        # Criar dicionários para armazenar informações dos vídeos
         last_interactions_dict = {entry['video_id']: entry['last_interaction'] for entry in last_ratings}
+        video_methods_dict = {entry['video_id']: entry['method'] for entry in last_ratings}
 
         # Obter os vídeos na ordem correta
         videos = Video.objects.filter(id__in=last_interactions_dict.keys())
 
         # Aplicar ordenação manualmente preservando a ordem das interações
         videos = sorted(videos, key=lambda v: last_interactions_dict[v.id], reverse=True)
+
+
+        for video in videos:
+            video.method = video_methods_dict.get(video.id, "Desconhecido")
 
         # Filtro por pesquisa no título
         query = request.GET.get('query')
@@ -41,13 +49,12 @@ class VideoHistoryView(ListView):
         page = request.GET.get('page')
         videos_paginated = paginator.get_page(page)
 
-        # Criar dicionário de avaliações do usuário
         user_ratings = {
             rating.video.youtube_id: rating.rating for rating in 
-            VideoRating.objects.filter(user=request.user, video_id__in=last_interactions_dict.keys())
+            VideoInteraction.objects.filter(user=request.user, video_id__in=last_interactions_dict.keys())
         }
 
         return render(request, self.template_name, {
-            'videos_history': videos_paginated,
+            'videos_history': videos_paginated, 
             'user_ratings': user_ratings,
         })

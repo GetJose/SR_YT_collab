@@ -1,7 +1,7 @@
 import random
 import pandas as pd
 from django.contrib.auth.models import User
-from recomendador_videos.home.models import VideoRating
+from .models import VideoInteraction
 from recomendador_videos.recomendacao.models import UserSimilarity
 from recomendador_videos.youtube_integration.models import Video
 from sklearn.metrics.pairwise import cosine_similarity
@@ -40,7 +40,7 @@ def obter_dados_video(video):
 
 #---- Maneiras de calcular a proximidade de dois usuarrios ----#
 def calcular_correlacao_pearson(user):
-   all_ratings = VideoRating.objects.all()
+   all_ratings = VideoInteraction.objects.all()
    data = {
        'user_id': [rating.user_id for rating in all_ratings],
        'video_id': [rating.video_id for rating in all_ratings],
@@ -58,7 +58,7 @@ def calcular_correlacao_pearson(user):
    return correlations
 
 def calcular_similaridade_cosseno(user):
-   all_ratings = VideoRating.objects.all()
+   all_ratings = VideoInteraction.objects.all()
    data = {
        'user_id': [rating.user_id for rating in all_ratings],
        'video_id': [rating.video_id for rating in all_ratings],
@@ -78,7 +78,7 @@ def calcular_similaridade_cosseno(user):
 #-----------------Funções para calcular a proximidade em relação aos itens (video)--------------------------#
 
 def calcular_similaridade_itens(user, recommended_videos):
-    videos_assistidos = VideoRating.objects.filter(user=user).values_list('video', flat=True)
+    videos_assistidos = VideoInteraction.objects.filter(user=user).values_list('video', flat=True)
     videos_restantes = Video.objects.exclude(id__in=videos_assistidos)
 
     video_data_user = [obter_dados_video(Video.objects.get(id=vid)) for vid in videos_assistidos]
@@ -150,16 +150,16 @@ def recomendar_videos(user, similaridade=calcular_similaridade_cosseno):
     recommended_videos = set()
     for similar_user, score in similar_users:
         if score > 0:
-            similar_user_ratings = VideoRating.objects.filter(user=similar_user, rating=1)
+            similar_user_ratings = VideoInteraction.objects.filter(user=similar_user, rating=1)
             for rating in similar_user_ratings:
-                if not VideoRating.objects.filter(user=user, video=rating.video).exists():
+                if not VideoInteraction.objects.filter(user=user, video=rating.video).exists():
                     recommended_videos.add(rating.video)
     recommended_videos = filtrar_e_ranquear_videos(recommended_videos, user.userprofile)
     return recommended_videos
 
 def recomendar_videos_itens_based(user):
-    videos_disliked_recentes = [rating.video for rating in VideoRating.objects.filter(user=user, rating=-1).order_by('-updated_at')[:5]]
-    videos_liked_recentes = [rating.video for rating in VideoRating.objects.filter(user=user, rating=1).order_by('-updated_at')[:5]]
+    videos_disliked_recentes = [rating.video for rating in VideoInteraction.objects.filter(user=user, rating=-1).order_by('-updated_at')[:5]]
+    videos_liked_recentes = [rating.video for rating in VideoInteraction.objects.filter(user=user, rating=1).order_by('-updated_at')[:5]]
     
     # Gerar frase com os títulos dos vídeos curtidos
     frase_importante = ' '.join([video.title for video in videos_liked_recentes])
@@ -170,7 +170,7 @@ def recomendar_videos_itens_based(user):
     for video in videos_liked_recentes:
         recomendados.update([
             video_similar for video_similar in encontrar_videos_similares(video, top_n=12)
-            if not VideoRating.objects.filter(user=user, video=video_similar).exists()
+            if not VideoInteraction.objects.filter(user=user, video=video_similar).exists()
         ])
 
     for video in videos_disliked_recentes:
@@ -188,9 +188,9 @@ def recomendar_videos_user_based(user):
     recommended_videos = set()
     for similar_user, score in similar_users:
         if score > 0:
-            similar_user_ratings = VideoRating.objects.filter(user=similar_user, rating=1)
+            similar_user_ratings = VideoInteraction.objects.filter(user=similar_user, rating=1)
             for rating in similar_user_ratings:
-                if not VideoRating.objects.filter(user=user, video=rating.video).exists():
+                if not VideoInteraction.objects.filter(user=user, video=rating.video).exists():
                     recommended_videos.add(rating.video)
     recommended_videos = filtrar_e_ranquear_videos(recommended_videos, user.userprofile)
     if len(recommended_videos) > 12:

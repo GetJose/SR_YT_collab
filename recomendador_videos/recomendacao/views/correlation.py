@@ -10,7 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 from recomendador_videos.youtube_integration.models import Video
 from django.http import JsonResponse
 import json
-from recomendador_videos.home.models import VideoRating
 from ..models import VideoInteraction
 
 
@@ -33,8 +32,8 @@ class UserCorrelationView(View):
                 selected_user_1 = User.objects.get(id=selected_user_id_1)
                 selected_user_2 = User.objects.get(id=selected_user_id_2)
 
-                ratings_user_1 = VideoRating.objects.filter(user=selected_user_1).values('video_id')
-                ratings_user_2 = VideoRating.objects.filter(user=selected_user_2).values('video_id')
+                ratings_user_1 = VideoInteraction.objects.filter(user=selected_user_1).values('video_id')
+                ratings_user_2 = VideoInteraction.objects.filter(user=selected_user_2).values('video_id')
 
                 total_videos_assistidos_user_1 = ratings_user_1.count()
                 total_videos_assistidos_user_2 = ratings_user_2.count()

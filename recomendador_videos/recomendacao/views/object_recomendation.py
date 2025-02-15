@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from recomendador_videos.youtube_integration.models import Video
 from ..services.object_recomendation import get_similar_videos, get_tsne_cluster_data
+from ..services.similaridade import calcular_similaridade_itens
 
 class ObjectRecommendationView(View):
     template_name = 'apps/recomendacao/object_recommendation.html'
@@ -13,13 +14,16 @@ class ObjectRecommendationView(View):
 
     def post(self, request):
         video_id = int(request.POST.get('video_id'))
+        videos = Video.objects.all()
         video_base = Video.objects.get(id=video_id)
         similar_videos = get_similar_videos(video_base)
         cluster_data = get_tsne_cluster_data(selected_video_id=video_id)
+        similar_videos_item = calcular_similaridade_itens(video_base, videos, 8)
 
         return render(request, self.template_name, {
             'videos': Video.objects.all(),
             "video_base": video_base,
             "similar_videos": similar_videos,
+            "similar_videos_item": similar_videos_item,
             "cluster_data": cluster_data
         })

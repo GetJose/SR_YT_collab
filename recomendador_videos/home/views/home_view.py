@@ -17,7 +17,9 @@ class HomeView(View):
         if user_profile.interests.count() < 1:
             return redirect('areas_interesse')
 
-        videos = buscar_videos_por_interesses(user_profile)        
+        videos = buscar_videos_por_interesses(user_profile)
+        for video in videos:
+            video.method = "item_based"    
         user_ratings = obter_avaliacoes_do_usuario(request.user, videos)
         recommended_videos = buscar_recomendacoes_para_usuario(request.user)
 

@@ -15,10 +15,17 @@
     </form>
 
     {% if video_base %}
-    <h3>Vídeo Base: {{ video_base.title }}</h3>
+    <h3>Fução de similaridade por objeto com o {{ video_base.title }}</h3>
     <ul>
         {% for item in similar_videos %}
             <li>{{ item.video.title }} - Similaridade: {{ item.similarity|floatformat:2 }}</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <h3>Fução de similaridade por item com o {{ video_base.title }}</h3>
+    <ul>
+        {% for video in similar_videos_item %}
+            <li>{{video.title }} </li>
         {% endfor %}
     </ul>
     {% endif %}

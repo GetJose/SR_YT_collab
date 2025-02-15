@@ -1,13 +1,13 @@
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
-from recomendador_videos.home.models import VideoRating
+from ..models import VideoInteraction
 from ..utils.texto import obter_dados_video
 from recomendador_videos.youtube_integration.models import Video
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def calcular_correlacao_pearson(user):
-   all_ratings = VideoRating.objects.all()
+   all_ratings = VideoInteraction.objects.all()
    data = {
        'user_id': [rating.user_id for rating in all_ratings],
        'video_id': [rating.video_id for rating in all_ratings],
@@ -25,7 +25,7 @@ def calcular_correlacao_pearson(user):
    return correlations
 
 def calcular_similaridade_cosseno(user):
-   all_ratings = VideoRating.objects.all()
+   all_ratings = VideoInteraction.objects.all()
    data = {
        'user_id': [rating.user_id for rating in all_ratings],
        'video_id': [rating.video_id for rating in all_ratings],
@@ -45,7 +45,7 @@ def calcular_similaridade_usuarios(user, metodo="pearson"):
     """
     Calcula a similaridade entre usuários com base nas avaliações de vídeos.
     """
-    all_ratings = VideoRating.objects.all().values("user_id", "video_id", "rating")
+    all_ratings = VideoInteraction.objects.all().values("user_id", "video_id", "rating")
     df_ratings = pd.DataFrame.from_records(all_ratings)
     ratings_matrix = df_ratings.pivot_table(index='user_id', columns='video_id', values='rating')
     
@@ -68,12 +68,13 @@ def calcular_similaridade_itens(video_alvo, lista_videos, top_n=6):
     """
     if not lista_videos:
         return []
+    lista_videos = [video for video in lista_videos if video.id != video_alvo.id]
 
     dados_videos = [obter_dados_video(video) for video in lista_videos]
     dados_video_alvo = obter_dados_video(video_alvo)
     
     if not dados_video_alvo or all(not texto for texto in dados_videos):
-        return []  # Evita erro de vocabulário vazio no TF-IDF
+        return [] 
 
     tfidf_vectorizer = TfidfVectorizer()
     tfidf_matrix = tfidf_vectorizer.fit_transform([dados_video_alvo] + dados_videos)

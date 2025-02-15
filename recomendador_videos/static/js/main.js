@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         
         const videoId = $(this).attr('id').split('-')[1];  
+        const videoElement = $(this).closest('.video-item');
+        const method = videoElement.data('method'); 
         const url = '/initialRateVideo/';  
 
         $.ajax({
@@ -35,7 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'POST',
             data: {
                 'video_id': videoId,
-                'rating': 0  
+                'rating': 0  ,
+                'method' : method
             },
             success: function(response) {
                 console.log('Avaliação inicial salva com sucesso.');
@@ -57,27 +60,30 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on('click', '.rate-button', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        
         const videoId = $(this).data('video-id');
         const rating = $(this).data('rating');
         const url = $(this).data('url');
         const messageDiv = $(this).siblings('.rating-message');
+    
         // Capturar os dados do botão
-
         const videoElement = $(this).closest('.video-item');
         const videoTitle = videoElement.find('h3').text();
-        const method = videoElement.data('method');
-
-        // Imprimir os dados no consoleS
+        const method = videoElement.data('method');  // Pegar o método de recomendação
+    
+        // Imprimir os dados no console
         console.log(`Título do vídeo: ${videoTitle}`);
         console.log(`ID do vídeo: ${videoId}`);
         console.log(`Avaliação: ${rating === 1 ? "Gostei" : "Não gostei"}`);
         console.log(`Método de recomendação: ${method}`);
-
+    
         $.ajax({
             url: url,
             method: 'POST',
             data: {
-                'rating': rating
+                'video_id': videoId,  // Adicionado para garantir que o ID seja enviado
+                'rating': rating,
+                'method': method  // Enviar o método de recomendação
             },
             success: function(response) {
                 if (rating === 1) {
@@ -95,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
 document.addEventListener("DOMContentLoaded", function() {
     const recommendationMenu = document.getElementById("recommendationMenu");
     const recommendationSubmenu = document.getElementById("recommendationSubmenu");
