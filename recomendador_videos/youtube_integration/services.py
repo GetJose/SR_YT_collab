@@ -89,7 +89,7 @@ def atualizar_categoria(youtube, category_id):
     return 'Unknown'
 
 #Função para fazer a busca no YouTube atravez da palavra pesquisada 
-def busca_YT(query, max_results=10):
+def busca_YT(query, max_results=50):
     cache_key = slugify(f"yt_search_{query}")
     videos = cache.get(cache_key)
 
