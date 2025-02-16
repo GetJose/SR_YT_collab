@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Playlists</h2>
+<ul>
+    {% for playlist in playlists %}
+        <li><a href="{% url 'detalhe_playlist' playlist.id %}">{{ playlist.nome }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'criar_playlist' %}">Criar nova playlist</a>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ playlist.nome }}</h2>
+<p>{{ playlist.descricao }}</p>
+<a href="{% url 'adicionar_video_playlist' playlist.id %}" class="btn btn-success">Adicionar Vídeo</a>
+<ul id="lista-videos">
+    {% for pv in playlist.videos.all %}
+        <li class="video-item" data-id="{{ pv.id }}" draggable="true">
+            {{ pv.video.title }}
+            <a href="{% url 'remover_video_playlist' playlist.id pv.video.id %}" class="text-danger">[Remover]</a>
+        </li>
+    {% endfor %}
+</ul>
+
+
+<a href="{% url 'editar_playlist' playlist.id %}">Editar</a>
+<a href="{% url 'deletar_playlist' playlist.id %}">Deletar</a>
+<br>
+<a href="{% url 'lista_playlists'%}">Volta para a Lista</a>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const lista = document.getElementById("lista-videos");
+
+        let draggedItem = null;
+
+        document.querySelectorAll(".video-item").forEach(item => {
+            item.addEventListener("dragstart", function (event) {
+                draggedItem = this;
+                setTimeout(() => this.style.display = "none", 0);
+            });
+
+            item.addEventListener("dragend", function (event) {
+                setTimeout(() => this.style.display = "block", 0);
+                draggedItem = null;
+            });
+
+            item.addEventListener("dragover", function (event) {
+                event.preventDefault();
+            });
+
+            item.addEventListener("drop", function (event) {
+                event.preventDefault();
+                if (draggedItem) {
+                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                    atualizarOrdem();
+                }
+            });
+        });
+
+        function atualizarOrdem() {
+            let ordem = [];
+            document.querySelectorAll(".video-item").forEach((item, index) => {
+                ordem.push(item.getAttribute("data-id"));
+            });
+
+            fetch("{% url 'atualizar_ordem_videos' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ ordem: ordem })
+            }).then(response => response.json())
+              .then(data => console.log("Ordem atualizada:", data))
+              .catch(error => console.error("Erro ao atualizar ordem:", error));
+        }
+    });
+</script>
+
+{% endblock %}

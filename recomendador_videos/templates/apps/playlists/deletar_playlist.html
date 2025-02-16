@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Deletar Playlist</h2>
+<p>Tem certeza que deseja excluir "{{ playlist.nome }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirmar</button>
+</form>
+{% endblock %}

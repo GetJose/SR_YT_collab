@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Adicionar Vídeo à Playlist: {{ playlist.nome }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="video_id" class="form-label">Selecione um vídeo</label>
+            <select name="video_id" id="video_id" class="form-control">
+                {% for video in videos %}
+                    <option value="{{ video.id }}">{{ video.title }} </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Adicionar</button>
+        <a href="{% url 'detalhe_playlist' playlist.id %}" class="btn btn-secondary">Voltar</a>
+    </form>
+
+</div>
+{% endblock %}
