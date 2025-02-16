@@ -1,9 +1,52 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<h2>Criar Playlist</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar</button>
-</form>
+<div class="container mt-4">
+    <h2>Criar Playlist</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_nome" class="form-label">Nome da Playlist</label>
+            {{ form.nome }}
+        </div>
+        <div class="mb-3">
+            <label for="id_descricao" class="form-label">Descrição</label>
+            {{ form.descricao }}
+        </div>
+        <br>    
+            <!-- Campo de busca para filtrar vídeos -->
+            <div class="mb-3">
+                <label for="search_videos" class="form-label">Buscar vídeos para adicionar:</label>
+                <input type="text" id="search_videos" class="form-control" placeholder="Digite para buscar vídeos..." onkeyup="buscarVideos()">
+            </div>
+    
+            <!-- Lista de vídeos disponíveis (limitada a 15) -->
+            <div id="lista-videos" class="row">
+                {% for video in videos %}
+                <div class="col-md-6 video-item {% if forloop.counter > 15 %}hidden-video{% endif %}" data-title="{{ video.title|lower }}">
+                    <label class="d-block">
+                        <input type="checkbox" name="video_ids[]" value="{{ video.id }}" class="video-checkbox">
+                        {{ video.title }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            
+        <button type="submit" class="btn btn-success">Criar Playlist</button>
+    </form>
+</div>
+<script src="{% static 'js/playlist.js' %}"></script>
+
+<style>
+    .video-item {
+        display: block;
+        padding: 5px;
+    }
+    
+    .hidden-video {
+        display: none;
+    }
+    </style>
 {% endblock %}

@@ -16,5 +16,5 @@ urlpatterns = [
     path('', ListaPlaylistsView.as_view(), name='lista_playlists'),
     path('atualizar_ordem/', AtualizarOrdemVideosView.as_view(), name='atualizar_ordem_videos'),
     path('playlist/<int:playlist_id>/adicionar-video/', AdicionarVideoPlaylistView.as_view(), name='adicionar_video_playlist'),
-    path("remover_video/<int:playlist_id>/<int:video_id>/", RemoverVideoPlaylistView.as_view(), name="remover_video_playlist"),
+    path('remover_video/<int:playlist_id>/<int:video_pos>/', RemoverVideoPlaylistView.as_view(), name='remover_video_playlist'),
 ]

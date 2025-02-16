@@ -1,21 +1,47 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
+
 <div class="container mt-4">
-    <h2>Adicionar Vídeo à Playlist: {{ playlist.nome }}</h2>
+    <h2>Adicionar Vídeos à Playlist: {{ playlist.nome }}</h2>
 
     <form method="post">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="video_id" class="form-label">Selecione um vídeo</label>
-            <select name="video_id" id="video_id" class="form-control">
-                {% for video in videos %}
-                    <option value="{{ video.id }}">{{ video.title }} </option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Adicionar</button>
-        <a href="{% url 'detalhe_playlist' playlist.id %}" class="btn btn-secondary">Voltar</a>
-    </form>
 
+        <!-- Campo de busca para filtrar vídeos -->
+        <div class="mb-3">
+            <label for="search_videos" class="form-label">Buscar vídeos para adicionar:</label>
+            <input type="text" id="search_videos" class="form-control" placeholder="Digite para buscar vídeos..." onkeyup="buscarVideos()">
+        </div>
+
+        <!-- Lista de vídeos disponíveis (limitada a 15) -->
+        <div id="lista-videos" class="row">
+            {% for video in videos %}
+            <div class="col-md-6 video-item {% if forloop.counter > 15 %}hidden-video{% endif %}" data-title="{{ video.title|lower }}">
+                <label class="d-block">
+                    <input type="checkbox" name="video_ids[]" value="{{ video.id }}" class="video-checkbox">
+                    {{ video.title }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        
+
+        <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
+        <a href="{% url 'detalhe_playlist' playlist.id %}" class="btn btn-secondary mt-3">Voltar</a>
+    </form>
 </div>
+
+<script src="{% static 'js/playlist.js' %}"></script>
+
+<style>
+.video-item {
+    display: block;
+    padding: 5px;
+}
+
+.hidden-video {
+    display: none;
+}
+</style>
 {% endblock %}

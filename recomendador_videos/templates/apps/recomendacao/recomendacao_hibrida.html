@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
+{% load static %}
+   
 {% block title %}
     Recomendador Híbrido - Recomendador de Vídeos
 {% endblock %}
@@ -16,36 +18,9 @@
 <section>
     <h2>Recomendações para você aproveitar</h2>
 
-    {% csrf_token %}
-    <div class="video-list">
-        {% if videos %}
-            {% for video in videos %}
-                <div class="video-item" id="video-{{ video.youtube_id }}" data-method="{{ video.method }}">
-                    <h3>{{ video.title }}</h3>
-                    <p>{{ video.description }}</p>
-                    <iframe class="video-iframe" 
-                            width="560" height="315" 
-                            src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
-                            frameborder="0" allowfullscreen
-                            data-video-id="{{ video.youtube_id }}"></iframe>
-                    <div class="like-dislike-container"> 
-                        <button class="rate-button {% if user_ratings|get_item:video.youtube_id == 1 %}liked{% endif %}"
-                            data-url="{% url 'rate_video' video.youtube_id %}"
-                            data-video-id="{{ video.youtube_id }}" 
-                            data-rating="1">Curtir</button>
-                        <button class="rate-button {% if user_ratings|get_item:video.youtube_id == -1 %}disliked{% endif %}"
-                            data-url="{% url 'rate_video' video.youtube_id %}"
-                            data-video-id="{{ video.youtube_id }}" 
-                            data-rating="-1">Não Curtir</button>
-                    </div>
-                    <div class="rating-message"></div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>Nenhum vídeo encontrado.</p>
-        {% endif %}
-    </div>
+    {% include 'apps/youtube/video_list.html' with videos=videos %}
     
 </section>
+<script src="{% static 'js/recommendation.js' %}"></script>
 {% endblock %}
 

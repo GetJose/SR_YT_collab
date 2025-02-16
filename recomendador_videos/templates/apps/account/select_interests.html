@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="profile-container interest">
@@ -19,53 +20,5 @@
   </form>
   
 </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const categories = document.querySelectorAll('.interest-category > label > input');
-
-    categories.forEach(input => {
-        const subInterests = input.closest('.interest-category').querySelector('.sub-interests');
-        
-        if (subInterests) {
-            // Exibir ou ocultar subinteresses com base no estado inicial
-            subInterests.style.display = input.checked ? 'block' : 'none';
-
-            input.addEventListener('change', function() {
-                if (input.checked) {
-                    // Exibir subinteresses ao marcar o pai
-                    subInterests.style.display = 'block';
-                } else {
-                    // Verificar se há filhos selecionados
-                    const anyChildChecked = Array.from(subInterests.querySelectorAll('input')).some(child => child.checked);
-
-                    if (!anyChildChecked) {
-                        // Ocultar os subinteresses somente se nenhum filho estiver marcado
-                        subInterests.style.display = 'none';
-                        subInterests.querySelectorAll('input').forEach(subInput => subInput.checked = false);
-                    } else {
-                        // Manter os filhos visíveis se algum estiver marcado
-                        subInterests.style.display = 'block';
-                    }
-                }
-            });
-        }
-    });
-});
-document.addEventListener('DOMContentLoaded', function () {
-    const clearButton = document.getElementById('clear-selection');
-    clearButton.addEventListener('click', function () {
-        // Desmarcar todos os checkboxes
-        document.querySelectorAll('#interest-form input[type="checkbox"]').forEach(input => {
-            input.checked = false;
-        });
-
-        // Ocultar todas as subcategorias
-        document.querySelectorAll('.sub-interests').forEach(subInterests => {
-            subInterests.style.display = 'none';
-        });
-    });
-});
-
-
-  </script>
+<script src="{% static 'js/account.js' %}"></script>
 {% endblock %}

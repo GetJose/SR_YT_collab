@@ -1,71 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
+{% load custom_filters %}
+
 <h2>{{ playlist.nome }}</h2>
 <p>{{ playlist.descricao }}</p>
-<a href="{% url 'adicionar_video_playlist' playlist.id %}" class="btn btn-success">Adicionar Vídeo</a>
-<ul id="lista-videos">
-    {% for pv in playlist.videos.all %}
-        <li class="video-item" data-id="{{ pv.id }}" draggable="true">
-            {{ pv.video.title }}
-            <a href="{% url 'remover_video_playlist' playlist.id pv.video.id %}" class="text-danger">[Remover]</a>
-        </li>
-    {% endfor %}
-</ul>
 
-
+<div class="video-list">
+    {% if playlist.videos.all %}
+        {% for pv in playlist.videos.all %}
+            <div class="video-item" id="video-{{ pv.video.youtube_id }}" data-method="{{ pv.video.method }}">
+                <h3>{{ pv.video.title }}</h3>
+                <p>{{ pv.video.description }}</p>
+                <iframe class="video-iframe" 
+                        width="560" height="315" 
+                        src="https://www.youtube.com/embed/{{ pv.video.youtube_id }}" 
+                        frameborder="0" allowfullscreen
+                        data-video-id="{{ pv.video.youtube_id }}"></iframe>
+               <!--- <div class="like-dislike-container"> 
+                    <button class="rate-button {% if user_ratings|get_item:pv.video.youtube_id == 1 %}liked{% endif %}"
+                        data-url="{% url 'rate_video' pv.video.youtube_id %}"
+                        data-video-id="{{ pv.video.youtube_id }}" 
+                        data-rating="1">Curtir</button>
+                    <button class="rate-button {% if user_ratings|get_item:pv.video.youtube_id == -1 %}disliked{% endif %}"
+                        data-url="{% url 'rate_video' pv.video.youtube_id %}"
+                        data-video-id="{{ pv.video.youtube_id }}" 
+                        data-rating="-1">Não Curtir</button>
+                </div>
+                <div class="rating-message"></div>--> 
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Nenhum vídeo encontrado.</p>
+    {% endif %}
+</div>
 <a href="{% url 'editar_playlist' playlist.id %}">Editar</a>
 <a href="{% url 'deletar_playlist' playlist.id %}">Deletar</a>
 <br>
 <a href="{% url 'lista_playlists'%}">Volta para a Lista</a>
+<a href="{% url 'lista_playlists' %}">Voltar para a Lista</a>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const lista = document.getElementById("lista-videos");
-
-        let draggedItem = null;
-
-        document.querySelectorAll(".video-item").forEach(item => {
-            item.addEventListener("dragstart", function (event) {
-                draggedItem = this;
-                setTimeout(() => this.style.display = "none", 0);
-            });
-
-            item.addEventListener("dragend", function (event) {
-                setTimeout(() => this.style.display = "block", 0);
-                draggedItem = null;
-            });
-
-            item.addEventListener("dragover", function (event) {
-                event.preventDefault();
-            });
-
-            item.addEventListener("drop", function (event) {
-                event.preventDefault();
-                if (draggedItem) {
-                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
-                    atualizarOrdem();
-                }
-            });
-        });
-
-        function atualizarOrdem() {
-            let ordem = [];
-            document.querySelectorAll(".video-item").forEach((item, index) => {
-                ordem.push(item.getAttribute("data-id"));
-            });
-
-            fetch("{% url 'atualizar_ordem_videos' %}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({ ordem: ordem })
-            }).then(response => response.json())
-              .then(data => console.log("Ordem atualizada:", data))
-              .catch(error => console.error("Erro ao atualizar ordem:", error));
-        }
-    });
-</script>
-
+<script src="{% static 'js/playlist.js' %}"></script>
+<script src="{% static 'js/recommendation.js' %}"></script>
 {% endblock %}

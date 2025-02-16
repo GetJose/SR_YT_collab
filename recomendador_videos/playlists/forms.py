@@ -3,9 +3,16 @@ from .models import Playlist, PlaylistVideo
 from recomendador_videos.youtube_integration.models import Video
 
 class PlaylistForm(forms.ModelForm):
+    videos = forms.ModelMultipleChoiceField(
+        queryset=Video.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Selecione os vídeos"
+    )
+
     class Meta:
         model = Playlist
-        fields = ['nome', 'descricao']
+        fields = ['nome', 'descricao', 'videos']
 
 class PlaylistVideoForm(forms.ModelForm):
     video = forms.ModelChoiceField(

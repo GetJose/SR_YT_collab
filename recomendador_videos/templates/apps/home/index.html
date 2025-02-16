@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     Home - Recomendador de Vídeos
@@ -22,4 +23,5 @@
         <h2>Recomendações Personalizadas</h2>
         {% include 'apps/youtube/video_list.html' with videos=videos_recomendados %}
     </section>
+    <script src="{% static 'js/recommendation.js' %}"></script>
 {% endblock %}

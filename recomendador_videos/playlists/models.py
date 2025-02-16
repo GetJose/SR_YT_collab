@@ -20,4 +20,4 @@ class PlaylistVideo(models.Model):
         ordering = ['ordem']
 
     def __str__(self):
-        return f"{self.playlist.nome} - {self.video.titulo}"
+        return f"{self.playlist.nome} - {self.video.title}"

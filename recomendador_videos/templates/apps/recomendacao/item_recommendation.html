@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-
+{% load static %}
+   
 {% block title %}
     Recomendador Híbrido - Recomendador de Vídeos
 {% endblock %}
@@ -23,4 +24,5 @@
         <!-- Inclusão da lista de vídeos recomendados -->
         {% include 'apps/youtube/video_list.html' with videos=videos %}
     </section>
+    <script src="{% static 'js/recommendation.js' %}"></script>
 {% endblock %}

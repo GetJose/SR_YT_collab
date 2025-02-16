@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     Histórico de Vídeos Assistidos
@@ -37,4 +38,6 @@
             {% endif %}
         </span>
     </div>
+
+<script src="{% static 'js/recommendation.js' %}"></script>
 {% endblock %}
