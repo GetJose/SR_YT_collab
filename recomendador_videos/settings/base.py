@@ -147,3 +147,13 @@ CACHES = {
     }
 }
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Se for Gmail
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL')  # Seu e-mail
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')  # Senha do seu e-mail ou senha de aplicativo
+

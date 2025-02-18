@@ -13,7 +13,6 @@
         <nav>
             <ul>
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'video_history' %}">Histórico</a></li>
                 <li><a href="{% url 'profile' %}">Perfil</a></li>
                 {% if user.is_superuser %}
                     <li><a href="{% url 'similaridade' %}">Similaridade</a></li>
@@ -32,9 +31,9 @@
                 <li><a href="{% url 'lista_playlists' %}">Playlists</a></li>
                 <!-- Logout -->
                 <li>
-                    <form method="POST" action="{% url 'logout' %}">
+                    <form method="POST" action="{% url 'logout' %}" id="logout-form">
                         {% csrf_token %}
-                        <button type="submit">Logout</button>
+                        <button type="submit" onclick="return confirmLogout()">Logout</button>
                     </form>
                 </li>
             </ul>
@@ -49,7 +48,13 @@
     </main>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        function confirmLogout() {
+            return confirm("Tem certeza que deseja sair?");
+        }
+    </script>
     {% block scripts %}{% endblock %}
 
     <footer>
-        <p>&copy; 2024 Recomendador de Vídeos. Todos os direitos
+        <p>&copy; 2025 Recomendador de Vídeos. Todos os direitos

@@ -7,8 +7,16 @@
 {% block content %}
     <div class="profile-container">
         <div class="profile-header">
-            <h1>Bem-vindo, {{ user.username }}</h1>
-            <p><strong>Data de criação:</strong> {{ user.date_joined|date:"d/m/Y H:i" }}</p>
+            <div class="profile-image">
+                <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar" width="50px">
+            </div>
+            <div class="profile-left">
+                <h1>Bem-vindo, {{ user.username }}</h1>
+                <p><strong>Data de criação:</strong> {{ user.date_joined|date:"d/m/Y H:i" }}</p>
+                <a href="{% url 'video_history' %}">Visualizar seu Histórico</a>
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Editar Perfil</a>
+
+            </div>
         </div>
 
         <section class="interests-section">

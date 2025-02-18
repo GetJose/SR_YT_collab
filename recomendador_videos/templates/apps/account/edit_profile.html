@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <h2>Editar Perfil</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <h3>Informações Pessoais</h3>
+        {{ user_form.as_p }}  <!-- Formulário do usuário (nome, email, senha) -->
+        
+        <h3>Dados do Perfil</h3>
+        {{ form.as_p }}  <!-- Formulário do perfil (bio, foto) -->
+
+        <a href="{% url 'change_password' %}">Alterar a Senha</a>
+        
+        <h3>Áreas de Interesse</h3>
+        <div class="interest_area">
+            {% for interest in interest_form.interests.field.queryset %}
+                {% if interest.is_root %}
+                    {% include 'interest_recursive.html' with interest=interest selected_interests=interest_form.initial.interests %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <div class="button-group">
+            <button type="submit" class="btn-save">Salvar</button>
+            <button type="button" id="clear-selection" class="btn-clear">Limpar Seleções</button>
+        </div>
+    </form>
+</div>
+
+
+<script src="{% static 'js/account.js' %}"></script>
+{% endblock %}
