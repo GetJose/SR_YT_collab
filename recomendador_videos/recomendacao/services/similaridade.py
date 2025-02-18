@@ -44,22 +44,29 @@ def calcular_similaridade_cosseno(user):
 def calcular_similaridade_usuarios(user, metodo="pearson"):
     """
     Calcula a similaridade entre usuários com base nas avaliações de vídeos.
+    Retorna um dicionário ordenado de usuários semelhantes (excluindo o próprio usuário).
     """
     all_ratings = VideoInteraction.objects.all().values("user_id", "video_id", "rating")
     df_ratings = pd.DataFrame.from_records(all_ratings)
+
+    # Criando matriz de avaliações (usuário x vídeo)
     ratings_matrix = df_ratings.pivot_table(index='user_id', columns='video_id', values='rating')
-    
+
     if user.id not in ratings_matrix.index:
         return {}
 
     user_ratings = ratings_matrix.loc[user.id]
-    
+
     if metodo == "pearson":
         correlations = ratings_matrix.corrwith(user_ratings, axis=1, method='pearson')
     else:  # Similaridade do cosseno
         similarities = cosine_similarity(user_ratings.values.reshape(1, -1), ratings_matrix.fillna(0).values)
         correlations = pd.Series(similarities.flatten(), index=ratings_matrix.index)
-    
+
+    # Removendo o próprio usuário da lista
+    correlations = correlations.drop(index=user.id, errors="ignore")
+
+    # Retorna dicionário ordenado (excluindo NaN)
     return correlations.dropna().sort_values(ascending=False).to_dict()
 
 def calcular_similaridade_itens(video_alvo, lista_videos, top_n=6):
