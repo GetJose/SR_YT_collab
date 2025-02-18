@@ -5,6 +5,7 @@
         {% for video in videos %}
             <div class="video-item" id="video-{{ video.youtube_id }}" data-method="{{video.method}}">
                 <h3>{{ video.title }}</h3>
+                {% include "video _options.html" with video=video %}
                 <p>{{ video.description }}</p>
                 <iframe class="video-iframe" 
                         width="560" height="315" 

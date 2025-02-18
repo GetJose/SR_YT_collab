@@ -7,6 +7,7 @@ from .views.lista import ListaPlaylistsView
 from .views.atualizar_ordem import AtualizarOrdemVideosView
 from .views.adicionar_video import AdicionarVideoPlaylistView
 from .views.remove_video import RemoverVideoPlaylistView
+from .views.enviar_video import EnviarVideoParaPlaylistView
 
 urlpatterns = [
     path('criar/', CriarPlaylistView.as_view(), name='criar_playlist'),
@@ -17,4 +18,5 @@ urlpatterns = [
     path('atualizar_ordem/', AtualizarOrdemVideosView.as_view(), name='atualizar_ordem_videos'),
     path('playlist/<int:playlist_id>/adicionar-video/', AdicionarVideoPlaylistView.as_view(), name='adicionar_video_playlist'),
     path('remover_video/<int:playlist_id>/<int:video_pos>/', RemoverVideoPlaylistView.as_view(), name='remover_video_playlist'),
+    path('enviar-video/<str:video_id>/', EnviarVideoParaPlaylistView.as_view(), name='enviar_video_playlist'),
 ]
