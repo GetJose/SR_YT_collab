@@ -1,10 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Playlists</h2>
-<ul>
-    {% for playlist in playlists %}
-        <li><a href="{% url 'detalhe_playlist' playlist.id %}">{{ playlist.nome }}</a></li>
-    {% endfor %}
-</ul>
+
+<!-- Barra de Pesquisa -->
+<form method="get">
+    <input type="text" name="q" placeholder="Buscar playlist..." value="{{ query }}">
+    <button type="submit">🔍 Buscar</button>
+</form>
+<!-- Resultados da Pesquisa -->
+{% if query %}
+    <h3>Resultados da Pesquisa</h3>
+    {% include "apps/playlists/playlist_list.html" with playlists=playlists_pesquisa show_radio=False empty_message="Nenhuma playlist encontrada." %}
+{% endif %}
+
+<!-- Minhas Playlists -->
+<h3>Minhas Playlists</h3>
+{% include "apps/playlists/playlist_list.html" with playlists=minhas_playlists show_radio=False empty_message="Você ainda não criou playlists." %}
+
+<!-- Playlists de Usuários Similares -->
+<h3>Playlists de Usuários Similares</h3>
+{% include "apps/playlists/playlist_list.html" with playlists=playlists_similares show_radio=False empty_message="Nenhuma playlist encontrada para usuários similares." %}
+
 <a href="{% url 'criar_playlist' %}">Criar nova playlist</a>
+<button class="btn btn-secondary" onclick="history.back()">← Voltar</button>
 {% endblock %}

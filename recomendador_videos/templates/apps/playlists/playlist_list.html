@@ -1,0 +1,34 @@
+<div class="playlist-container">
+    {% for playlist in playlists %}
+        <div class="playlist-item">
+            {% if show_radio %}
+                <label>
+                    <input type="radio" name="playlist_id" value="{{ playlist.id }}" required>
+                    <strong>{{ playlist.nome }}</strong>
+                </label>
+            {% else %}
+                <a href="{% url 'detalhe_playlist' playlist.id %}">
+                    <strong>{{ playlist.nome }}</strong>
+                </a>
+            {% endif %}
+
+            <p>{{ playlist.descricao }}</p>
+
+            {% if playlist.videos.exists %}
+                <img src="{{ playlist.videos.first.video.thumbnail_url }}" alt="Capa da Playlist" class="playlist-thumbnail">
+            {% endif %}
+            
+            <div class="playlist-videos">
+                {% for pv in playlist.videos.all|slice:":3" %}
+                    <p>🎥 {{ pv.video.title }}</p>
+                {% endfor %}
+
+                {% if playlist.videos.count > 3 %}
+                    <span class="more-videos">+ {{ playlist.videos.count|add:"-3" }} mais</span>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p>{{ empty_message|default:"Nenhuma playlist encontrada." }}</p>
+    {% endfor %}
+</div>

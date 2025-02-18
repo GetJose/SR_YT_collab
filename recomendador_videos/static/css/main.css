@@ -451,6 +451,15 @@ nav ul .submenu li a:hover {
     background-color: #c62828;
   }
   
+  .playlist-container { display: flex; flex-wrap: wrap; gap: 10px; }
+  .playlist-item { border: 1px solid #ccc; padding: 10px; border-radius: 8px; width: 250px; }
+  .more-videos { color: gray; font-style: italic; }
+  .playlist-thumbnail {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
 
 /* Responsividade */
 @media (max-width: 768px) {

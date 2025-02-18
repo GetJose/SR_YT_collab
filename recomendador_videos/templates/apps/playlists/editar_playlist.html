@@ -29,6 +29,7 @@
         </li>
     {% endfor %}
 </ul>
+<button class="btn btn-secondary" onclick="history.back()">← Voltar</button>
 <script>
     const atualizarOrdemUrl = "{% url 'atualizar_ordem_videos' %}";
     const csrfToken = "{{ csrf_token }}";

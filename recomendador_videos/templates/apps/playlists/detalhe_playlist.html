@@ -34,11 +34,13 @@
         <p>Nenhum vídeo encontrado.</p>
     {% endif %}
 </div>
-<a href="{% url 'editar_playlist' playlist.id %}">Editar</a>
-<a href="{% url 'deletar_playlist' playlist.id %}">Deletar</a>
+{% if request.user == playlist.usuario %}
+    <a href="{% url 'editar_playlist' playlist.id %}">Editar</a>
+    <a href="{% url 'deletar_playlist' playlist.id %}">Deletar</a>
+{% endif %}
+
 <br>
-<a href="{% url 'lista_playlists'%}">Volta para a Lista</a>
-<a href="{% url 'lista_playlists' %}">Voltar para a Lista</a>
+<a href="{% url 'lista_playlists' %}"> voltar para listagem</a>
 
 <script src="{% static 'js/playlist.js' %}"></script>
 <script src="{% static 'js/recommendation.js' %}"></script>

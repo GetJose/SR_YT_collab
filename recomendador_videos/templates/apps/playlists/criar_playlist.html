@@ -21,23 +21,24 @@
                 <label for="search_videos" class="form-label">Buscar vídeos para adicionar:</label>
                 <input type="text" id="search_videos" class="form-control" placeholder="Digite para buscar vídeos..." onkeyup="buscarVideos()">
             </div>
+
+            {% if video_pre_selecionado %}
+                <input type="hidden" name="video_id" value="{{ video_pre_selecionado.youtube_id }}">
+                <p> O video: <strong>{{ video_pre_selecionado.title}}</strong> já será adicionado a playlist.</p>
+            {% endif %}
     
             <div id="lista-videos" class="row">
                 {% for video in videos %}
                     <div class="col-md-6 video-item {% if forloop.counter > 15 %}hidden-video{% endif %}" data-title="{{ video.title|lower }}">
                         <label class="d-block">
-                            <input type="checkbox" name="videos" value="{{ video.id }}" class="video-checkbox"
-                                {% if video_pre_selecionado and video.id == video_pre_selecionado.id %}checked{% endif %}>
+                            <input type="checkbox" name="videos" value="{{ video.id }}" class="video-checkbox">
                             {{ video.title }}
                         </label>
                     </div>
                 {% endfor %}
             </div>
             
-            <!-- Campo oculto para enviar o ID do vídeo pré-selecionado -->
-            {% if video_pre_selecionado %}
-                <input type="hidden" name="video_id" value="{{ video_pre_selecionado.youtube_id }}">
-            {% endif %}
+            
             
             
             

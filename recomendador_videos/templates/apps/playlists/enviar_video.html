@@ -1,14 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
 <h2>Escolha uma Playlist</h2>
 <form method="post">
     {% csrf_token %}
     <input type="hidden" name="video_id" value="{{ video.youtube_id }}">
     
-    <label for="playlist">Selecione uma Playlist:</label>
-    <select name="playlist_id" required>
-        {% for playlist in playlists %}
-            <option value="{{ playlist.id }}">{{ playlist.nome }}</option>
-        {% endfor %}
-    </select>
+    {% include "apps/playlists/playlist_list.html" with playlists=playlists show_radio=True empty_message="Você não tem playlists disponíveis para este vídeo." %}
 
     <button type="submit">Adicionar</button>
+    <a href="{% url 'criar_playlist' %}?video_id={{ video.youtube_id }}">Criar nova playlist com o vídeo</a>
 </form>
+{% endblock %}
