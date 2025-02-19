@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-
+{% load static %}
+   
 {% block title %}
 Busca de Vídeos no YouTube
 {% endblock %}
@@ -20,6 +21,9 @@ Busca de Vídeos no YouTube
 <section>
     <h2>Resultado da busca no YouTube por: {{ query }}</h2>
     {% include 'apps/youtube/video_list.html' with videos=page_obj %}
+    {% if not page_obj.object_list %}
+         <p>Tente desativar os filtros ou verifique por erros ortográficos.</p>
+    {% endif %}
 </section>
 
 <!-- Navegação da Paginação -->
@@ -38,6 +42,7 @@ Busca de Vídeos no YouTube
     {% endif %}
     </span>
 </div>
-
+<script src="{% static 'js/recommendation.js' %}"></script>
+<script src="{% static 'js/video_options.js' %}"></script>
 {% endblock %}
 
