@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-
-<div class="container mt-4">
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/videos.css' %}">
+{% endblock %}
+<div class="form-container">
     <h2>Adicionar Vídeos à Playlist: {{ playlist.nome }}</h2>
 
     <form method="post">
@@ -13,35 +17,22 @@
             <label for="search_videos" class="form-label">Buscar vídeos para adicionar:</label>
             <input type="text" id="search_videos" class="form-control" placeholder="Digite para buscar vídeos..." onkeyup="buscarVideos()">
         </div>
-
-        <!-- Lista de vídeos disponíveis (limitada a 15) -->
         <div id="lista-videos" class="row">
             {% for video in videos %}
-            <div class="col-md-6 video-item {% if forloop.counter > 15 %}hidden-video{% endif %}" data-title="{{ video.title|lower }}">
-                <label class="d-block">
-                    <input type="checkbox" name="video_ids[]" value="{{ video.id }}" class="video-checkbox">
-                    {{ video.title }}
-                </label>
-            </div>
+                <div class="video-item {% if forloop.counter > 15 %}hidden-video{% endif %}" data-title="{{ video.title|lower }}">
+                    <label class="d-block">
+                        <input type="checkbox" name="videos" value="{{ video.id }}" class="video-checkbox">
+                        {{ video.title }}
+                    </label>
+                </div>
             {% endfor %}
+        </div>        
+        <div class="button-group">
+            <button type="submit" class="btn btn-add">Adicionar</button>
+            <a href="{% url 'detalhe_playlist' playlist.id %}" class="btn btn-cancel">Cancelar</a>
         </div>
-        
-
-        <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
-        <button class="btn btn-secondary" onclick="history.back()">← Voltar</button>
     </form>
 </div>
 
 <script src="{% static 'js/playlist.js' %}"></script>
-
-<style>
-.video-item {
-    display: block;
-    padding: 5px;
-}
-
-.hidden-video {
-    display: none;
-}
-</style>
 {% endblock %}

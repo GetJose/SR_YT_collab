@@ -1,0 +1,246 @@
+.video-section {
+    max-width: 97vw;
+    margin: 10px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+    gap: 15px;
+    justify-content: center;
+}
+
+.video-item {
+    background-color: #fff;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 10px; 
+    width: 100%; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: transform 0.3s ease;
+    min-height: 300px;
+    min-width: auto;
+    cursor: pointer;
+}
+
+.video-item:hover {
+    transform: translateY(-5px);
+}
+
+.video-list {
+   color: #555;
+}
+
+.video-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.video-title {
+    font-size: 1rem;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    margin: 1rem 0;
+}
+
+.video-description {
+    height: 40px; 
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; 
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-options-container {
+    position: relative;
+    display: inline-block;
+
+}
+
+.options-button {
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    background: none;
+    border: none;
+}
+
+.options-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000; 
+    min-width: 150px;
+}
+
+.options-menu button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 10px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.options-menu button:hover {
+    background: #f5f5f5;
+}
+/* Botões de Curtir/Não Curtir */
+.like-dislike-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px; 
+    margin-top: 10px;
+}
+
+button.rate-button {
+    border: none;
+    padding: 0.9rem 2rem; 
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px;
+    width: 50%;
+    background-color: rgb(207, 203, 203);
+    color: #333;
+}
+
+button.rate-button:hover {
+    background-color: rgb(189, 184, 184);
+}
+
+button.liked {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+}
+
+button.disliked {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+
+button.liked:hover {
+    background-color: darkgreen;
+}
+
+button.disliked:hover {
+    background-color: darkred;
+}
+
+#lista-videos .video-item{
+    min-height: 30px;
+    padding: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 5px;
+}
+.video-item {
+    display: flex;
+}
+.video-item label{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+    
+.hidden-video {
+    display: none;
+}
+
+/* Para telas menores que 1024px */
+@media (min-width: 721px) and (max-width: 1024px) {
+    .video-item {
+        min-height:300px;
+        max-height: 350px;
+    }
+
+    .video-title {
+        font-size: 0.8rem;
+    }
+
+    .video-description {
+        height: 30px;
+        font-size: 0.6rem;
+    }
+    .like-dislike-container {
+        flex-direction: column;
+        margin-top: 10px;
+    }
+    button.rate-button {
+        padding: 5px 10px; 
+        font-size: 0.7rem;
+        border-radius: 5px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 720px) {
+    .video-section {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .video-item {
+        min-height: 280px;
+        max-height: 310px;
+        max-width: 49vw;
+    }
+    #lista-videos .video-item{
+        width: 100%;
+        max-width: 90vw;
+    }
+
+    .video-title {
+        font-size: 0.7rem;
+    }
+
+    .video-description {
+        font-size: 0.5rem;
+    }
+    button.rate-button {
+        border: none;
+        padding: 0.6rem 1rem; 
+    }
+}
+
+@media (max-width: 480px) {
+    .video-section {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .video-item {
+        min-height: 300px;
+        max-height: 350px;
+        max-width: 90vw;
+        margin-left: 15px;
+    }
+
+
+}

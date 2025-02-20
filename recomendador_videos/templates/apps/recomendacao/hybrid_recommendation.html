@@ -4,17 +4,12 @@
 {% block title %}
     Recomendador Híbrido - Recomendador de Vídeos
 {% endblock %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/videos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pesquisa.css' %}">
+{% endblock %}
 {% block content %}
-    <section class="search-section">
-        <h3>Digite o termo de busca para encontrar vídeos no YouTube.</h3>
-        <form action="{% url 'video_search' %}" method="GET">
-            <input type="text" name="query" placeholder="Digite o termo de busca" required>
-            <button type="submit">Buscar</button>
-        </form>
-    </section>
-
-    <hr>
+{% include 'search_section.html' with action_url='video_search' search_title="Pesquise por vídeos no YouTube." %}
 
     <section>
         <h2>Recomendações com base nos videos que curtiu e no que os usuarios estão gostando!</h2>
@@ -28,7 +23,9 @@
         </form>
 
         <!-- Inclusão da lista de vídeos recomendados -->
+        <section class="video-section">
         {% include 'apps/youtube/video_list.html' with videos=videos %}
+        </section>
     </section>
     <script src="{% static 'js/recommendation.js' %}"></script>
     <script src="{% static 'js/video_options.js' %}"></script>

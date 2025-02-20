@@ -8,7 +8,6 @@ function buscarVideos() {
         let text = video.getAttribute("data-title");
         let checkbox = video.querySelector("input");
 
-        // Garante que vídeos já selecionados sempre fiquem visíveis
         if (checkbox.checked) {
             video.style.display = "block";
         } else if (text.includes(input) && encontrados < 15) {
@@ -19,7 +18,6 @@ function buscarVideos() {
         }
     });
 
-    // Se a busca estiver vazia, restaurar os primeiros 15 vídeos + os selecionados
     if (input === "") {
         encontrados = 0;
         videos.forEach(video => {
@@ -81,8 +79,9 @@ document.addEventListener("DOMContentLoaded", function () {
           .catch(error => console.error("Erro ao atualizar ordem:", error));
     }
 });
+
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".remover-video").forEach(button => {
+    document.querySelectorAll(".remove-video").forEach(button => {
         button.addEventListener("click", function (event) {
             event.preventDefault();
 
@@ -91,19 +90,19 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             let playlistId = this.getAttribute("data-playlist");
-            let videoItem = this.closest(".video-item");
-            let videoIndex = Array.from(videoItem.parentNode.children).indexOf(videoItem);  
+            let videoId = this.getAttribute("data-video");  
+            let videoItem = this.closest(".video-item");  
 
-            fetch(`/playlists/remover_video/${playlistId}/${videoIndex}/`, {
+            fetch(`/playlists/remover_video/${playlistId}/${videoId}/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken
+                    "X-CSRFToken": csrfToken  
                 }
             }).then(response => response.json())
               .then(data => {
                   if (data.status === "success") {
-                      videoItem.remove();
+                      videoItem.remove(); 
                   } else {
                       alert(data.message);
                   }

@@ -1,0 +1,80 @@
+.profile-header {
+  display: flex;
+  justify-content: center;
+}
+.profile-header-right{
+  display: flex;
+  align-items: center;
+  flex: 2;
+}
+.profile-header-left{
+  display: flex;
+  flex: 1;
+  align-items: start;
+  justify-content: end;
+  gap: 1rem;
+}
+.user-avatar {
+  border-radius: 50%;
+  width: 5rem;
+  margin-right: 1rem;
+}
+.profile-text {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filters-form {
+  margin-top: 15px;
+}
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+.action-buttons a, 
+.action-buttons form {
+  flex: 1; 
+}
+
+.action-buttons .btn {
+  width: 100%; 
+}
+
+.btn-add.profile{
+ width: 100%;
+ margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column; /* Empilha os elementos verticalmente */
+    align-items: center; /* Centraliza os itens */
+    text-align: center;
+  }
+
+  .profile-header-left {
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px; /* Dá um espaço entre a imagem e o texto */
+  }
+
+  .profile-header-right {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .user-avatar {
+    width: 4rem; /* Reduz um pouco o tamanho do avatar em telas pequenas */
+    margin-right: 0; /* Remove a margem direita para centralizar melhor */
+  }
+
+  .action-buttons {
+    flex-direction: column; /* Empilha os botões verticalmente */
+    gap: 10px;
+  }
+}

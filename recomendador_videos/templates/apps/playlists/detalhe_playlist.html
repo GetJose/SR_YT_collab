@@ -3,45 +3,62 @@
 {% load static %}
 {% load custom_filters %}
 
-<h2>{{ playlist.nome }}</h2>
-<p>{{ playlist.descricao }}</p>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/videos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
+{% endblock %}
 
-<div class="video-list">
-    {% if playlist.videos.all %}
-        {% for pv in playlist.videos.all %}
-            <div class="video-item" id="video-{{ pv.video.youtube_id }}" data-method="{{ pv.video.method }}">
-                <h3>{{ pv.video.title }}</h3>
-                <p>{{ pv.video.description }}</p>
-                <iframe class="video-iframe" 
-                        width="560" height="315" 
-                        src="https://www.youtube.com/embed/{{ pv.video.youtube_id }}" 
-                        frameborder="0" allowfullscreen
-                        data-video-id="{{ pv.video.youtube_id }}"></iframe>
-               <!--- <div class="like-dislike-container"> 
-                    <button class="rate-button {% if user_ratings|get_item:pv.video.youtube_id == 1 %}liked{% endif %}"
-                        data-url="{% url 'rate_video' pv.video.youtube_id %}"
-                        data-video-id="{{ pv.video.youtube_id }}" 
-                        data-rating="1">Curtir</button>
-                    <button class="rate-button {% if user_ratings|get_item:pv.video.youtube_id == -1 %}disliked{% endif %}"
-                        data-url="{% url 'rate_video' pv.video.youtube_id %}"
-                        data-video-id="{{ pv.video.youtube_id }}" 
-                        data-rating="-1">Não Curtir</button>
+<div class="playlist-section">
+    <div class="playlist-header">
+        <h2>{{ playlist.nome }}</h2>
+        <p>{{ playlist.descricao }}</p>
+    </div> 
+    <div> 
+        {% if request.user == playlist.usuario %}
+            <a href="{% url 'editar_playlist' playlist.id %}" class="btn btn-primary">Editar</a>
+            <button class="btn btn-cancel" onclick="confirmarDelecao({{ playlist.id }})">Deletar</button>
+        {% endif %}
+        <a href="{% url 'lista_playlists' %}" class="btn btn-back">Voltar para listagem</a>
+    </div>
+    <section class="video-section">
+        {% if playlist.videos.all %}
+            {% for pv in playlist.videos.all %}
+                <div class="video-item">
+                    <div class="video-header">
+                        <h3 class="video-title">{{ pv.video.title }}</h3>
+                    </div>
+                    <p class="video-description">{{ pv.video.description }}</p>
+                    <div class="video-container">
+                        <iframe width="560" height="315"
+                                src="https://www.youtube.com/embed/{{ pv.video.youtube_id }}"
+                                frameborder="0" allowfullscreen>
+                        </iframe>
+                    </div>
                 </div>
-                <div class="rating-message"></div>--> 
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>Nenhum vídeo encontrado.</p>
-    {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>Nenhum vídeo encontrado na playlist.</p>
+        {% endif %}
+    </section>
 </div>
-{% if request.user == playlist.usuario %}
-    <a href="{% url 'editar_playlist' playlist.id %}">Editar</a>
-    <a href="{% url 'deletar_playlist' playlist.id %}">Deletar</a>
-{% endif %}
-
-<br>
-<a href="{% url 'lista_playlists' %}"> voltar para listagem</a>
 
 <script src="{% static 'js/playlist.js' %}"></script>
 <script src="{% static 'js/recommendation.js' %}"></script>
+<script>
+    function confirmarDelecao(playlistId) {
+        if (confirm("Tem certeza que deseja deletar esta playlist?")) {
+            $.ajax({
+                url: `/playlists/deletar/${playlistId}/`,
+                type: "POST",
+                success: function(response) {
+                    alert("Playlist deletada com sucesso!");
+                    window.location.href = "{% url 'lista_playlists' %}";
+                },
+                error: function(xhr) {
+                    alert("Erro ao deletar a playlist.");
+                }
+            });
+        }
+    }
+</script>
 {% endblock %}

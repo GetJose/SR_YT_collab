@@ -4,21 +4,22 @@
 {% block title %}
     Histórico de Vídeos Assistidos
 {% endblock %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/videos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pesquisa.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginacao.css' %}">
+{% endblock %}
 {% block content %}
 
+    {% include 'search_section.html' with action_url='video_history' search_title="Seu Histórico de Vídeos." search_placeholder="Pesquisar no histórico" %}
 
-    <section class="search-section">
-        <h3>Seu Histórico de Vídeos</h3>
-      
-        <form action="{% url 'video_history' %}" method="GET">
-            <input type="text" name="query" placeholder="Pesquisar no histórico">
-            <button type="submit">Pesquisar</button>
-        </form>
-    </section>
-    <hr>
     <section>
+        {% if query %}
+        <h3>Resultados da Pesquisa por {{query}}.</h3>
+        {% endif %}
+        <section class="video-section">
         {% include 'apps/youtube/video_list.html' with videos=videos_history %}
+        </section>
     </section>
 
     <div class="pagination">

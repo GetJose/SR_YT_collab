@@ -1,0 +1,81 @@
+
+/* Estilo para paginação */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-size: 1rem;
+}
+
+.pagination .step-links {
+    display: flex;
+    gap: 10px; 
+}
+
+.pagination .step-links a {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination .step-links a:hover {
+    background-color: #0056b3;
+}
+
+.pagination .step-links .current {
+    font-weight: bold;
+    color: #333;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.pagination .step-links a[disabled] {
+    pointer-events: none;
+    background-color: #ddd;
+}
+
+.pagination .step-links span {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        flex-direction: column; /* Empilha os elementos */
+        gap: 5px; /* Reduz o espaçamento */
+    }
+
+    .pagination .step-links {
+        flex-wrap: wrap; /* Permite que os botões quebrem linha */
+        justify-content: center; /* Centraliza os botões */
+        gap: 5px;
+    }
+
+    .pagination .step-links a,
+    .pagination .step-links .current {
+        padding: 6px 10px; /* Reduz o tamanho dos botões */
+        font-size: 0.9rem; /* Diminui um pouco o tamanho da fonte */
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination .step-links {
+        flex-direction: column; /* Empilha os botões em telas muito pequenas */
+        align-items: center;
+        width: 80%;
+    }
+
+    .pagination .step-links a,
+    .pagination .step-links .current {
+        width: 100%; /* Faz os botões ocuparem toda a largura */
+        text-align: center;
+    }
+}

@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
+{% endblock %}
 {% block content %}
 <h2>Escolha uma Playlist</h2>
 <form method="post">
@@ -7,7 +11,7 @@
     
     {% include "apps/playlists/playlist_list.html" with playlists=playlists show_radio=True empty_message="Você não tem playlists disponíveis para este vídeo." %}
 
-    <button type="submit">Adicionar</button>
-    <a href="{% url 'criar_playlist' %}?video_id={{ video.youtube_id }}">Criar nova playlist com o vídeo</a>
+    <button type="submit" class="btn btn-add">Adicionar</button>
+    <a href="{% url 'criar_playlist' %}?video_id={{ video.youtube_id }}" class="btn btn-primary">Criar nova playlist com o vídeo</a>
 </form>
 {% endblock %}

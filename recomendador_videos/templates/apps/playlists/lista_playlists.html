@@ -1,26 +1,31 @@
 {% extends 'base.html' %}
-{% block content %}
-<h2>Playlists</h2>
-
-<!-- Barra de Pesquisa -->
-<form method="get">
-    <input type="text" name="q" placeholder="Buscar playlist..." value="{{ query }}">
-    <button type="submit">🔍 Buscar</button>
-</form>
-<!-- Resultados da Pesquisa -->
-{% if query %}
-    <h3>Resultados da Pesquisa</h3>
-    {% include "apps/playlists/playlist_list.html" with playlists=playlists_pesquisa show_radio=False empty_message="Nenhuma playlist encontrada." %}
-{% endif %}
-
-<!-- Minhas Playlists -->
-<h3>Minhas Playlists</h3>
-{% include "apps/playlists/playlist_list.html" with playlists=minhas_playlists show_radio=False empty_message="Você ainda não criou playlists." %}
-
-<!-- Playlists de Usuários Similares -->
-<h3>Playlists de Usuários Similares</h3>
-{% include "apps/playlists/playlist_list.html" with playlists=playlists_similares show_radio=False empty_message="Nenhuma playlist encontrada para usuários similares." %}
-
-<a href="{% url 'criar_playlist' %}">Criar nova playlist</a>
-<button class="btn btn-secondary" onclick="history.back()">← Voltar</button>
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pesquisa.css' %}">
 {% endblock %}
+{% block content %}
+{% include 'search_section.html' with action_url='lista_playlists' search_title="Informe nome ou descrição de uma playlist que queira encontrar." search_placeholder="Buscar playlist..." %}
+<section class="playlist-section">
+        <div class="playlist-header">
+            <h2>Playlists</h2>
+            <a href="{% url 'criar_playlist' %}" class="btn btn-primary">Criar nova playlist</a>
+        </div>
+    
+        <!-- Resultados da Pesquisa -->
+    {% if query %}
+        <h3>Resultados da Pesquisa por {{query}}.</h3>
+        {% include "apps/playlists/playlist_list.html" with playlists=playlists_pesquisa show_radio=False empty_message="Nenhuma playlist encontrada." %}
+    {% endif %}
+
+    <!-- Minhas Playlists -->
+    <h3>Minhas Playlists</h3>
+    {% include "apps/playlists/playlist_list.html" with playlists=minhas_playlists show_radio=False empty_message="Você ainda não criou playlists." %}
+
+    <!-- Playlists de Usuários Similares -->
+    <h3>Playlists de Usuários Similares</h3>
+    {% include "apps/playlists/playlist_list.html" with playlists=playlists_similares show_radio=False empty_message="Nenhuma playlist encontrada para usuários similares." %}
+
+</section>
+{% endblock %}
+

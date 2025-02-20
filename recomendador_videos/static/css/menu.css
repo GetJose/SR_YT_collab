@@ -1,0 +1,96 @@
+/* Melhorando o layout do menu */
+.menu-toggle {
+    display: none; /* Esconde o botão em telas grandes */
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 20px;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+nav ul li {
+    position: relative;
+}
+
+/* Estilização do submenu */
+nav ul .submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    width: 200px;
+    z-index: 10;
+}
+
+nav ul .submenu.open {
+    display: block;
+}
+
+nav ul .submenu li {
+    display: block;
+    padding: 10px;
+}
+
+nav ul .submenu li a {
+    color: #333;
+    display: block;
+}
+
+nav ul .submenu li a:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block; /* Mostra o botão do menu */
+    }
+
+    nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #333;
+        position: absolute;
+        top: 60px;
+        left: 0;
+    }
+
+    nav.active {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    nav ul li {
+        width: 100%;
+        text-align: end;
+        margin-right: 20px;
+    }
+    nav ul li:hover {
+        background-color: #272626;
+    }
+
+    nav ul .submenu {
+        position: static;
+        width: 100%;
+    }
+}

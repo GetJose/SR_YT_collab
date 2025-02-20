@@ -1,0 +1,12 @@
+{% load static %}
+
+<div class="video-options-container">
+    <button class="options-button" onclick="toggleOptionsMenu(event, this)">
+        &#x22EE; <!-- Ícone de três pontos -->
+    </button>
+    <div class="options-menu hidden">
+        <button class="copy-link" onclick="copyVideoLink(event, '{{ video.youtube_id }}')">Copiar Link</button>
+        <button class="add-to-playlist" onclick="openPlaylistSelection(event, '{{ video.youtube_id }}')">Enviar para Playlist</button>
+        <button class="create-playlist" onclick="openCreatePlaylist(event, '{{ video.youtube_id }}')">Criar Playlist</button>
+    </div>
+</div>

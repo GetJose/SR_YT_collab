@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/interesses.css' %}">
+{% endblock %}
 {% block content %}
-<div class="profile-container">
+<div class="form-container">
     <h2>Editar Perfil</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -25,8 +29,9 @@
         </div>
         
         <div class="button-group">
-            <button type="submit" class="btn-save">Salvar</button>
-            <button type="button" id="clear-selection" class="btn-clear">Limpar Seleções</button>
+            <button type="submit" class="btn btn-add">Salvar</button>
+            <button type="button" id="clear-selection" class="btn btn-cancel">Limpar Seleções</button>
+            <a href="{% url 'profile' %}" class="btn btn-back"> Voltar para o Perfil</a>
         </div>
     </form>
 </div>

@@ -1,0 +1,139 @@
+.playlist-section {
+    max-width: 97vw;
+    margin: 10px auto;
+    gap: 15px;
+    justify-content: center;
+}
+
+.playlist-header {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+    gap: 20px;
+}
+
+.playlist-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: flex-start;
+    align-items: start;
+}
+
+.playlist-item {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 280px;
+    min-height: 300px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    padding: 0.5rem;
+}
+
+.playlist-item:hover {
+    transform: scale(1.02);
+}
+
+.playlist-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: transparent;
+    padding: 0;
+}
+
+.playlist-item-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f4f4f4;
+}
+
+.playlist-thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.playlist-info {
+    flex: 1;
+}
+
+.playlist-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.playlist-description {
+    font-size: 0.9em;
+    color: #555;
+    margin: 5px 0 0;
+}
+
+.playlist-videos {
+    padding: 10px;
+    max-height: 200px;
+}
+
+.playlist-videos p {
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    line-height: 1.4em;
+    max-height: 2.8em;
+}
+
+.more-videos {
+    font-size: 0.9em;
+    color: #007bff;
+}
+
+
+
+/* Lista de vídeos */
+.playlist-card {
+    padding-top: 5px;
+}
+.playlist-card .video-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.playlist-card  .video-item {
+    background: #f1f1f1;
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;    
+}
+.playlist-card  p{
+    max-width: 90%;
+    white-space: nowrap;  
+    overflow: hidden;  
+    text-overflow: ellipsis;  
+}
+
+.playlist-card .remove-video {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}

@@ -1,17 +1,28 @@
 {% load custom_filters %}
 {% csrf_token %}
-<div class="video-list">
     {% if videos %}
         {% for video in videos %}
             <div class="video-item" id="video-{{ video.youtube_id }}" data-method="{{video.method}}">
-                <h3>{{ video.title }}</h3>
-                {% include "video _options.html" with video=video %}
-                <p>{{ video.description }}</p>
-                <iframe class="video-iframe" 
-                        width="560" height="315" 
+                
+                <!-- Cabeçalho: Título + Opções -->
+                <div class="video-header">
+                    <h3 class="video-title">{{ video.title }}</h3>
+                    <div class="video-options"> {% include "video_options.html" with video=video %}</div> 
+                </div>
+
+                <!-- Descrição -->
+                <p class="video-description">{{ video.description }}</p>
+
+                <!-- Vídeo (Iframe) -->
+                <div class="video-container">
+                    <iframe 
                         src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
-                        frameborder="0" allowfullscreen
-                        data-video-id="{{ video.youtube_id }}"></iframe>
+                        allowfullscreen
+                        data-video-id="{{ video.youtube_id }}">
+                    </iframe>
+                </div>
+
+                <!-- Botões de Curtir/Não Curtir -->
                 <div class="like-dislike-container"> 
                     <button class="rate-button {% if user_ratings|get_item:video.youtube_id == 1 %}liked{% endif %}"
                         data-url="{% url 'rate_video' video.youtube_id %}"
@@ -22,11 +33,10 @@
                         data-video-id="{{ video.youtube_id }}" 
                         data-rating="-1">Não Curtir</button>
                 </div>
-               
                 <div class="rating-message"></div>
+
             </div>
         {% endfor %}
-    {% else %}
-        <p>Nenhum vídeo encontrado.</p>
+        {% else %}
+            <p>Nenhum vídeo encontrado.</p>
     {% endif %}
-</div>

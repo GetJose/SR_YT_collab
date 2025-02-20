@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/interesses.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
 {% block content %}
-<div class="profile-container interest">
+<div class="form-container interest">
   <h2>Selecione suas áreas de interesse</h2>
   <form method="post" id="interest-form">
     <div class="interest_area">
@@ -14,8 +17,9 @@
     {% endfor %}
   </div>
     <div class="button-group">
-      <button type="submit" class="btn-save">Salvar</button>
-      <button type="button" id="clear-selection" class="btn-clear">Limpar Seleções</button>
+      <button type="submit" class="btn btn-add">Salvar</button>
+      <button type="button" id="clear-selection" class="btn btn-cancel">Limpar Seleções</button>
+      <a href="{% url 'profile'%}" class="btn btn-back"> Voltar para perfil </a>
     </div>
   </form>
   

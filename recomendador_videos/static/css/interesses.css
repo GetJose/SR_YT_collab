@@ -1,0 +1,49 @@
+/* Estilos para interesses */
+
+.interest_area {
+    display: flex;
+    justify-content: start;
+    align-items: baseline;
+    margin: 15px auto;
+    flex-wrap: wrap;
+    font-size: 15px;
+}
+
+.interest-label input[type="checkbox"] {
+    display: none;
+}
+
+.interest-label span {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 5px;
+    background-color: #cfcfcf;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.interest-label span:hover {
+    background-color: #dcdcdc;
+}
+
+.interest-label input[type="checkbox"]:checked + span {
+    background-color: #4396ee;
+    color: white;
+}
+
+.interests-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.interests-list li {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+
+

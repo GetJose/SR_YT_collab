@@ -1,35 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-{% load custom_filters %}
-
-<div class="container mt-4">
-    <h2>Editar Playlist</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="{{ form.nome.id_for_label }}" class="form-label">Nome da Playlist</label>
-            {{ form.nome }}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+<div class="form-container">
+        <h2>Editar Playlist</h2>
+        <form method="post" >
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="{{ form.nome.id_for_label }}" class="form-label">Nome da Playlist</label>
+                {{ form.nome }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.descricao.id_for_label }}" class="form-label">Descrição</label>
+                {{ form.descricao }}
+            </div>
+            <h3 >Vídeos na Playlist</h3>
+            <div class="playlist-card">
+            <ul class="video-list">
+                {% for pv in playlist.videos.all %}
+                    <li class="video-item" data-id="{{ pv.id }}" draggable="true">
+                        <p>{{ pv.video.title }}</p> 
+                        <button class="remove-video" 
+                                data-playlist="{{ playlist.id }}" 
+                                data-video="{{ pv.video.id }}">
+                            Remover
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
-        <div class="mb-3">
-            <label for="{{ form.descricao.id_for_label }}" class="form-label">Descrição</label>
-            {{ form.descricao }}
+        <div class="button-group">
+            <a href="{% url 'adicionar_video_playlist' playlist.id %}" class="btn btn-add">Adicionar Vídeo a Playlist</a>
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <a href="{% url 'detalhe_playlist' playlist.id %}" class="btn btn-cancel">Cancelar</a>
         </div>
-        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-        <a href="{% url 'detalhe_playlist' playlist.id %}" class="btn btn-secondary">Cancelar</a>
-    </form>
+        </form>
+    </div>
 </div>
 
-<a href="{% url 'adicionar_video_playlist' playlist.id %}" class="btn btn-success">Adicionar Vídeo</a>
-<ul id="lista-videos">
-    {% for pv in playlist.videos.all %}
-        <li class="video-item" data-id="{{ pv.id }}" draggable="true">
-            {{ pv.video.title }}
-            <button class="remover-video" data-playlist="{{ playlist.id }}" data-video="{{ pv.video.id }}" style="border: none; background: none; color: red; cursor: pointer;">[Remover]</button>
-        </li>
-    {% endfor %}
-</ul>
-<button class="btn btn-secondary" onclick="history.back()">← Voltar</button>
 <script>
     const atualizarOrdemUrl = "{% url 'atualizar_ordem_videos' %}";
     const csrfToken = "{{ csrf_token }}";

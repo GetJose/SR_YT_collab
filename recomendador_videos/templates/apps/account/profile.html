@@ -1,21 +1,32 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     Perfil de {{ user.username }}
 {% endblock %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/interesses.css' %}">
+{% endblock %}
 {% block content %}
-    <div class="profile-container">
+    <div class="form-container">
         <div class="profile-header">
-            <div class="profile-image">
-                <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar" width="50px">
+            <div class="profile-header-right">
+            <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar">
+            <div class="profile-text">
+                <h2>Bem-vindo, 
+                    {% if user.first_name and user.last_name %}
+                        {{ user.first_name }} {{ user.last_name }}.
+                    {% else %}
+                        {{ user.username }}.
+                    {% endif %}
+                </h2>
+                <p><strong>Data de criação do perfil:</strong> {{ user.date_joined|date:"d/m/Y H:i" }}</p>
             </div>
-            <div class="profile-left">
-                <h1>Bem-vindo, {{ user.username }}</h1>
-                <p><strong>Data de criação:</strong> {{ user.date_joined|date:"d/m/Y H:i" }}</p>
-                <a href="{% url 'video_history' %}">Visualizar seu Histórico</a>
+            </div>
+            <div class="profile-header-left">
+                <a href="{% url 'video_history' %}" class="btn btn-back">Histórico</a>
                 <a href="{% url 'edit_profile' %}" class="btn btn-primary">Editar Perfil</a>
-
             </div>
         </div>
 
@@ -35,14 +46,14 @@
             <form method="post" class="filters-form">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="btn btn-save">Salvar Preferências</button>
+                <button type="submit" class="btn btn-add profile">Salvar Preferências</button>
             </form>
         </section>
     
-        <div class="action-buttons">
-            <a href="{% url 'areas_interesse' %}" class="btn btn-edit">Editar Áreas de Interesse</a>
-            <form method="get" action="{% url 'delete_profile' %}" class="delete-profile-form">
-                <button type="submit" class="btn btn-danger">Deletar Perfil</button>
+        <div class="button-group">
+            <a href="{% url 'areas_interesse' %}" class="btn btn-primary">Editar Áreas de Interesse</a>
+            <form method="get" action="{% url 'delete_profile' %}">
+                <button type="submit" class="btn btn-cancel">Deletar Perfil</button>
             </form>
         </div>
     </div>

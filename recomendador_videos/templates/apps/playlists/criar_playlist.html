@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/videos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pesquisa.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
 {% block content %}
-<div class="container mt-4">
+<div class="form-container">
     <h2>Criar Playlist</h2>
 
     <form method="post">
@@ -29,7 +33,7 @@
     
             <div id="lista-videos" class="row">
                 {% for video in videos %}
-                    <div class="col-md-6 video-item {% if forloop.counter > 15 %}hidden-video{% endif %}" data-title="{{ video.title|lower }}">
+                    <div class="video-item {% if forloop.counter > 15 %}hidden-video{% endif %}" data-title="{{ video.title|lower }}">
                         <label class="d-block">
                             <input type="checkbox" name="videos" value="{{ video.id }}" class="video-checkbox">
                             {{ video.title }}
@@ -37,26 +41,11 @@
                     </div>
                 {% endfor %}
             </div>
-            
-            
-            
-            
-            
-        <button type="submit" class="btn btn-success">Criar Playlist</button>
-        <button class="btn btn-secondary" onclick="history.back()">← Voltar</button>
+
+        <button type="submit" class="btn btn-add">Criar Playlist</button>
+        <a href="{% url 'lista_playlists' %}" class="btn btn-back">Voltar para a listagem</a>
 
     </form>
 </div>
 <script src="{% static 'js/playlist.js' %}"></script>
-
-<style>
-    .video-item {
-        display: block;
-        padding: 5px;
-    }
-    
-    .hidden-video {
-        display: none;
-    }
-    </style>
 {% endblock %}

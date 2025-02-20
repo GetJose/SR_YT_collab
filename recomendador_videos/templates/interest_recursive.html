@@ -6,7 +6,7 @@
   </label>
 
   {% if interest.sub_interests.exists %}
-    <div class="sub-interests" style="margin-left: 30px; display: none;">
+    <div class="sub-interests" style="margin-left: 20px; display: none;">
       {% for sub_interest in interest.sub_interests.all %}
         {% include 'interest_recursive.html' with interest=sub_interest selected_interests=selected_interests %}
       {% endfor %}

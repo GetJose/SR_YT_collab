@@ -4,23 +4,18 @@
 {% block title %}
     Home - Recomendador de Vídeos
 {% endblock %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/videos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pesquisa.css' %}">
+{% endblock %}
 {% block content %}
-    <section class="search-section">
-        <h3>Digite o termo de busca para encontrar vídeos no YouTube.</h3>
-        <form action="{% url 'video_search' %}" method="GET">
-            <input type="text" name="query" placeholder="Digite o termo de busca" required>
-            <button type="submit">Buscar</button>
-        </form>
-    </section>
-    <hr>
-    <section>
-        <h2>Recomendações Baseadas nos Seus Interesses</h2>
+    {% include 'search_section.html' with action_url='video_search' search_title="Pesquise por vídeos no YouTube." %}
+    <h2>Recomendações Baseadas nos Seus Interesses</h2>
+    <section class="video-section">
         {% include 'apps/youtube/video_list.html' with videos=videos %}
     </section>
-    <br>
-    <section>
-        <h2>Recomendações Personalizadas</h2>
+    <h2>Recomendações Personalizadas</h2>
+    <section class="video-section">
         {% include 'apps/youtube/video_list.html' with videos=videos_recomendados %}
     </section>
     <script src="{% static 'js/recommendation.js' %}"></script>

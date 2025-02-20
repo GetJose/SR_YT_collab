@@ -1,0 +1,102 @@
+/* Estilos para o cabeçalho */
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+    width: 100%;
+    max-height: 200px ;
+}
+
+header h1 {
+    color: #fff;
+}
+
+/* Estilos do menu de navegação */
+header nav ul {
+    list-style: none;
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap; /* Permite que os itens quebrem em telas menores */
+    min-height: 50px;
+}
+
+header nav ul li {
+    display: inline-block;
+}
+
+/* Links e botões do menu */
+header nav ul li a, 
+header nav ul li form button {
+    color: #fff;
+    background: none;
+    border: none;
+    text-decoration: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+}
+
+header nav ul li a:hover, 
+header nav ul li form button:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+header nav ul li form {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+/* Responsividade para telas menores */
+@media screen and (max-width: 768px) {
+    header {
+        padding: 0.8rem;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+    }
+
+    header nav ul {
+        flex-direction: column; /* Empilha o menu verticalmente */
+        gap: 0.5rem;
+        padding: 5px;
+    }
+
+    header nav ul li {
+        width: 100%; /* Ocupa a largura total para melhor clique */
+        text-align: center;
+    }
+
+    header nav ul li a, 
+    header nav ul li form button {
+        display: block; /* Ocupa a largura total */
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+}
+
+/* Responsividade para telas muito pequenas (celulares) */
+@media screen and (max-width: 480px) {
+
+
+    header h1 {
+        font-size: 1rem;
+    }
+
+    header nav ul {
+        gap: 0.3rem;
+    }
+
+    header nav ul li a, 
+    header nav ul li form button {
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,8 @@
+<section class="search-section">
+    <h2>{{ search_title|default:"Pesquise por palavras-chave." }}</h2>
+    <form action="{% url action_url%} " method="GET">
+        <input type="text" name="query" value="{{ query|default:'' }}" placeholder="{{ search_placeholder|default:'Oque deseja pesquisar?' }}" required>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+</section>
+<hr>
