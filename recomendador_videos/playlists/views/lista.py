@@ -9,7 +9,7 @@ class ListaPlaylistsView(LoginRequiredMixin, View):
     template_name = 'apps/playlists/lista_playlists.html'
 
     def get(self, request):
-        query = request.GET.get("q", "")
+        query = request.GET.get("query", "")
         usuario = request.user
 
         # 1️⃣ Playlists do próprio usuário

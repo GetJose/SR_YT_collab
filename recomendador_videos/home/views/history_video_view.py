@@ -57,4 +57,5 @@ class VideoHistoryView(ListView):
         return render(request, self.template_name, {
             'videos_history': videos_paginated, 
             'user_ratings': user_ratings,
+            "query": query,
         })

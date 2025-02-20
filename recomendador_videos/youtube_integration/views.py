@@ -29,4 +29,5 @@ class VideoSearchView(View):
             'query': query,
             'paginator': paginator,
             'page_obj': page_obj,
+            "query": query,
         })
