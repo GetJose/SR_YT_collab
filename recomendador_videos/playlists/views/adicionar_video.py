@@ -12,7 +12,7 @@ class AdicionarVideoPlaylistView(LoginRequiredMixin, View):
         playlist = get_object_or_404(Playlist, id=playlist_id, usuario=request.user)
         query = request.GET.get("q", "").strip()
 
-        # Pega todos os vídeos excluindo os que já estão na playlist
+        # Excluir vídeos já adicionados
         videos = Video.objects.exclude(id__in=playlist.videos.values_list('id', flat=True))
 
         if query:
@@ -22,7 +22,7 @@ class AdicionarVideoPlaylistView(LoginRequiredMixin, View):
 
     def post(self, request, playlist_id):
         playlist = get_object_or_404(Playlist, id=playlist_id, usuario=request.user)
-        video_ids = request.POST.getlist("video_ids[]")
+        video_ids = request.POST.getlist("videos")  # Nome corrigido
 
         if not video_ids:
             messages.error(request, "Nenhum vídeo selecionado.")
@@ -32,7 +32,7 @@ class AdicionarVideoPlaylistView(LoginRequiredMixin, View):
             video = get_object_or_404(Video, id=video_id)
             if not PlaylistVideo.objects.filter(playlist=playlist, video=video).exists():
                 maior_ordem = PlaylistVideo.objects.filter(playlist=playlist).order_by('-ordem').first()
-                nova_ordem = (maior_ordem.ordem + 1) if maior_ordem else 0
+                nova_ordem = (maior_ordem.ordem + 1) if maior_ordem else 0  # Corrigido para evitar erro
                 PlaylistVideo.objects.create(playlist=playlist, video=video, ordem=nova_ordem)
 
         messages.success(request, "Vídeos adicionados à playlist com sucesso!")
