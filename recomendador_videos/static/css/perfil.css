@@ -51,15 +51,16 @@
 
 @media (max-width: 768px) {
   .profile-header {
-    flex-direction: column; /* Empilha os elementos verticalmente */
-    align-items: center; /* Centraliza os itens */
+    flex-direction: column;
+    align-items: center; 
     text-align: center;
+    gap: 15px;
   }
 
   .profile-header-left {
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px; /* Dá um espaço entre a imagem e o texto */
+    margin-bottom: 10px; 
   }
 
   .profile-header-right {
@@ -69,12 +70,12 @@
   }
 
   .user-avatar {
-    width: 4rem; /* Reduz um pouco o tamanho do avatar em telas pequenas */
-    margin-right: 0; /* Remove a margem direita para centralizar melhor */
+    width: 4rem;
+    margin-right: 0;
   }
 
   .action-buttons {
-    flex-direction: column; /* Empilha os botões verticalmente */
+    flex-direction: column; 
     gap: 10px;
   }
 }

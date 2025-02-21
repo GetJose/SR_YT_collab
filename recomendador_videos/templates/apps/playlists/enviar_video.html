@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
 {% endblock %}
 {% block content %}
+<div class="playlist-section">
 <h2>Escolha uma Playlist</h2>
 <form method="post">
     {% csrf_token %}
@@ -14,4 +15,5 @@
     <button type="submit" class="btn btn-add">Adicionar</button>
     <a href="{% url 'criar_playlist' %}?video_id={{ video.youtube_id }}" class="btn btn-primary">Criar nova playlist com o vídeo</a>
 </form>
+</div>
 {% endblock %}

@@ -36,7 +36,7 @@
 }
 
 .playlist-item:hover {
-    transform: scale(1.02);
+    transform: translateY(-5px);
 }
 
 .playlist-link {
@@ -54,6 +54,7 @@
     align-items: center;
     padding: 10px;
     background: #f4f4f4;
+    min-height: 100px;
 }
 
 .playlist-thumbnail {
@@ -78,7 +79,11 @@
     font-size: 0.9em;
     color: #555;
     margin: 5px 0 0;
+    height: 2rem; 
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
 
 .playlist-videos {
     padding: 10px;
@@ -98,8 +103,6 @@
     font-size: 0.9em;
     color: #007bff;
 }
-
-
 
 /* Lista de vídeos */
 .playlist-card {
@@ -136,4 +139,33 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .playlist-item {
+        width: 250px;
+    }
+}
+
+@media (max-width: 720px) {
+    p {
+        font-size: 12px;
+    }
+    .playlist-title, .playlist-description{
+        font-size: 15px;
+    }
+    .playlist-item {
+        width: 200px;
+        min-height: 250px;
+    }
+
+    .playlist-container{
+        justify-content: center;
+    }
+}
+
+@media (max-width: 420px){
+    .playlist-item {
+        width: 280px;
+    }
 }

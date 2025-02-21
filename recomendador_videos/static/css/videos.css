@@ -187,7 +187,7 @@ button.disliked:hover {
     }
 
     .video-description {
-        height: 30px;
+        height: 2.1rem;
         font-size: 0.6rem;
     }
     .like-dislike-container {
@@ -219,11 +219,12 @@ button.disliked:hover {
     }
 
     .video-title {
-        font-size: 0.7rem;
+        font-size: 0.9rem;
+        margin: 5px 0;
     }
 
     .video-description {
-        font-size: 0.5rem;
+        font-size: 0.6rem;
     }
     button.rate-button {
         border: none;
