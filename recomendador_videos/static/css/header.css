@@ -66,8 +66,9 @@ header nav ul li form {
 
     header nav ul {
         flex-direction: column; /* Empilha o menu verticalmente */
-        gap: 0.5rem;
-        padding: 5px;
+        padding: 0;
+        margin: 0;
+        gap: 0;
     }
 
     header nav ul li {
@@ -90,11 +91,6 @@ header nav ul li form {
     header h1 {
         font-size: 1rem;
     }
-
-    header nav ul {
-        gap: 0.3rem;
-    }
-
     header nav ul li a, 
     header nav ul li form button {
         font-size: 0.9rem;

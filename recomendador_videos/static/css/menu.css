@@ -7,22 +7,61 @@
     color: white;
     cursor: pointer;
     position: absolute;
-    top: 5px;
+    top: 15px;
     right: 20px;
+    z-index: 1001; /* Garante que o botão fique acima do menu */
+}
+
+nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente */
+    backdrop-filter: blur(10px); /* Aplica o efeito de desfoque */
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Mantém o menu acima de outros elementos */
+    transition: all 0.3s ease-in-out;
+}
+
+nav.active {
+    display: flex;
 }
 
 nav ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    padding: 0;
+    flex-direction: column;
     list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    width: 100%;
 }
 
 nav ul li {
-    position: relative;
+    padding: 5px;
 }
+
+nav ul li a {
+    color: white;
+    font-size: 1.5rem;
+    text-decoration: none;
+    display: block;
+}
+
+nav ul li:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Efeito hover suave */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+}
+
 
 /* Estilização do submenu */
 nav ul .submenu {
@@ -78,6 +117,7 @@ nav ul .submenu li a:hover {
     nav ul {
         flex-direction: column;
         width: 100%;
+
     }
 
     nav ul li {

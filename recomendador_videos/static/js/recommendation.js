@@ -1,29 +1,39 @@
 document.addEventListener("DOMContentLoaded", function () {
-    $(document).on('click', '.video-item', function(e) {
+    $(document).on('click', '.video-item', function (e) {
         e.preventDefault();
         
-        const videoId = $(this).attr('id').split('-')[1];  
-        const videoElement = $(this).closest('.video-item');
-        const method = videoElement.data('method'); 
-        const url = '/initialRateVideo/';  
+        // Verifica se o elemento tem ID antes de tentar acessar
+        const videoId = $(this).attr('id') || ''; 
 
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: {
-                'video_id': videoId,
-                'rating': 0,
-                'method': method
-            },
-            success: function(response) {
-                console.log('Avaliação inicial salva com sucesso.');
-            },
-            error: function(xhr) {
-                console.error('Erro ao salvar a avaliação inicial.');
+        if (videoId.includes('-')) {
+            const videoIdNumber = videoId.split('-')[1];
+
+            if (videoIdNumber) {
+                const videoElement = $(this).closest('.video-item');
+                const method = videoElement.data('method') || '';  
+                const url = '/initialRateVideo/';
+
+                if (method) {  
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            'video_id': videoIdNumber,
+                            'rating': 0,
+                            'method': method
+                        },
+                        success: function (response) {
+                            console.log('Avaliação inicial salva com sucesso.');
+                        },
+                        error: function (xhr) {
+                            console.error('Erro ao salvar a avaliação inicial.');
+                        }
+                    });
+                }
             }
-        });
+        }
 
-        // Verificar se fullscreen é permitido
+        // Lógica do fullscreen (separada da avaliação)
         const iframe = $(this).find('iframe')[0];
         if (iframe && document.fullscreenEnabled) {
             try {
@@ -42,18 +52,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    $(document).on('click', '.rate-button', function(e) {
+    $(document).on('click', '.rate-button', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        
-        const videoId = $(this).data('video-id');
-        const rating = $(this).data('rating');
-        const url = $(this).data('url');
+
+        const videoId = $(this).data('video-id') || null;
+        const rating = $(this).data('rating') || null;
+        const url = $(this).data('url') || null;
         const messageDiv = $(this).siblings('.rating-message');
 
+        if (!videoId || !rating || !url) {
+            console.warn("Dados de avaliação incompletos.");
+            return;
+        }
+
         const videoElement = $(this).closest('.video-item');
-        const videoTitle = videoElement.find('h3').text();
-        const method = videoElement.data('method');
+        const videoTitle = videoElement.find('h3').text() || "Título não disponível";
+        const method = videoElement.data('method') || '';
 
         console.log(`Título do vídeo: ${videoTitle}`);
         console.log(`ID do vídeo: ${videoId}`);
@@ -68,12 +83,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 'rating': rating,
                 'method': method
             },
-            success: function(response) {
+            success: function (response) {
                 $('#video-' + videoId + ' .rate-button').removeClass('liked disliked');
                 $('#video-' + videoId + ` .rate-button[data-rating="${rating}"]`).addClass(rating === 1 ? 'liked' : 'disliked');
                 messageDiv.text(response.message);
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 messageDiv.text('Erro ao avaliar o vídeo.');
             }
         });
