@@ -7,14 +7,14 @@
 {% block content %}
 {% include 'search_section.html' with action_url='lista_playlists' search_title="Informe nome ou descrição de uma playlist que queira encontrar." search_placeholder="Buscar playlist..." %}
 <section class="playlist-section">
-        <div class="playlist-header">
-            <h2>Playlists</h2>
-            <a href="{% url 'criar_playlist' %}" class="btn btn-primary">Criar nova playlist</a>
-        </div>
-    
-        <!-- Resultados da Pesquisa -->
+    <div class="playlist-header">
+        <h2>Playlists</h2>
+        <a href="{% url 'criar_playlist' %}" class="btn btn-primary">Criar nova playlist</a>
+    </div>
+
+    <!-- Resultados da Pesquisa -->
     {% if query %}
-        <h3>Resultados da Pesquisa por {{query}}.</h3>
+        <h3>Resultados da Pesquisa por "{{ query }}"</h3>
         {% include "apps/playlists/playlist_list.html" with playlists=playlists_pesquisa show_radio=False empty_message="Nenhuma playlist encontrada." %}
     {% endif %}
 
@@ -26,6 +26,8 @@
     <h3>Playlists de Usuários Similares</h3>
     {% include "apps/playlists/playlist_list.html" with playlists=playlists_similares show_radio=False empty_message="Nenhuma playlist encontrada para usuários similares." %}
 
+    <!-- Playlists Recomendadas -->
+    <h3>Playlists Recomendadas para Você</h3>
+    {% include "apps/playlists/playlist_list.html" with playlists=playlists_recomendadas show_radio=False empty_message="Nenhuma playlist recomendada para você ainda." %}
 </section>
 {% endblock %}
-

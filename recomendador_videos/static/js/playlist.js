@@ -110,3 +110,85 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+function mostrarModal() {
+    console.log("Abrindo modal...");
+    document.getElementById("modalRecomendacao").style.display = "block";
+}
+
+
+function fecharModal() {
+    document.getElementById("modalRecomendacao").style.display = "none";
+}
+function buscarUsuarios() {
+    let termo = document.getElementById("pesquisarUsuario").value;
+
+    if (termo.length < 1) {
+        document.getElementById("listaUsuarios").innerHTML = "";
+        return;
+    }
+
+    fetch(`/accounts/buscar_usuarios?q=${termo}`)
+        .then(response => response.json())
+        .then(data => {
+            let listaUsuarios = document.getElementById("listaUsuarios");
+            listaUsuarios.innerHTML = "";
+
+            if (data.length === 0) {
+                listaUsuarios.innerHTML = "<p>Nenhum usuário encontrado.</p>";
+            }
+
+            data.forEach(user => {
+                let btn = document.createElement("button");
+                btn.textContent = user.username;
+                btn.classList.add("usuario-btn");
+                btn.onclick = () => enviarRecomendacao(user.id);
+                listaUsuarios.appendChild(btn);
+            });
+        })
+        .catch(error => console.error("Erro ao buscar usuários:", error));
+}
+
+// Enviar a recomendação da playlist
+function enviarRecomendacao(usuarioId) {
+    let playlistId = document.getElementById("modalRecomendacao").dataset.playlistId;
+    
+    fetch("/playlists/recomendar_playlist/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: `usuario_id=${usuarioId}&playlist_id=${playlistId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.success || data.error);
+        fecharModalRecomendacao();
+    });
+}
+
+// Obter o CSRF Token dos cookies para segurança nas requisições POST
+function getCSRFToken() {
+    return document.cookie.split("; ")
+        .find(row => row.startsWith("csrftoken"))
+        ?.split("=")[1];
+}
+
+function removerRecomendacao(playlistId) {
+    if (confirm("Tem certeza que deseja remover esta recomendação?")) {
+        fetch(`/playlists/remover_recomendacao/${playlistId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.href = data.redirect_url;  // Redireciona para a listagem de playlists
+        })
+        .catch(error => console.error("Erro ao remover recomendação:", error));
+    }
+}

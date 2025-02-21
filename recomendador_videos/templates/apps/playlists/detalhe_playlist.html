@@ -6,6 +6,7 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/videos.css' %}">
     <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}">
 {% endblock %}
 
 <div class="playlist-section">
@@ -17,8 +18,21 @@
         {% if request.user == playlist.usuario %}
             <a href="{% url 'editar_playlist' playlist.id %}" class="btn btn-primary">Editar</a>
             <button class="btn btn-cancel" onclick="confirmarDelecao({{ playlist.id }})">Deletar</button>
+            {% if request.user.userprofile.role == 'teacher' %}
+            <button class="btn btn-add" onclick="mostrarModal()" data-playlist-id="{{ playlist.id }}">Recomendar</button>
+            
+            {% endif %}
+
         {% endif %}
         <a href="{% url 'lista_playlists' %}" class="btn btn-back">Voltar para listagem</a>
+        {% if recomendacao %}
+            <div class="recomendacao-info">
+                <p>Esta playlist foi recomendada para você por <strong>{{ recomendacao.recomendado_por.username }}</strong>.</p>
+                <button class="btn btn-cancel" onclick="removerRecomendacao({{ playlist.id }})">Remover Recomendação</button>
+            </div>
+        {% endif %}
+    
+
     </div>
     <section class="video-section">
         {% if playlist.videos.all %}
@@ -40,7 +54,20 @@
             <p>Nenhum vídeo encontrado na playlist.</p>
         {% endif %}
     </section>
+    <div id="modalRecomendacao" class="modal" data-playlist-id="{{ playlist.id }}" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Recomendar Playlist</span>               
+                <button class="modal-close" onclick="fecharModal()">&times;</button>
+            </div>
+            <input type="text" id="pesquisarUsuario" placeholder="Buscar usuário..." onkeyup="buscarUsuarios()">
+            <div id="listaUsuarios"></div>
+        </div>
+    </div>
+   
 </div>
+
+
 
 <script src="{% static 'js/playlist.js' %}"></script>
 <script src="{% static 'js/recommendation.js' %}"></script>
@@ -60,5 +87,6 @@
             });
         }
     }
+   
 </script>
 {% endblock %}

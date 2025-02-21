@@ -21,3 +21,9 @@ class PlaylistVideo(models.Model):
 
     def __str__(self):
         return f"{self.playlist.nome} - {self.video.title}"
+
+class PlaylistRecomendacao(models.Model):
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+    recomendado_por = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recomendacoes_enviadas")
+    recomendado_para = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recomendacoes_recebidas")
+    data_recomendacao = models.DateTimeField(auto_now_add=True)

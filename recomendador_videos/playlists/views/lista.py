@@ -1,7 +1,8 @@
+from django.db.models.functions import Random
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from ..models import Playlist
+from ..models import Playlist, PlaylistRecomendacao
 from django.db.models import Q
 from recomendador_videos.recomendacao.services.similaridade import calcular_similaridade_usuarios 
 
@@ -21,14 +22,20 @@ class ListaPlaylistsView(LoginRequiredMixin, View):
         else:
             playlists_pesquisa = Playlist.objects.none()
 
-        # 3️⃣ Playlists de usuários semelhantes
+        # 3️⃣ Playlists de usuários semelhantes (aleatórias)
         similaridade = calcular_similaridade_usuarios(usuario)
         usuarios_similares = list(similaridade.keys())[:3] 
-        playlists_similares = Playlist.objects.filter(usuario__in=usuarios_similares)
+        playlists_similares = Playlist.objects.filter(usuario__in=usuarios_similares).order_by(Random())[:6]
+
+        # 4️⃣ Playlists recomendadas ao usuário
+        playlists_recomendadas = Playlist.objects.filter(
+            id__in=PlaylistRecomendacao.objects.filter(recomendado_para=usuario).values_list("playlist_id", flat=True)
+        )
 
         return render(request, self.template_name, {
             "minhas_playlists": minhas_playlists,
             "playlists_pesquisa": playlists_pesquisa,
             "playlists_similares": playlists_similares,
+            "playlists_recomendadas": playlists_recomendadas,
             "query": query
         })
