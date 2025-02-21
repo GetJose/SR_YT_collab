@@ -1,0 +1,12 @@
+{% extends 'base_account.html' %}
+
+{% block title %}Ativação de Conta{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Confirme sua Conta</h2>
+    <p>Verifique seu e-mail para ativar sua conta antes de fazer login.</p>
+    <p>Após ativar, você pode acessar sua conta normalmente.</p>
+    <p><a href="{% url 'login' %}">Ir para o login</a></p>
+</div>
+{% endblock %}

@@ -13,6 +13,12 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return self.request.user.userprofile  # Obtém o perfil do usuário logado
 
+    def get_form(self, form_class=None):
+        """Garante que o usuário logado seja passado para o formulário"""
+        form = super().get_form(form_class)
+        form.__init__(user=self.request.user, **self.get_form_kwargs())  # Passa o usuário
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:

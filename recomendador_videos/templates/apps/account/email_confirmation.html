@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação de E-mail</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f4f4f4; padding: 20px;">
+    <div style="max-width: 600px; background: white; padding: 20px; border-radius: 8px; margin: auto;">
+        <h2 style="color: #333;">Olá,</h2>
+        <p>Por favor, clique no botão abaixo para ativar sua conta:</p>
+        <p style="text-align: center;">
+            <a href="{{ activation_url }}" 
+               style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                Ativar Conta
+            </a>
+        </p>
+        <p>Se o botão não funcionar, copie e cole este link no seu navegador:</p>
+        <p style="word-wrap: break-word;"><a href="{{ activation_url }}">{{ activation_url }}</a></p>
+        <p>Se você não se cadastrou, ignore este e-mail.</p>
+    </div>
+</body>
+</html>

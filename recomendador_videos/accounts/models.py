@@ -38,7 +38,7 @@ class UserProfile(models.Model):
     duracao_faixa = models.CharField(max_length=10, choices=DURATION_CHOICES, default='none')  
     linguagens_preferidas = models.CharField(max_length=200, null=True, blank=True) 
     aplicar_filtros = models.BooleanField(default=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student', editable=False)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
 
     def __str__(self):
         return self.user.username

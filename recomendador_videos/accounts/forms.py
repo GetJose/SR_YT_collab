@@ -13,12 +13,13 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
 
 class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, label="Email")  # Adiciona o campo de email
     avatar = forms.ImageField(required=False, label="Avatar")
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'avatar']
-    
+        fields = ['username', 'email', 'password1', 'password2', 'avatar']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].help_text = None
@@ -26,11 +27,20 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['password2'].help_text = None
 
         self.fields['username'].widget.attrs.update({'placeholder': 'Nome de usuário'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Email'})
         self.fields['password1'].widget.attrs.update({'placeholder': 'Senha'})
         self.fields['password2'].widget.attrs.update({'placeholder': 'Confirme a senha'})
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Este email já está em uso. Tente outro.")
+        return email
+
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.is_active = False  # Define usuário como inativo até confirmação por email
         if commit:
             user.save()
             UserProfile.objects.create(user=user, avatar=self.cleaned_data.get('avatar', 'avatars/default.png'))
@@ -50,17 +60,28 @@ class UserProfileEditForm(forms.ModelForm):
     first_name = forms.CharField(max_length=150, required=True, label="Nome")
     last_name = forms.CharField(max_length=150, required=True, label="Sobrenome")
     email = forms.EmailField(required=True, label="Email")
+    role = forms.ChoiceField(
+        choices=UserProfile.ROLE_CHOICES,
+        required=True,
+        label="Função"  
+    )
 
     class Meta:
         model = UserProfile
-        fields = ['avatar']
+        fields = ['avatar', 'role']  
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  
         super().__init__(*args, **kwargs)
+
         if self.instance and self.instance.user:
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
             self.fields['email'].initial = self.instance.user.email
+
+        if user and not user.is_superuser:
+            del self.fields['role']
+
 
     def save(self, commit=True):
         user_profile = super().save(commit=False)
@@ -68,11 +89,14 @@ class UserProfileEditForm(forms.ModelForm):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
-        
+
+        if 'role' in self.cleaned_data and self.instance.user.is_superuser:
+            user_profile.role = self.cleaned_data['role']
+
         if commit:
             user.save()
             user_profile.save()
-        
+
         return user_profile
 
 class InterestForm(forms.ModelForm):

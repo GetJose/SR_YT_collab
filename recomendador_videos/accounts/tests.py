@@ -1,3 +1,9 @@
-from django.test import TestCase
+from django.core.mail import send_mail
 
-# Create your tests here.
+send_mail(
+    "Teste Django",
+    "Este é um e-mail de teste enviado pelo Django.",
+    "projeto.tcc.getulio@gmail.com",
+    ["getuliojose01@gmail.com"],
+    fail_silently=False,
+)

@@ -1,0 +1,11 @@
+{% extends 'base_account.html' %}
+
+{% block title %}Conta Ativada{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Conta Ativada com Sucesso</h2>
+    <p>Sua conta foi ativada! Agora você pode fazer login normalmente.</p>
+    <p><a href="{% url 'login' %}">Ir para o login</a></p>
+</div>
+{% endblock %}

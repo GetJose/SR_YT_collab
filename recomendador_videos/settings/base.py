@@ -15,7 +15,7 @@ import os
 
 load_dotenv()
 
-YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY ')
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -147,13 +147,27 @@ CACHES = {
     }
 }
 
+# Define que a sessão será excluída ao fechar o navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  
+
+# Tempo limite de sessão (exemplo: 30 minutos de inatividade)
+SESSION_COOKIE_AGE = 1800  # 1800 segundos = 30 minutos
+
+# Opcional: Apenas cookies seguros (HTTPS)
+SESSION_COOKIE_SECURE = True  
+
+# Opcional: Impede que JavaScript acesse os cookies de sessão
+SESSION_COOKIE_HTTPONLY = True  
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Se for Gmail
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL')  # Seu e-mail
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')  # Senha do seu e-mail ou senha de aplicativo
+EMAIL_USE_SSL = False  
+EMAIL_HOST_USER = "projeto.tcc.getulio@gmail.com"
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 

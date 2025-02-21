@@ -1,11 +1,21 @@
 from django.contrib import admin
-from .models import Interest, UserProfile
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+from .models import UserProfile, Interest
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = "Perfil do Usuário"
+    filter_horizontal = ('interests',)
 
-admin.site.register(Interest)
-admin.site.register(UserProfile)
+    def get_readonly_fields(self, request, obj=None):
+        if not request.user.is_superuser:
+            return ['role']  # Somente administradores podem editar o campo
+        return []
 
-# @admin.register(UserProfile)
-# class UserProfileAdmin(admin.ModelAdmin):
-#     list_display = ('user', 'role', 'duracao_faixa')
-#     list_filter = ('role',)
-#     search_fields = ('user__username',)
+class CustomUserAdmin(UserAdmin):
+    inlines = (UserProfileInline,)
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
+
