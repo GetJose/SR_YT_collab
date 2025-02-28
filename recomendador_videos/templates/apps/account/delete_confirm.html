@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     Deletar Perfil
 {% endblock %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
 {% block content %}
+<div class="form-container">
     <h1>Tem certeza de que deseja deletar seu perfil?</h1>
     <p>Esta ação não pode ser desfeita.</p>
     
     <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Sim, deletar meu perfil</button>
-        <a href="{% url 'profile' %}" class="btn btn-secondary">Cancelar</a>
+        <div class="button-group">
+            <button type="submit" class="btn btn-cancel">Sim, deletar meu perfil</button>
+            <a href="{% url 'profile' %}" class="btn btn-back">Cancelar</a>
+        </div>
     </form>
+</div>
 {% endblock %}

@@ -21,7 +21,7 @@ header nav ul {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    flex-wrap: wrap; /* Permite que os itens quebrem em telas menores */
+    flex-wrap: wrap;
     min-height: 50px;
 }
 
@@ -29,7 +29,6 @@ header nav ul li {
     display: inline-block;
 }
 
-/* Links e botões do menu */
 header nav ul li a, 
 header nav ul li form button {
     color: #fff;
@@ -65,26 +64,25 @@ header nav ul li form {
     }
 
     header nav ul {
-        flex-direction: column; /* Empilha o menu verticalmente */
+        flex-direction: column; 
         padding: 0;
         margin: 0;
         gap: 0;
     }
 
     header nav ul li {
-        width: 100%; /* Ocupa a largura total para melhor clique */
+        width: 100%;
         text-align: center;
     }
 
     header nav ul li a, 
     header nav ul li form button {
-        display: block; /* Ocupa a largura total */
+        display: block; 
         padding: 0.8rem;
         font-size: 1rem;
     }
 }
 
-/* Responsividade para telas muito pequenas (celulares) */
 @media screen and (max-width: 480px) {
 
 

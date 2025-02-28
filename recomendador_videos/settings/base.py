@@ -15,7 +15,7 @@ import os
 
 load_dotenv()
 
-YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY_1')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -163,11 +163,10 @@ SESSION_COOKIE_HTTPONLY = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False  
-EMAIL_HOST_USER = "projeto.tcc.getulio@gmail.com"
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 

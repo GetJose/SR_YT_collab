@@ -1,6 +1,9 @@
 <div class="playlist-container">
     {% for playlist in playlists %}
+    {% if show_radio %}
+        {% else %}
         <a href="{% url 'detalhe_playlist' playlist.id %}" class="playlist-link">
+            {% endif %}
             <div class="playlist-item">
                 <div class="playlist-item-header">
                     {% if playlist.videos.exists %}

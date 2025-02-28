@@ -28,7 +28,6 @@ label {
     margin-bottom: 5px;
 }
 
-/* Ajuste para todos os inputs e textarea */
 input, textarea , select{
     width: 100%;
     padding: 8px;
@@ -56,19 +55,19 @@ input[type="checkbox"] {
 
 @media (max-width: 900px) {
     .form-container {
-        max-width: 100%; /* Faz o formulário ocupar toda a largura da tela */
-        margin: 0; /* Remove margens laterais */
-        padding: 1rem; /* Reduz o padding para não ficar muito espaçado */
-        border-radius: 0; /* Remove bordas arredondadas para melhor adaptação */
-        box-shadow: none; /* Remove a sombra para um visual mais limpo */
+        max-width: 100%; 
+        margin: 0; 
+        padding: 1rem; 
+        border-radius: 0; 
+        box-shadow: none; 
     }
 
     input, textarea, select {
-        font-size: 14px; /* Ajusta o tamanho da fonte para melhor legibilidade */
-        padding: 6px; /* Reduz o padding interno */
+        font-size: 14px;
+        padding: 6px; 
     }
 
     .checkbox-container {
-        flex-wrap: wrap; /* Permite que os checkboxes fiquem em múltiplas linhas se necessário */
+        flex-wrap: wrap; 
     }
 }

@@ -5,18 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const subInterests = input.closest('.interest-category').querySelector('.sub-interests');
 
         if (subInterests) {
-            subInterests.style.display = input.checked ? 'block' : 'none';
+            const checkSubInterests = () => {
+                const anyChildChecked = Array.from(subInterests.querySelectorAll('input')).some(child => child.checked);
+                subInterests.style.display = (input.checked || anyChildChecked) ? 'block' : 'none';
+            };
 
-            input.addEventListener('change', function() {
-                if (input.checked) {
-                    subInterests.style.display = 'block';
-                } else {
-                    const anyChildChecked = Array.from(subInterests.querySelectorAll('input')).some(child => child.checked);
-                    if (!anyChildChecked) {
-                        subInterests.style.display = 'none';
-                        subInterests.querySelectorAll('input').forEach(subInput => subInput.checked = false);
-                    }
-                }
+            checkSubInterests();
+
+            input.addEventListener('change', checkSubInterests);
+
+            subInterests.querySelectorAll('input').forEach(subInput => {
+                subInput.addEventListener('change', checkSubInterests);
             });
         }
     });
@@ -24,8 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearButton = document.getElementById('clear-selection');
     if (clearButton) {
         clearButton.addEventListener('click', function () {
-            document.querySelectorAll('#interest-form input[type="checkbox"]').forEach(input => input.checked = false);
+            const checkboxes = document.querySelectorAll('form input[type="checkbox"]');
+
+            checkboxes.forEach(input => input.checked = false);
+
             document.querySelectorAll('.sub-interests').forEach(subInterests => subInterests.style.display = 'none');
+
+            checkboxes.forEach(input => input.removeAttribute('checked'));
         });
     }
 });

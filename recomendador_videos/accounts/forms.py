@@ -1,19 +1,29 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from .models import UserProfile, Interest
-from django.contrib.auth.forms import PasswordChangeForm
 
 class CustomPasswordChangeForm(PasswordChangeForm):
+    """
+    Formulário personalizado para alteração de senha.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['old_password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Senha atual'})
-        self.fields['new_password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Nova senha'})
-        self.fields['new_password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirme a nova senha'})
+        fields_attrs = {
+            'old_password': 'Senha atual',
+            'new_password1': 'Nova senha',
+            'new_password2': 'Confirme a nova senha'
+        }
+        
+        for field, placeholder in fields_attrs.items():
+            self.fields[field].widget.attrs.update({'class': 'form-control', 'placeholder': placeholder})
 
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="Email")  # Adiciona o campo de email
+    """
+    Formulário personalizado para criação de usuário.
+    """
+    email = forms.EmailField(required=True, label="Email")
     avatar = forms.ImageField(required=False, label="Avatar")
 
     class Meta:
@@ -22,14 +32,16 @@ class CustomUserCreationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].help_text = None
-        self.fields['password1'].help_text = None
-        self.fields['password2'].help_text = None
-
-        self.fields['username'].widget.attrs.update({'placeholder': 'Nome de usuário'})
-        self.fields['email'].widget.attrs.update({'placeholder': 'Email'})
-        self.fields['password1'].widget.attrs.update({'placeholder': 'Senha'})
-        self.fields['password2'].widget.attrs.update({'placeholder': 'Confirme a senha'})
+        placeholders = {
+            'username': 'Nome de usuário',
+            'email': 'Email',
+            'password1': 'Senha',
+            'password2': 'Confirme a senha'
+        }
+        
+        for field, placeholder in placeholders.items():
+            self.fields[field].widget.attrs.update({'placeholder': placeholder})
+            self.fields[field].help_text = None
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -40,14 +52,22 @@ class CustomUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
-        user.is_active = False  # Define usuário como inativo até confirmação por email
+        user.is_active = False
+        
         if commit:
             user.save()
-            UserProfile.objects.create(user=user, avatar=self.cleaned_data.get('avatar', 'avatars/default.png'))
+            UserProfile.objects.create(
+                user=user, 
+                avatar=self.cleaned_data.get('avatar', 'avatars/default.png')
+            )
         return user
-    
+
+
 class UserEditForm(UserChangeForm):
-    password = None  # Remove o campo de senha do formulário
+    """
+    Formulário para editar dados básicos do usuário.
+    """
+    password = None
     first_name = forms.CharField(required=True, label="Nome")
     last_name = forms.CharField(required=True, label="Sobrenome")
     email = forms.EmailField(required=True, label="Email")
@@ -56,104 +76,94 @@ class UserEditForm(UserChangeForm):
         model = User
         fields = ['first_name', 'last_name', 'email']
 
+
 class UserProfileEditForm(forms.ModelForm):
+    """
+    Formulário para editar o perfil do usuário.
+    """
     first_name = forms.CharField(max_length=150, required=True, label="Nome")
     last_name = forms.CharField(max_length=150, required=True, label="Sobrenome")
     email = forms.EmailField(required=True, label="Email")
-    role = forms.ChoiceField(
-        choices=UserProfile.ROLE_CHOICES,
-        required=True,
-        label="Função"  
+    role = forms.ChoiceField(choices=UserProfile.ROLE_CHOICES, required=True, label="Função")
+    avatar = forms.ImageField(
+        required=False,
+        label="Alterar avatar",
+        widget=forms.ClearableFileInput(attrs={'aria-label': 'Modificar imagem de perfil'})
     )
 
     class Meta:
         model = UserProfile
-        fields = ['avatar', 'role']  
+        fields = ['avatar', 'role']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-
+        
         if self.instance and self.instance.user:
-            self.fields['first_name'].initial = self.instance.user.first_name
-            self.fields['last_name'].initial = self.instance.user.last_name
-            self.fields['email'].initial = self.instance.user.email
+            self._prepopulate_user_fields()
 
         if user and not user.is_superuser:
-            del self.fields['role']
+            self.fields.pop('role')
 
+    def _prepopulate_user_fields(self):
+        """Preenche campos com dados do usuário."""
+        self.fields['first_name'].initial = self.instance.user.first_name
+        self.fields['last_name'].initial = self.instance.user.last_name
+        self.fields['email'].initial = self.instance.user.email
 
     def save(self, commit=True):
         user_profile = super().save(commit=False)
         user = user_profile.user
+        
+        self._update_user_fields(user)
+        
+        if commit:
+            user.save()
+            user_profile.save()
+        return user_profile
+
+    def _update_user_fields(self, user):
+        """Atualiza campos do usuário."""
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
 
-        if 'role' in self.cleaned_data and self.instance.user.is_superuser:
-            user_profile.role = self.cleaned_data['role']
-
-        if commit:
-            user.save()
-            user_profile.save()
-
-        return user_profile
 
 class InterestForm(forms.ModelForm):
+    """
+    Formulário para seleção de áreas de interesse.
+    """
     interests = forms.ModelMultipleChoiceField(
         queryset=Interest.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-    )
-    
-    new_interests = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Adicione novas áreas de interesse'}),
-        required=False
     )
 
     class Meta:
         model = UserProfile
         fields = ['interests']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk:
-            self.fields['interests'].initial = self.instance.interests.all()
-
     def clean_interests(self):
-        interests = self.cleaned_data.get('interests')
-        if len(interests) < 1:
-            raise forms.ValidationError("Selecione pelo menos uma das áreas de interesse.")
-        return interests
+        return self.cleaned_data.get('interests')
 
     def save(self, commit=True):
         profile = super().save(commit=False)
-        interests = self.cleaned_data.get('interests')
-
-        new_interests_text = self.cleaned_data.get('new_interests')
-        if new_interests_text:
-            new_interests_list = [i.strip() for i in new_interests_text.split(',')]
-            for interest_name in new_interests_list:
-                interest, created = Interest.objects.get_or_create(name=interest_name)
-                interests = interests | Interest.objects.filter(id=interest.id)
-
-        profile.interests.set(interests)
-
+        profile.interests.set(self.cleaned_data.get('interests', []))
         if commit:
             profile.save()
         return profile
-    
+
+
 class UserProfileFilterForm(forms.ModelForm):
+    """
+    Formulário para filtrar vídeos com base na duração e linguagem.
+    """
     DURATION_CHOICES = [
         ('short', 'Curtos (até 2 minutos)'),
         ('medium', 'Normais (até 15 minutos)'),
         ('long', 'Longos (mais de 15 minutos)'),
         ('none', 'Sem limite de tempo'),
     ]
-
-    class Meta:
-        model = UserProfile
-        fields = ['duracao_faixa', 'linguagens_preferidas', 'aplicar_filtros']
 
     duracao_faixa = forms.ChoiceField(
         required=False,
@@ -175,6 +185,10 @@ class UserProfileFilterForm(forms.ModelForm):
         widget=forms.CheckboxInput(),
         label='Aplicar filtros nas buscas de vídeos'
     )
+
+    class Meta:
+        model = UserProfile
+        fields = ['duracao_faixa', 'linguagens_preferidas', 'aplicar_filtros']
 
     def save(self, commit=True):
         profile = super().save(commit=False)

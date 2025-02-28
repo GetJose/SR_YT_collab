@@ -19,6 +19,15 @@
   width: 5rem;
   margin-right: 1rem;
 }
+
+p:has(#id_avatar) {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+}
+
 .profile-text {
   flex-grow: 1;
   overflow: hidden;

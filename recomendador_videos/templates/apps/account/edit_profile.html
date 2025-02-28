@@ -11,11 +11,8 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <h3>Informações Pessoais</h3>
-        {{ user_form.as_p }}  <!-- Formulário do usuário (nome, email, senha) -->
-        
-        <h3>Dados do Perfil</h3>
-        {{ form.as_p }}  <!-- Formulário do perfil (bio, foto) -->
+        {{ form.as_p }} 
+        {{ user_form.as_p }} 
 
         <a href="{% url 'change_password' %}">Alterar a Senha</a>
         

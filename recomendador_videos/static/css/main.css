@@ -1,4 +1,4 @@
+/* Importa os arquivos CSS principais */
 @import url('base.css');
 @import url('header.css');
 @import url('footer.css');
-@import url('responsividade.css');

@@ -9,18 +9,24 @@ from recomendador_videos.recomendacao.models import VideoInteraction
 
 @method_decorator(login_required, name='dispatch')
 class VideoHistoryView(ListView):
+    """
+    View para exibir o histórico de vídeos assistidos pelo usuário.
+    Permite ao usuário visualizar os vídeos assistidos, com opções para filtrar ou buscar.
+    """
     template_name = 'apps/home/video_history.html'
-    paginate_by = 9
+    paginate_by = 9 #padrão da paginação.
 
     def get(self, request):
-        # Recuperar as últimas interações do usuário com cada vídeo e seu método de recomendação
+        """
+        Renderiza a página de histórico com os vídeos assistidos.
+        """
         last_ratings = (
             VideoInteraction.objects
             .filter(user=request.user)
             .values('video_id')
             .annotate(
                 last_interaction=Max('updated_at'),
-                method=F('method')  # Recupera o método de recomendação
+                method=F('method') 
             )
             .order_by('-last_interaction')
         )
@@ -32,19 +38,21 @@ class VideoHistoryView(ListView):
         # Obter os vídeos na ordem correta
         videos = Video.objects.filter(id__in=last_interactions_dict.keys())
 
-        # Aplicar ordenação manualmente preservando a ordem das interações
-        videos = sorted(videos, key=lambda v: last_interactions_dict[v.id], reverse=True)
+        query = request.GET.get('query')
+        if query:
+            query = query.lower()
+            videos = [
+                video for video in videos 
+                if query in (video.title or '').lower() or 
+                query in (video.channel_title or '').lower() or 
+                query in (video.description or '').lower()
+            ]
 
+        videos = sorted(videos, key=lambda v: last_interactions_dict[v.id], reverse=True)
 
         for video in videos:
             video.method = video_methods_dict.get(video.id, "Desconhecido")
 
-        # Filtro por pesquisa no título
-        query = request.GET.get('query')
-        if query:
-            videos = [video for video in videos if query.lower() in video.title.lower()]
-
-        # Paginação
         paginator = Paginator(videos, self.paginate_by)
         page = request.GET.get('page')
         videos_paginated = paginator.get_page(page)

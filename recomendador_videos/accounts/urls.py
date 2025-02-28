@@ -4,7 +4,6 @@ from .views import SelectInterestsView, RegisterView, ProfileView, DeleteProfile
 from .views.BuscarUsuario import buscar_usuarios
 
 urlpatterns = [
-
     path('login/', CustomLoginView.as_view(template_name='apps/account/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),

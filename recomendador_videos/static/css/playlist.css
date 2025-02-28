@@ -73,6 +73,9 @@
     font-size: 1.1em;
     font-weight: bold;
     margin: 0;
+    max-height: 2.5rem; 
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .playlist-description {
@@ -103,7 +106,19 @@
     font-size: 0.9em;
     color: #007bff;
 }
-
+.playlist-acesso {
+    margin: 10px 0;
+}
+.acesso-label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+.acesso-status.publico {
+    color: green;
+}
+.acesso-status.privado {
+    color: red;
+}
 /* Lista de vídeos */
 .playlist-card {
     padding-top: 5px;

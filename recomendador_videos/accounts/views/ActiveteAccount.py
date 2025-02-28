@@ -6,6 +6,16 @@ from django.contrib.auth.models import User
 from django.views import View
 
 class ActivateAccountView(View):
+     """
+    View para ativação de conta de usuário, após receber o email 
+    de ativaçao o usuario acessa a pagina de ativaçao pelo link.
+    Args:
+        request (HttpRequest): Requisição HTTP recebida.
+        uidb64 (str): ID do usuário codificado.
+        token (str): Token de ativação.
+    Returns:
+        HttpResponse: Página de sucesso ou erro de ativação.
+    """
      def get(self, request, uidb64, token):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
@@ -16,6 +26,6 @@ class ActivateAccountView(View):
         if user and default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
-            return render(request, 'apps/account/activation_success.html')  # Novo template de sucesso
+            return render(request, 'apps/account/activation_success.html')
         else:
-            return render(request, 'apps/account/activation_invalid.html')  # Caso o link esteja errado/expirado
+            return render(request, 'apps/account/activation_invalid.html') 

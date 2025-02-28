@@ -1,0 +1,61 @@
+Tecnologia  
+    Inteligência Artificial  
+        Aprendizado de Máquina  
+        Processamento de Linguagem Natural  
+        Visão Computacional  
+    Desenvolvimento de Software  
+        Front-end  
+        Back-end  
+        Desenvolvimento Mobile  
+    Segurança da Informação  
+        Criptografia  
+        Pentest  
+        Governança e Compliance  
+
+Ciência da Computação  
+    Algoritmos e Estruturas de Dados  
+    Programação  
+        Python  
+        JavaScript  
+        C++  
+    Sistemas Operacionais  
+        Linux  
+        Windows  
+
+Educação  
+    Metodologias de Ensino  
+    Tecnologias Educacionais  
+        LMS  
+        Ferramentas Interativas  
+    Educação Inclusiva  
+        Acessibilidade Digital  
+
+Engenharia  
+    Engenharia de Software  
+    Engenharia Elétrica  
+    Engenharia de Dados  
+        ETL  
+        Data Lakes  
+
+Matemática e Estatística  
+    Cálculo  
+    Álgebra Linear  
+    Estatística  
+        Probabilidade  
+        Análise de Regressão  
+
+Design e Multimídia  
+    Design Gráfico  
+    UI/UX Design  
+    Produção de Vídeos  
+        Edição de Vídeo  
+        Motion Graphics  
+
+Empreendedorismo e Inovação  
+    Startups  
+    Gestão de Projetos  
+        Metodologias Ágeis  
+        Scrum  
+    Marketing Digital  
+        SEO  
+        Análise de Métricas  

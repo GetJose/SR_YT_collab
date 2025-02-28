@@ -8,6 +8,15 @@ from ..models import Playlist, PlaylistRecomendacao
 @login_required
 @csrf_exempt
 def recomendar_playlist(request):
+    """
+    Recomendação de playlist para outro usuário.
+    Permite que professores recomendem suas próprias playlists para alunos.
+    A recomendação é registrada no banco de dados e evita duplicatas.
+    Returns:
+        JsonResponse: Resposta JSON com o status da operação.
+            - "success": Recomendação feita com sucesso.
+            - "error": Mensagem de erro em caso de falha ou restrição.
+    """
     if request.method == "POST":
         usuario_destino_id = request.POST.get("usuario_id")
         playlist_id = request.POST.get("playlist_id")
@@ -21,13 +30,11 @@ def recomendar_playlist(request):
         if playlist.usuario != request.user:
             return JsonResponse({"error": "Você só pode recomendar suas próprias playlists!"}, status=403)
 
-        # Verifica se já existe uma recomendação dessa playlist para o mesmo usuário
         if PlaylistRecomendacao.objects.filter(
             playlist=playlist, recomendado_para=usuario_destino
         ).exists():
             return JsonResponse({"error": "Esta playlist já foi recomendada para este usuário!"}, status=400)
 
-        # Criar a recomendação
         PlaylistRecomendacao.objects.create(
             playlist=playlist, recomendado_por=request.user, recomendado_para=usuario_destino
         )

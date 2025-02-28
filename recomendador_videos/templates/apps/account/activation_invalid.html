@@ -1,3 +1,11 @@
-<h2>Link de ativação inválido</h2>
-<p>O link pode ter expirado ou já ter sido usado.</p>
-<a href="{% url 'register' %}">Tente se cadastrar novamente</a>
+{% extends 'base_account.html' %}
+
+{% block title %}Ativação de Conta{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Link de ativação inválido</h2>
+    <p>O link pode ter expirado ou já ter sido usado.</p>
+    <p><a href="{% url 'register' %}">Tente se cadastrar novamente</a></p>
+</div>
+{% endblock %}

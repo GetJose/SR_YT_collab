@@ -101,30 +101,34 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
-
 #### 🪟 **Windows**
 
-1. **Clonar o repositório:**
+1. **Instalar o GTK (se necessário para visualizações gráficas):**
+- Baixe o instalador do GTK para Windows.
+- Adicione o caminho da pasta `bin` do GTK às variáveis de ambiente.
+
+2. **Clonar o repositório:**
 ```powershell
 git clone https://github.com/seu-usuario/sistema-recomendacao-videos.git
 cd sistema-recomendacao-videos
 ```
 
-2. **Criar e ativar o ambiente virtual:**
+3. **Criar e ativar o ambiente virtual:**
 ```powershell
 python -m venv venv
-venv\Scripts\activate
+.\venv\Scripts\activate
 ```
 
-3. **Instalar as dependências:**
+4. **Instalar as dependências:**
 ```powershell
 pip install -r requirements.txt
+pip install pycairo PyGObject
 ```
 
-4. **Configurar o arquivo `.env`:**
+5. **Configurar o arquivo `.env`:**
 Crie o arquivo `.env` e adicione as variáveis de ambiente.
 
-5. **Aplicar migrações e iniciar o servidor:**
+6. **Aplicar migrações e iniciar o servidor:**
 ```powershell
 python manage.py makemigrations
 python manage.py migrate
@@ -133,27 +137,32 @@ python manage.py runserver
 
 #### 🍏 **macOS**
 
-1. **Clonar o repositório:**
+1. **Instalar dependências adicionais:**
+```bash
+brew install pango
+```
+
+2. **Clonar o repositório:**
 ```bash
 git clone https://github.com/seu-usuario/sistema-recomendacao-videos.git
 cd sistema-recomendacao-videos
 ```
 
-2. **Criar e ativar o ambiente virtual:**
+3. **Criar e ativar o ambiente virtual:**
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-3. **Instalar as dependências:**
+4. **Instalar as dependências:**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Configurar o arquivo `.env`:**
+5. **Configurar o arquivo `.env`:**
 Crie o arquivo `.env` com as configurações de API e secret keys.
 
-5. **Aplicar migrações e iniciar o servidor:**
+6. **Aplicar migrações e iniciar o servidor:**
 ```bash
 python manage.py makemigrations
 python manage.py migrate

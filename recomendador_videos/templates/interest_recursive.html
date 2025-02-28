@@ -1,15 +1,17 @@
-<div class="interest-category">
-  <label class="interest-label">
-    <input type="checkbox" name="interests" value="{{ interest.id }}" 
-           {% if interest in selected_interests %}checked{% endif %}>
-    <span>{{ interest.name }}</span> <!-- Span para estilizar como botão -->
-  </label>
+<div class="interest_area">
+  <div class="interest-category">
+    <label class="interest-label">
+      <input type="checkbox" name="interests" value="{{ interest.id }}" 
+             {% if interest in selected_interests %}checked{% endif %}>
+      <span>{{ interest.name }}</span>
+    </label>
 
-  {% if interest.sub_interests.exists %}
-    <div class="sub-interests" style="margin-left: 20px; display: none;">
-      {% for sub_interest in interest.sub_interests.all %}
-        {% include 'interest_recursive.html' with interest=sub_interest selected_interests=selected_interests %}
-      {% endfor %}
-    </div>
-  {% endif %}
+    {% if interest.sub_interests.exists %}
+      <div class="sub-interests">
+        {% for sub_interest in interest.sub_interests.all %}
+          {% include 'interest_recursive.html' with interest=sub_interest selected_interests=selected_interests %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
 </div>

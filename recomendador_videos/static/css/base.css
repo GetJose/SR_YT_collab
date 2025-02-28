@@ -29,8 +29,36 @@ img{
     height: auto;
 }
 
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    margin: 0 auto;
+    min-width: 350px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-/* Botões */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
 
 .btn {
     display: inline-flex;
@@ -98,6 +126,14 @@ img{
 }
 .button-group .btn.btn-add{
     flex:2;
+}
+
+.btn-close {
+    float: right;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    background-color: #aaa;
 }
 
 /* textos e titulos */

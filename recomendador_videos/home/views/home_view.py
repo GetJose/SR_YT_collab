@@ -10,9 +10,22 @@ from recomendador_videos.home.services import (
 
 @method_decorator(login_required, name='dispatch')
 class HomeView(View):
+    """
+    View responsável pela página inicial do sistema de recomendação.
+    Exibe vídeos recomendados com base no histórico e preferências do usuário.
+    """
     template_name = 'apps/home/index.html'
 
     def get(self, request):
+        """
+        Renderiza a página inicial com os vídeos recomendados.
+        Args:
+            request (HttpRequest): A requisição HTTP do usuário.
+        Returns:
+            HttpResponse: Página HTML com os vídeos recomendados, 
+            se não existir areas de interesse do dusuario e encaminhado
+            pro formulario de escolha das areas, e assim evitar o "coldstart".
+        """
         user_profile = request.user.userprofile
         if user_profile.interests.count() < 1:
             return redirect('areas_interesse')

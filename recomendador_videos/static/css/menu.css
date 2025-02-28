@@ -1,6 +1,6 @@
 /* Melhorando o layout do menu */
 .menu-toggle {
-    display: none; /* Esconde o botão em telas grandes */
+    display: none; 
     background: none;
     border: none;
     font-size: 2rem;
@@ -57,45 +57,7 @@ nav ul .submenu li a:hover {
 /* Responsividade */
 @media (max-width: 768px) {
     .menu-toggle {
-        display: block;
-    }
-}
-
-
-/* Estilização do submenu */
-nav ul .submenu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    width: 200px;
-    z-index: 10;
-}
-
-nav ul .submenu.open {
-    display: block;
-}
-
-nav ul .submenu li {
-    display: block;
-    padding: 10px;
-}
-
-nav ul .submenu li a {
-    color: #333;
-    display: block;
-}
-
-nav ul .submenu li a:hover {
-    background-color: #f0f0f0;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block; /* Mostra o botão do menu */
+        display: block; 
     }
 
     nav {

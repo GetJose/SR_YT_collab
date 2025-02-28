@@ -19,6 +19,11 @@
             <label for="id_descricao" class="form-label">Descrição</label>
             {{ form.descricao }}
         </div>
+        <div class="mb-3">
+            <label for="{{ form.nivel_acesso.id_for_label }}" class="form-label">Nível de Acesso</label>
+            {{ form.nivel_acesso }}
+        </div>
+        
         <br>    
             <!-- Campo de busca para filtrar vídeos -->
             <div class="mb-3">
