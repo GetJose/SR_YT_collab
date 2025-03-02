@@ -5,7 +5,7 @@ Um sistema completo de recomendação de vídeos educacionais baseado em intera�
 ---
 
 ## **Índice**
-- [Sobre o Projeto](#sobre-o-projeto)
+- [Sobre o Projeto](#-sobre-o-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Instalação e Configuração](#instalação-e-configuração)
@@ -15,7 +15,6 @@ Um sistema completo de recomendação de vídeos educacionais baseado em intera�
 - [Dashboard e Visualização](#dashboard-e-visualização)
 - [Contribuição](#contribuição)
 - [Licença](#licença)
-
 ---
 
 ## 📖 **Sobre o Projeto**
@@ -95,12 +94,42 @@ EMAIL_USE_TLS = 'True'
 
 > **Obs:** A configuração de e-mail é necessária para ativação de contas e recuperação de senha.
 
-5. **Aplicar migrações e iniciar o servidor:**
+5. **Criar as pastas de mídia e avatares:**
+
+Crie a estrutura de diretórios para armazenar imagens e avatares dos usuários:
+```bash
+mkdir media
+mkdir media/avatars
+cp caminho/default.png media/avatars/
+```
+6. **Aplicar migrações e iniciar o servidor:**
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
+
+7. **Criar o superusuário:**
+
+Para acessar o painel de administração do Django e gerenciar usuários e conteúdos:
+```bash
+python manage.py createsuperuser
+```
+📂 Populando o banco de dados (opcional)
+
+1. **Importar interesses:**
+
+Você pode popular a base de interesses com um arquivo de texto.
+```bash
+python manage.py import_interests recomendador_videos/data/interesses.txt
+```
+2. **Preencher vídeos com base nos interesses:**
+
+Depois de importar os interesses, preencha o banco com vídeos relacionados:
+```bash
+python manage.py preencher_videos
+```
+
 #### 🪟 **Windows**
 
 1. **Instalar o GTK (se necessário para visualizações gráficas):**
@@ -134,7 +163,29 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
+7. **Criar o superusuário:**
 
+Para acessar o painel de administração do Django e gerenciar usuários e conteúdos:
+
+```powershell
+python manage.py createsuperuser
+```
+📂 Populando o banco de dados (opcional)
+
+1. **Importar interesses:**
+
+Você pode popular a base de interesses com um arquivo de texto.
+
+```powershell
+python manage.py import_interests recomendador_videos/data/interesses.txt
+```
+2. **Preencher vídeos com base nos interesses:**
+
+Depois de importar os interesses, preencha o banco com vídeos relacionados:
+
+```powershell
+python manage.py preencher_videos
+```
 #### 🍏 **macOS**
 
 1. **Instalar dependências adicionais:**

@@ -23,9 +23,12 @@ __pycache__/
 db.sqlite3
 *.sqlite3
 
-# Migrations do Django (se você não quiser versionar)
-*/migrations/*.py
-!*/migrations/__init__.py
+# Ignorar arquivos de migração do Django, exceto __init__.py
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Ignorar pastas de cache
+__pycache__/
 
 # Arquivos de configurações de IDEs
 .idea/

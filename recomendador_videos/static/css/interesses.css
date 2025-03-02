@@ -1,12 +1,13 @@
 /* Estilos para a área de interesses */
 .interest_area {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Colunas flexíveis */
     gap: 20px;
-    max-width: 1200px; 
+    width: 100%;
     margin: 0 auto;
+    box-sizing: border-box;
+    padding: 10px;
 }
-
 .interest-label input[type="checkbox"] {
     display: none;
 }
@@ -14,7 +15,6 @@
 .interest-label span {
     display: inline-block;
     padding: 10px 15px;
-    margin: 5px 0;
     background-color: #cfcfcf;
     border-radius: 5px;
     cursor: pointer;
@@ -35,11 +35,14 @@
 
 .sub-interests {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-wrap: wrap; 
+    align-items: flex-start;
     padding-left: 20px;
     border-left: 2px solid #ccc;
+    max-width: 100%;
+    box-sizing: border-box;
 }
+
 
 .interests-list {
     list-style-type: none;
@@ -53,15 +56,32 @@
     padding: 8px;
     border-radius: 5px;
 }
+
 /* Responsividade */
 @media (max-width: 1024px) {
     .interest_area {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajusta para telas médias */
+    }
+}
+
+@media (max-width: 768px) {
+    .interest_area {
+        grid-template-columns: 1fr;
+    }
+
+    .sub-interests {
+        padding-left: 10px;
+        border-left: none;
     }
 }
 
 @media (max-width: 500px) {
     .interest_area {
         grid-template-columns: 1fr;
+    }
+
+    .interest-label span {
+        font-size: 14px;
+        padding: 8px 10px;
     }
 }
