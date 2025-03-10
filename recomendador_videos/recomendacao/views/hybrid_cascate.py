@@ -1,12 +1,10 @@
 from django.shortcuts import render
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from ..services.recomendacao import recomendar_videos_hibrido_cascata
 from ..services.similaridade import calcular_similaridade_cosseno, calcular_correlacao_pearson
 
-@method_decorator(login_required, name='dispatch')
-class HybridCascateRecommendationView(View):
+class HybridCascateRecommendationView(LoginRequiredMixin,View):
     """
     View para exibir recomendações de vídeos usando uma abordagem híbrida em cascata.
     A abordagem em cascata primeiro aplica uma técnica de recomendação (user-based ou item-based) 

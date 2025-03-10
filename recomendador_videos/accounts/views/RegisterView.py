@@ -44,6 +44,12 @@ class RegisterView(View):
             user.is_active = False  # Define como inativo até o email ser confirmado
             user.save()  # Apenas salva o usuário, o signal criará o perfil automaticamente
 
+            avatar = form.cleaned_data.get('avatar')
+            if avatar:
+                profile = UserProfile.objects.get(user=user)
+                profile.avatar = avatar
+                profile.save()
+                
             self.send_activation_email(user, request)
 
             return render(request, 'apps/account/activation_pending.html')
@@ -65,7 +71,7 @@ class RegisterView(View):
         activation_url = f"http://{domain}{link}"
 
         subject = "Confirme seu e-mail"
-        from_email = "noreply@seudominio.com"#se estiver em produção substiruir pelo dominio correto
+        from_email = "noreply@seudominio.com"
         to_email = [user.email]
 
         context = {'activation_url': activation_url}

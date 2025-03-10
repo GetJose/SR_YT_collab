@@ -1,12 +1,10 @@
 from django.shortcuts import render
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from ..services.recomendacao import recomendar_videos_hibrido_fusao
 from ..services.similaridade import calcular_similaridade_cosseno, calcular_correlacao_pearson
 
-@method_decorator(login_required, name='dispatch')
-class HybridRecommendationView(View):
+class HybridRecommendationView(LoginRequiredMixin,View):
     """
     View para exibir recomendações de vídeos usando uma abordagem híbrida.
     Combina as recomendações user-based e item-based, permitindo escolher a métrica de similaridade (cosseno ou correlação de Pearson).

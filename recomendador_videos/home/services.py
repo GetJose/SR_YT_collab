@@ -3,6 +3,7 @@ from recomendador_videos.youtube_integration.services.search_service import busc
 from recomendador_videos.youtube_integration.models import Video
 from recomendador_videos.recomendacao.services.recomendacao import recomendar_videos_user_based
 from recomendador_videos.recomendacao.models import VideoInteraction
+from django.db.models import F, Max
     
 
 def buscar_videos_por_interesses(user_profile):
@@ -56,42 +57,33 @@ def obter_avaliacoes_do_usuario(user, videos):
         dict: Dicionário com o ID do vídeo como chave e a avaliação como valor.
     """
     user_ratings = VideoInteraction.objects.filter(user=user, video__in=videos)
+    if not user_ratings.exists():
+        return {} 
     return {rating.video.youtube_id: rating.rating for rating in user_ratings}
 
 
-def avaliar_video(video_id, user, rating_value:int, method:str):
-    """
-    Avalia ou cria um registro de avaliação para o vídeo, armazenando também o método de recomendação.
-    Args:
-        video_id (str): ID do vídeo no YouTube.
-        user (User): Usuário que está avaliando o vídeo.
-        rating_value (int): Valor da avaliação (1 para curtido, 0 para não curtido).
-        method (str): Método de recomendação que levou ao vídeo.
-    Returns:
-        tuple: Um tupla contendo a interação de vídeo e uma mensagem de status.
-    """
-    try:
-        video = Video.objects.get(youtube_id=video_id)
-    except Video.DoesNotExist:
-        return None, "Vídeo não encontrado."
 
-    video_rating, created = VideoInteraction.objects.get_or_create(
-        user=user,
-        video=video,
-        defaults={'rating': rating_value, 'method': method} 
+
+def buscar_historico_videos(user):
+    """
+    Busca o histórico de vídeos assistidos pelo usuário, com a última interação e método.
+    """
+    last_ratings = (
+        VideoInteraction.objects
+        .filter(user=user)
+        .values('video_id')
+        .annotate(
+            last_interaction=Max('updated_at'),
+            method=F('method') 
+        )
+        .order_by('-last_interaction')
     )
-    # Atualiza se necessário
-    if not created:
-        updated = False
-        if video_rating.rating != rating_value:
-            video_rating.rating = rating_value
-            updated = True
-        if video_rating.method != method:
-            video_rating.method = method
-            updated = True
 
-        if updated:
-            video_rating.save()
-            return video_rating, f"Avaliação atualizada: {'Curtido' if rating_value == 1 else 'Não Curtido'}, Método: {method}."
+    last_interactions_dict = {entry['video_id']: entry['last_interaction'] for entry in last_ratings}
+    video_methods_dict = {entry['video_id']: entry['method'] for entry in last_ratings}
 
-    return video_rating, f"Você avaliou o vídeo como: {'Curtido' if rating_value == 1 else 'Não Curtido'}, Método: {method}."
+    videos = Video.objects.filter(id__in=last_interactions_dict.keys())
+
+    return videos, last_interactions_dict, video_methods_dict
+
+

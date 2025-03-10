@@ -4,3 +4,4 @@ from .hybrid_fusion import HybridRecommendationView
 from .hybrid_cascate import HybridCascateRecommendationView
 from .correlation import UserCorrelationView
 from .object_recomendation import ObjectRecommendationView
+from .rate_video import RateVideoView

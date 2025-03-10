@@ -1,15 +1,12 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 from recomendador_videos.home.services import (
     buscar_videos_por_interesses, 
     buscar_recomendacoes_para_usuario, 
     obter_avaliacoes_do_usuario
 )
-
-@method_decorator(login_required, name='dispatch')
-class HomeView(View):
+class HomeView(LoginRequiredMixin, View):
     """
     View responsável pela página inicial do sistema de recomendação.
     Exibe vídeos recomendados com base no histórico e preferências do usuário.

@@ -1,12 +1,9 @@
 from django.http import JsonResponse
 from django.views import View
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from recomendador_videos.home.services import avaliar_video
+from django.contrib.auth.mixins import LoginRequiredMixin
+from ..services.avaliar import avaliar_video
 
-
-@method_decorator(login_required, name='dispatch')
-class RateVideoView(View):
+class RateVideoView(LoginRequiredMixin,View):
     """
     View para registrar ou atualizar a avaliação de vídeos.
     Esta view é usada para capturar tanto a avaliação inicial (rating 0) quanto avaliações normais.

@@ -1,32 +1,32 @@
 from django.shortcuts import render
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
-from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import HttpResponse
 import pandas as pd
 from django.contrib.auth.models import User
-from ..services.similaridade import calcular_similaridade_cosseno, calcular_correlacao_pearson
-from django.views.decorators.csrf import csrf_exempt
 from recomendador_videos.youtube_integration.models import Video
 from ..models import VideoInteraction
-import json
+from ..services.similaridade import calcular_similaridade_cosseno, calcular_correlacao_pearson
 
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
-class UserCorrelationView(View):
+class UserCorrelationView(LoginRequiredMixin, UserPassesTestMixin, View):
     """
     View para exibir e calcular a correlação entre usuários com base em suas interações com vídeos.
-    Permite visualizar a similaridade entre usuários usando correlação de Pearson e similaridade de cosseno.
-    Também exibe estatísticas sobre vídeos assistidos e avaliações positivas em comum.
+    Requer login e que o usuário seja administrador.
     """
     template_name = 'apps/recomendacao/user_correlation.html'
+    login_url = 'login'  
+    redirect_field_name = 'next'  
+
+    def test_func(self):
+        """
+        Verifica se o usuário é administrador.
+        """
+        return self.request.user.is_staff
 
     def get(self, request):
         """
         Obtém e exibe as correlações e estatísticas de interação entre usuários.
-        Calcula a similaridade de cosseno e correlação de Pearson, além de buscar vídeos assistidos e avaliações positivas em comum.
         """
-        user = request.user
-      
         selected_user_id_1 = request.GET.get('selected_user_1')
         selected_user_id_2 = request.GET.get('selected_user_2')
 
@@ -53,8 +53,8 @@ class UserCorrelationView(View):
             except User.DoesNotExist:
                 pass  
 
-        similaridade_cosseno = calcular_similaridade_cosseno(user)
-        similaridade_pearson = calcular_correlacao_pearson(user)
+        similaridade_cosseno = calcular_similaridade_cosseno(request.user)
+        similaridade_pearson = calcular_correlacao_pearson(request.user)
 
         similaridade_com_nomes_cosseno = similaridade_cosseno.index.map(lambda user_id: User.objects.get(id=user_id).username)
         similaridade_cosseno_dict = dict(zip(similaridade_com_nomes_cosseno, similaridade_cosseno.values))
@@ -77,10 +77,6 @@ class UserCorrelationView(View):
     def post(self, request):
         """
         Gera e exporta um arquivo CSV com as correlações de todos os usuários.
-        Args:
-            request (HttpRequest): A requisição HTTP recebida.
-        Returns:
-            HttpResponse: Arquivo CSV contendo as correlações entre os usuários.
         """
         users = User.objects.all()
         data = []

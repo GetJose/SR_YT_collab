@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function sendRating(videoId, rating, method, messageDiv = null) {
         if (videoId && rating !== null && method) {
             $.ajax({
-                url: '/rate_video/',
+                url: '/recomendacao/rate_video/',
                 method: 'POST',
                 data: { 'video_id': videoId, 'rating': rating, 'method': method },
                 success: function (response) {

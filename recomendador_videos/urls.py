@@ -27,7 +27,7 @@ urlpatterns = [
     path('', include('recomendador_videos.home.urls')),
     path('accounts/', include('recomendador_videos.accounts.urls')),
     path('youtube/', include('recomendador_videos.youtube_integration.urls')),
-    path('correlacao/', include('recomendador_videos.recomendacao.urls')),
+    path('recomendacao/', include('recomendador_videos.recomendacao.urls')),
     path('playlists/', include('recomendador_videos.playlists.urls')),
 ]
 

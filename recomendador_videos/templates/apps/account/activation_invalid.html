@@ -7,5 +7,9 @@
     <h2>Link de ativação inválido</h2>
     <p>O link pode ter expirado ou já ter sido usado.</p>
     <p><a href="{% url 'register' %}">Tente se cadastrar novamente</a></p>
+    
+    <p>Se você acredita que isso foi um erro ou precisa de ajuda, entre em contato com o administrador do sistema: 
+        <strong>{{ admin_email }}</strong>
+    </p>
 </div>
 {% endblock %}

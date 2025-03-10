@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from ..services.recomendacao import recomendar_videos_user_based
 
-@method_decorator(login_required, name='dispatch')
-class UserRecommendationView(View):
+class UserRecommendationView(LoginRequiredMixin,View):
     """
     View para exibir recomendações de vídeos personalizadas para o usuário logado.
     Utiliza a recomendação baseada em usuário (user-based) para buscar vídeos relevantes.

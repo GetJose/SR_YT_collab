@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from recomendador_videos.youtube_integration.models import Video
 from ..services.object_recomendation import get_similar_videos, get_tsne_cluster_data
 from ..services.similaridade import calcular_similaridade_itens
 
-class ObjectRecommendationView(View):
+class ObjectRecommendationView(LoginRequiredMixin,View):
     """
     View para exibir recomendações de vídeos com base na similaridade de objetos.
     A view permite visualizar os clusters de vídeos e buscar vídeos semelhantes 

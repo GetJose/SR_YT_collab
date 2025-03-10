@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from ..services.recomendacao import recomendar_videos_itens_based
 
-@method_decorator(login_required, name='dispatch')
-class ItemRecommendationView(View):
+class ItemRecommendationView(LoginRequiredMixin,View):
     """
     View para exibir recomendações de vídeos com base na similaridade de itens.
     Utiliza a abordagem item-based para recomendar vídeos semelhantes aos que o usuário já assistiu ou avaliou.

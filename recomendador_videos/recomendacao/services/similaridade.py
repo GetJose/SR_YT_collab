@@ -63,9 +63,12 @@ def calcular_similaridade_usuarios(user, metodo="pearson"):
     Returns:
         dict: Dicionário com os IDs dos usuários e seus respectivos scores de similaridade.
     """
-    all_ratings = VideoInteraction.objects.all().values("user_id", "video_id", "rating")
+    all_ratings = VideoInteraction.objects.exclude(rating__isnull=True).values("user_id", "video_id", "rating")
     df_ratings = pd.DataFrame.from_records(all_ratings)
 
+    if df_ratings.empty or user.id not in df_ratings["user_id"].unique():
+        return {}
+    
     ratings_matrix = df_ratings.pivot_table(index='user_id', columns='video_id', values='rating')
 
     if user.id not in ratings_matrix.index:
@@ -76,7 +79,7 @@ def calcular_similaridade_usuarios(user, metodo="pearson"):
     if metodo == "pearson":
         correlations = ratings_matrix.corrwith(user_ratings, axis=1, method='pearson')
     else:  
-        similarities = cosine_similarity(user_ratings.values.reshape(1, -1), ratings_matrix.fillna(0).values)
+        similarities = cosine_similarity(user_ratings.fillna(0).values.reshape(1, -1), ratings_matrix.fillna(0).values)
         correlations = pd.Series(similarities.flatten(), index=ratings_matrix.index)
 
     correlations = correlations.drop(index=user.id, errors="ignore")
