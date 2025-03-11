@@ -31,24 +31,30 @@
     {% endif %}
     <h2>Clusters de Vídeos</h2>
     <div id="cluster-chart"></div>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script>
-        var clusterData = JSON.parse('{{ cluster_data|escapejs }}');
 
-        var data = [{
-            x: clusterData.map(d => d.x),
-            y: clusterData.map(d => d.y),
-            mode: 'markers',
-            text: clusterData.map(d => d.title),
-            marker: { size: 10 }
-        }];
-        
-        var layout = {
-            title: 'Distribuição de Clusters',
-            xaxis: { title: 'PCA Component 1' },
-            yaxis: { title: 'PCA Component 2' }
-        };
-        
-        Plotly.newPlot('cluster-chart', data, layout);
-    </script>
+{% endblock %}
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/recommendation.js' %}"></script>
+<script src="{% static 'js/video_options.js' %}"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    var clusterData = JSON.parse('{{ cluster_data|escapejs }}');
+
+    var data = [{
+        x: clusterData.map(d => d.x),
+        y: clusterData.map(d => d.y),
+        mode: 'markers',
+        text: clusterData.map(d => d.title),
+        marker: { size: 10 }
+    }];
+    
+    var layout = {
+        title: 'Distribuição de Clusters',
+        xaxis: { title: 'PCA Component 1' },
+        yaxis: { title: 'PCA Component 2' }
+    };
+    
+    Plotly.newPlot('cluster-chart', data, layout);
+</script>
 {% endblock %}
