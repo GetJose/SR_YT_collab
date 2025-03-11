@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from ..services import buscar_historico_videos, obter_avaliacoes_do_usuario
+from ..services import buscar_historico_videos
+from recomendador_videos. recomendacao.services.avaliar import  obter_avaliacoes_do_usuario
 
 class VideoHistoryView(LoginRequiredMixin, ListView):
     """

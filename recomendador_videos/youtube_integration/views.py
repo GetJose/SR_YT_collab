@@ -5,9 +5,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from googleapiclient.errors import HttpError
 from httplib2 import ServerNotFoundError
-
 from .services.search_service import busca_YT, filtrar_e_ranquear_videos, buscar_videos_local
-from recomendador_videos.home.services import obter_avaliacoes_do_usuario
+from recomendador_videos. recomendacao.services.avaliar import  obter_avaliacoes_do_usuario 
 
 class VideoSearchView(LoginRequiredMixin, View):
     """

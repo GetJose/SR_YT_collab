@@ -4,8 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from recomendador_videos.home.services import (
     buscar_videos_por_interesses, 
     buscar_recomendacoes_para_usuario, 
-    obter_avaliacoes_do_usuario
 )
+from recomendador_videos. recomendacao.services.avaliar import  obter_avaliacoes_do_usuario
 class HomeView(LoginRequiredMixin, View):
     """
     View responsável pela página inicial do sistema de recomendação.

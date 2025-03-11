@@ -6,10 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: 'POST',
                 data: { 'video_id': videoId, 'rating': rating, 'method': method },
                 success: function (response) {
-                    const videoButtons = $('#video-' + videoId + ' .rate-button');
-                    videoButtons.removeClass('liked disliked');
-                    
-                    videoButtons.filter(`[data-rating="${rating}"]`).addClass(rating === 1 ? 'liked' : 'disliked');
                     if (messageDiv) messageDiv.text(response.message || 'Avaliação registrada com sucesso.');
                 },
                 error: function () {
@@ -32,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
             iframe.focus(); 
 
             iframe.contentWindow.postMessage(
-                `{"event":"command","func":"playVideo","args":""}`,
+                '{"event":"command","func":"playVideo","args":""}',
                 '*'
             );
 
@@ -47,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
         if (iframe) {
             iframe.contentWindow.postMessage(
-                `{"event":"command","func":"playVideo","args":""}`,
+                '{"event":"command","func":"playVideo","args":""}',
                 '*'
             );
     
@@ -64,6 +60,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const rating = $(this).data('rating');
         const messageDiv = $(this).siblings('.rating-message');
         const method = $(this).closest('.video-item').data('method') || '';
+
+        if ($(this).hasClass('liked') || $(this).hasClass('disliked')) {
+            $(this).removeClass('liked disliked');
+        } else {
+            $(this).siblings('.rate-button').removeClass('liked disliked');
+            $(this).addClass(rating === 1 ? 'liked' : 'disliked');
+        }
 
         sendRating(videoId, rating, method, messageDiv);
     });

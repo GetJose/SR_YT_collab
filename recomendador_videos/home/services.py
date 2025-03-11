@@ -47,23 +47,6 @@ def buscar_recomendacoes_para_usuario(user):
 
     return recommended_videos
 
-def obter_avaliacoes_do_usuario(user, videos):
-    """
-    Obtém as avaliações do usuário para uma lista de vídeos.
-    Args:
-        user (User): Usuário para buscar as avaliações.
-        videos (list): Lista de vídeos para verificar as interações.
-    Returns:
-        dict: Dicionário com o ID do vídeo como chave e a avaliação como valor.
-    """
-    user_ratings = VideoInteraction.objects.filter(user=user, video__in=videos)
-    if not user_ratings.exists():
-        return {} 
-    return {rating.video.youtube_id: rating.rating for rating in user_ratings}
-
-
-
-
 def buscar_historico_videos(user):
     """
     Busca o histórico de vídeos assistidos pelo usuário, com a última interação e método.
