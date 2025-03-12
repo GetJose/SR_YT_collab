@@ -2,6 +2,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import re
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -37,3 +39,52 @@ def obter_palavra_importante(titulo: str) -> str:
 
     max_indice = pesos.argmax()
     return palavras_importantes[max_indice]
+
+
+def extract_hashtags(text):
+    """
+    Extrai hashtags de um texto.
+    Args:
+        text (str): Texto de entrada (título ou descrição).
+    Returns:
+        set: Conjunto de hashtags encontradas.
+    """
+    return set(re.findall(r'#\w+', text)) if text else set()
+
+def get_video_features(video):
+    """
+    Extrai os metadados de um vídeo para usar como features.
+    Args:
+        video (Video): Objeto do vídeo.
+    Returns:
+        dict: Dicionário com as features do vídeo (título, descrição, canal, etc.).
+    """
+    hashtags = extract_hashtags(video.title + " " + (video.description or ""))
+    return {
+        "title": video.title.lower() if video.title else "",
+        "description": video.description.lower() if video.description else "",
+        "channel": video.channel_title.lower() if video.channel_title else "",
+        "playlist": video.playlist_id.lower() if video.playlist_id else "",
+        "duration": video.duration,
+        "year": video.published_at.year if video.published_at else None,
+        "hashtags": hashtags
+    }
+
+def calculate_text_similarity(text1, text2):
+    """
+    Calcula a similaridade entre dois textos usando TF-IDF e cosseno.
+    Args:
+        text1 (str): Primeiro texto.
+        text2 (str): Segundo texto.
+    Returns:
+        float: Pontuação de similaridade entre 0 e 1.
+    """
+    if not text1 or not text2:
+        return 0
+
+    corpus = [text1, text2]
+    vectorizer = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = vectorizer.fit_transform(corpus)
+
+    similarity_matrix = cosine_similarity(tfidf_matrix)
+    return similarity_matrix[0, 1]

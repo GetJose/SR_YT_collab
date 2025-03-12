@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ..services.recomendacao import recomendar_videos_hibrido_fusao
-from ..services.similaridade import calcular_similaridade_cosseno, calcular_correlacao_pearson
 
 class HybridRecommendationView(LoginRequiredMixin,View):
     """
@@ -21,6 +20,5 @@ class HybridRecommendationView(LoginRequiredMixin,View):
             HttpResponse: Página renderizada com os vídeos recomendados e o método de similaridade selecionado.
         """
         metodo = request.GET.get('metodo', 'cosseno')
-        similaridade = calcular_similaridade_cosseno if metodo == 'cosseno' else calcular_correlacao_pearson
-        videos_recomendados = recomendar_videos_hibrido_fusao(request.user, similaridade)
+        videos_recomendados = recomendar_videos_hibrido_fusao(request.user, similaridade = metodo)
         return render(request, self.template_name, {'videos': videos_recomendados, 'metodo': metodo})

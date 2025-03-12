@@ -6,7 +6,7 @@ import pandas as pd
 from django.contrib.auth.models import User
 from recomendador_videos.youtube_integration.models import Video
 from ..models import VideoInteraction
-from ..services.similaridade import calcular_similaridade_cosseno, calcular_correlacao_pearson
+from ..services.similaridade import calcular_similaridade_usuarios
 
 class UserCorrelationView(LoginRequiredMixin, UserPassesTestMixin, View):
     """
@@ -51,16 +51,15 @@ class UserCorrelationView(LoginRequiredMixin, UserPassesTestMixin, View):
                 positive_ratings_user_2 = set(ratings_user_2.filter(rating=1).values_list('video_id', flat=True))
                 common_positive_ratings = positive_ratings_user_1 & positive_ratings_user_2
             except User.DoesNotExist:
-                pass  
+                pass
 
-        similaridade_cosseno = calcular_similaridade_cosseno(request.user)
-        similaridade_pearson = calcular_correlacao_pearson(request.user)
+        # Calcula a similaridade e ajusta para dicionário
+        similaridade_cosseno = calcular_similaridade_usuarios(request.user, metodo="cosseno")
+        similaridade_pearson = calcular_similaridade_usuarios(request.user)
 
-        similaridade_com_nomes_cosseno = similaridade_cosseno.index.map(lambda user_id: User.objects.get(id=user_id).username)
-        similaridade_cosseno_dict = dict(zip(similaridade_com_nomes_cosseno, similaridade_cosseno.values))
-
-        similaridade_com_nomes_pearson = similaridade_pearson.index.map(lambda user_id: User.objects.get(id=user_id).username)
-        similaridade_pearson_dict = dict(zip(similaridade_com_nomes_pearson, similaridade_pearson.values))
+        # Mapeia os nomes dos usuários com base nos IDs
+        similaridade_cosseno_dict = {User.objects.get(id=user_id).username: score for user_id, score in similaridade_cosseno.items()}
+        similaridade_pearson_dict = {User.objects.get(id=user_id).username: score for user_id, score in similaridade_pearson.items()}
 
         return render(request, self.template_name, {
             'similaridade_cosseno': similaridade_cosseno_dict,
@@ -69,8 +68,8 @@ class UserCorrelationView(LoginRequiredMixin, UserPassesTestMixin, View):
             'total_videos_assistidos_user_2': total_videos_assistidos_user_2,
             'common_videos': common_videos,
             'common_positive_ratings': common_positive_ratings,
-            'users': User.objects.all(), 
-            'selected_user_1': selected_user_1,  
+            'users': User.objects.all(),
+            'selected_user_1': selected_user_1,
             'selected_user_2': selected_user_2,
         })
 
@@ -82,7 +81,7 @@ class UserCorrelationView(LoginRequiredMixin, UserPassesTestMixin, View):
         data = []
         
         for user in users:
-            user_correlations = calcular_correlacao_pearson(user)
+            user_correlations = calcular_similaridade_usuarios(user)
             for similar_user_id, score in user_correlations.items():
                 similar_user = User.objects.get(id=similar_user_id)
                 data.append([user.username, similar_user.username, score])
