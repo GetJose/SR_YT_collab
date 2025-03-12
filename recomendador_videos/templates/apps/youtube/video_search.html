@@ -2,45 +2,44 @@
 {% load static %}
    
 {% block title %}
-Busca de Vídeos no YouTube
+    Busca de Vídeos no YouTube
 {% endblock %}
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/videos.css' %}">
     <link rel="stylesheet" href="{% static 'css/pesquisa.css' %}">
     <link rel="stylesheet" href="{% static 'css/paginacao.css' %}">
 {% endblock %}
-<nav>
-   <a href="{% url 'home' %}">Home</a>
-</nav>
 {% block content %}
-{% include 'search_section.html' with action_url='video_search' search_title="Pesquise por vídeos no YouTube." %}
-<section>
-    <h2>Resultado da busca no YouTube por: {{ query }}</h2>
-    <div class="video-section">
-         {% include 'apps/youtube/video_list.html' with videos=page_obj %}
+
+    {% include 'search_section.html' with action_url='video_search' search_title="Pesquise por vídeos no YouTube." search_placeholder="Pesquisar no Youtube" %}
+    <section>
+        <h2>Resultado da busca no YouTube por: {{ query }}</h2>
+        <div class="video-section">
+            {% include 'apps/youtube/video_list.html' with videos=videos %}
+        </div>
+        {% if not videos.object_list %}
+            <p>Tente desativar os filtros ou verifique por erros ortográficos.</p>
+        {% endif %}
+    </section>
+
+    <!-- Navegação da Paginação -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if videos.has_previous %}
+                <a href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">&laquo; primeira</a>
+                <a href="?page={{ videos.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ videos.number }} de {{ videos.paginator.num_pages }}
+            </span>
+
+            {% if videos.has_next %}
+                <a href="?page={{ videos.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">próxima</a>
+                <a href="?page={{ videos.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">última &raquo;</a>
+            {% endif %}
+        </span>
     </div>
-    {% if not page_obj.object_list %}
-         <p>Tente desativar os filtros ou verifique por erros ortográficos.</p>
-    {% endif %}
-</section>
-
-<!-- Navegação da Paginação -->
-<div class="pagination">
-    <span class="step-links">
-    {% if page_obj.has_previous %}
-        <a href="?query={{ query }}&page=1">Primeira</a>
-        <a href="?query={{ query }}&page={{ page_obj.previous_page_number }}">Anterior</a>
-    {% endif %}
-
-    <span class="current">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-
-    {% if page_obj.has_next %}
-        <a href="?query={{ query }}&page={{ page_obj.next_page_number }}">Próxima</a>
-        <a href="?query={{ query }}&page={{ page_obj.paginator.num_pages }}">Última</a>
-    {% endif %}
-    </span>
-</div>
-
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'js/recommendation.js' %}"></script>
