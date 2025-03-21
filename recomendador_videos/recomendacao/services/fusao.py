@@ -32,10 +32,10 @@ def combinar_recomendacoes(user, user_recommendations, item_recommendations):
         score = (1 - (idx / max_item_idx)) * peso_item
         
         if video.id in ranking_videos:
-            ranking_videos[video.id] += score
+            ranking_videos[video.id] += score * 1.3 
             videos_dict[video.id].method = "hybrid"  # Marca como híbrido se estiver nas duas listas
         else:
-            ranking_videos[video.id] = score * 1.3  # Aumenta ligeiramente a pontuação se for só item-based
+            ranking_videos[video.id] = score  
             videos_dict[video.id].method = "item_based"
 
     # Ordena os vídeos com base na pontuação final
