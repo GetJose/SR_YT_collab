@@ -3,13 +3,12 @@ from ..utils.banco import converter_duracao_iso_para_segundos, obter_nome_catego
 from .yt_services import get_youtube_client
 from django.core.cache import cache
 from django.utils.text import slugify
+import math
 
 
-def filtrar_e_ranquear_videos(videos, user_profile):
+def filtrar_videos(videos, user_profile):
     """
-    Filtra e ranqueia vídeos com base no perfil do usuário.
-    Os vídeos são filtrados por categoria, duração e idioma, e depois ordenados com base
-    em uma pontuação que considera curtidas, descurtidas e visualizações.
+    Filtra vídeos com base nas preferências do usuário.
     """
     if user_profile.aplicar_filtros:
         categorias_permitidas = ['Education', 'Science & Technology', 'Unknown']
@@ -31,27 +30,32 @@ def filtrar_e_ranquear_videos(videos, user_profile):
                 v for v in videos
                 if (v.language.split('-')[0] in linguagens_preferidas) or v.language == "Unknown"
             ]
+    
+    return videos
 
-    def calcular_ranking(video):
-        """
-        Calcula a pontuação de ranking de um vídeo.
-        A pontuação é baseada na proporção de curtidas e no número de visualizações.
-        Args:
-            video (Video): Objeto de vídeo para calcular o ranking.
-        Returns:
-            float: Pontuação de relevância do vídeo.
-        """
-        likes = int(video.like_count) if video.like_count else 0
-        dislikes = int(video.dislike_count) if video.dislike_count else 0
-        total_views = int(video.view_count) if video.view_count else 0
+def calcular_ranking(video):
+    """
+    Calcula a pontuação de ranking de um vídeo, ponderando likes e visualizações.
+    - Usa a raiz quadrada do total de visualizações para evitar que vídeos muito vistos dominem.
+    - Normaliza os likes para dar um peso mais realista à aceitação do público.
+    """
+    likes = int(video.like_count) if video.like_count else 0
+    dislikes = int(video.dislike_count) if video.dislike_count else 0
+    total_views = int(video.view_count) if video.view_count else 0
 
-        percentual_likes = likes / (likes + dislikes) if (likes + dislikes) > 0 else 0
-        percentual_views = total_views
+    percentual_likes = likes / (likes + dislikes) if (likes + dislikes) > 0 else 0
+    
+    peso_views = math.sqrt(total_views)
 
-        return (percentual_likes * 1) + (percentual_views * (2 / 3))
-    # Ordenar vídeos com base no ranking calculado
-    videos_ranqueados = sorted(videos, key=calcular_ranking, reverse=True)
+    return (percentual_likes ) + (peso_views * 0.66)
 
+
+def filtrar_e_ranquear_videos(videos, user_profile):
+    """
+    Aplica os filtros e ranqueia os vídeos de acordo com o perfil do usuário.
+    """
+    videos_filtrados = filtrar_videos(videos, user_profile)
+    videos_ranqueados = sorted(videos_filtrados, key=calcular_ranking, reverse=True)
     return videos_ranqueados
 
 def busca_YT(query, max_results=50):
