@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
     <h2>Recomendação por Objeto</h2>
+
+   <!-- Campo de pesquisa -->
+    <div>Pesquise por um titulo     <input type="text" id="search_videos" onkeyup="filtrarVideos()" placeholder="Buscar vídeo..." /></div>
+    <br>
 
     <!-- Formulário para selecionar o vídeo base -->
     <form method="post">
@@ -8,11 +13,12 @@
         <label for="video_id">Escolha um vídeo:</label>
         <select name="video_id" id="video_id">
             {% for video in videos %}
-                <option value="{{ video.id }}">{{ video.title }}</option>
+                <option value="{{ video.id }}" data-title="{{ video.title|lower }}">{{ video.title }}</option>
             {% endfor %}
         </select>
         <button type="submit">Buscar</button>
     </form>
+
 
     {% if video_base %}
     <h3>Fução de similaridade por objeto com o {{ video_base.title }}</h3>
@@ -33,28 +39,57 @@
     <div id="cluster-chart"></div>
 
 {% endblock %}
-{% endblock %}
-{% block scripts %}
-<script src="{% static 'js/recommendation.js' %}"></script>
-<script src="{% static 'js/video_options.js' %}"></script>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script>
-    var clusterData = JSON.parse('{{ cluster_data|escapejs }}');
 
-    var data = [{
-        x: clusterData.map(d => d.x),
-        y: clusterData.map(d => d.y),
-        mode: 'markers',
-        text: clusterData.map(d => d.title),
-        marker: { size: 10 }
-    }];
-    
-    var layout = {
-        title: 'Distribuição de Clusters',
-        xaxis: { title: 'PCA Component 1' },
-        yaxis: { title: 'PCA Component 2' }
-    };
-    
-    Plotly.newPlot('cluster-chart', data, layout);
-</script>
+{% block scripts %}
+    <script src="{% static 'js/recommendation.js' %}"></script>
+    <script src="{% static 'js/video_options.js' %}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var clusterData = JSON.parse('{{ cluster_data|escapejs }}');
+
+        var data = [{
+            x: clusterData.map(d => d.x),
+            y: clusterData.map(d => d.y),
+            mode: 'markers',
+            text: clusterData.map(d => d.title),
+            marker: { size: 10 }
+        }];
+        
+        var layout = {
+            title: 'Distribuição de Clusters',
+            xaxis: { title: 'PCA Component 1' },
+            yaxis: { title: 'PCA Component 2' }
+        };
+        
+        Plotly.newPlot('cluster-chart', data, layout);
+        function filtrarVideos() {
+            let input = document.getElementById("search_videos").value.toLowerCase();
+            let select = document.getElementById("video_id");
+            let options = select.getElementsByTagName("option");
+        
+            let encontrados = 0;
+            for (let i = 0; i < options.length; i++) {
+                let text = options[i].getAttribute("data-title");
+        
+                if (text.includes(input) && encontrados < 15) {
+                    options[i].style.display = "block";
+                    encontrados++;
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+        
+            if (input === "") {
+                encontrados = 0;
+                for (let i = 0; i < options.length; i++) {
+                    if (encontrados < 15) {
+                        options[i].style.display = "block";
+                        encontrados++;
+                    } else {
+                        options[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
 {% endblock %}
