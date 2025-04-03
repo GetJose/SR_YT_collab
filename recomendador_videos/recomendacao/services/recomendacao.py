@@ -31,27 +31,28 @@ def recomendar_videos_user_based(usuario, metodo_similaridade="pearson", top_n=5
     recomendados = {}
 
     for usuario_similar, score in usuarios_mais_similares:
-        # Obtém vídeos curtidos pelo usuário similar
-        videos_similares = VideoInteraction.objects.filter(
-            user=usuario_similar, rating=1
-        ).select_related('video')
+        videos_interacoes = VideoInteraction.objects.filter(
+        user=usuario_similar, rating=1
+    ).select_related('video')
 
-        filtrar_videos(videos_similares, usuario.userprofile)
-        
-        for rating in videos_similares:
-            video = rating.video
+    # Extrai apenas os vídeos das interações
+    videos_similares = [interacao.video for interacao in videos_interacoes]
 
-            if VideoInteraction.objects.filter(user=usuario, video=video).exists():
-                continue
+    # Filtra os vídeos antes de continuar
+    filtrar_videos(videos_similares, usuario.userprofile)
 
-            peso_similaridade = score
-            peso_ranking = calcular_ranking(video)
+    for video in videos_similares:
+        if VideoInteraction.objects.filter(user=usuario, video=video).exists():
+            continue
 
-            if video not in recomendados:
-                recomendados[video] = 0
-            
-            # Adiciona pesos e reforça vídeos repetidos com um leve bônus progressivo
-            recomendados[video] += (peso_similaridade * peso_ranking) + (0.1 * recomendados[video])
+        peso_similaridade = score
+        peso_ranking = calcular_ranking(video)
+
+        if video not in recomendados:
+            recomendados[video] = 0
+
+        # Adiciona pesos e reforça vídeos repetidos com um leve bônus progressivo
+        recomendados[video] += (peso_similaridade * peso_ranking) + (0.1 * recomendados[video])
 
     recomendados_ordenados = sorted(recomendados.items(), key=lambda x: x[1], reverse=True)
 
@@ -61,43 +62,43 @@ def recomendar_videos_user_based(usuario, metodo_similaridade="pearson", top_n=5
     return [video for video, _ in recomendados_ordenados]
 
 
-def recomendar_videos_user_based(usuario, metodo_similaridade="pearson", top_n=5):
-    """
-    Recomenda vídeos com base na similaridade entre usuários.
-    Busca os usuários mais semelhantes, analisa os vídeos que eles curtiram e recomenda vídeos que o usuário atual ainda não assistiu.
-    Args:
-        usuario (User): Usuário para quem os vídeos serão recomendados.
-        metodo_similaridade (str): Método para calcular a similaridade entre usuários ('pearson' ou 'cosseno').
-        top_n (int): Número de usuários mais similares a considerar para as recomendações.
-    Returns:
-        list[Video]: Lista de vídeos recomendados ordenados pelo ranqueamento.
-    """
-    similaridade_usuarios = calcular_similaridade_usuarios(usuario, metodo=metodo_similaridade)
+# def recomendar_videos_user_based(usuario, metodo_similaridade="pearson", top_n=5):
+#     """
+#     Recomenda vídeos com base na similaridade entre usuários.
+#     Busca os usuários mais semelhantes, analisa os vídeos que eles curtiram e recomenda vídeos que o usuário atual ainda não assistiu.
+#     Args:
+#         usuario (User): Usuário para quem os vídeos serão recomendados.
+#         metodo_similaridade (str): Método para calcular a similaridade entre usuários ('pearson' ou 'cosseno').
+#         top_n (int): Número de usuários mais similares a considerar para as recomendações.
+#     Returns:
+#         list[Video]: Lista de vídeos recomendados ordenados pelo ranqueamento.
+#     """
+#     similaridade_usuarios = calcular_similaridade_usuarios(usuario, metodo=metodo_similaridade)
 
-    if not similaridade_usuarios:
-        return []
-    usuarios_mais_similares = sorted(similaridade_usuarios.items(), key=lambda x: x[1], reverse=True)[:top_n]
+#     if not similaridade_usuarios:
+#         return []
+#     usuarios_mais_similares = sorted(similaridade_usuarios.items(), key=lambda x: x[1], reverse=True)[:top_n]
 
-    recomendados = {}
+#     recomendados = {}
 
-    for usuario_similar, score in usuarios_mais_similares:
-        videos_similares = VideoInteraction.objects.filter(
-            user=usuario_similar, rating=1
-        ).select_related('video')
+#     for usuario_similar, score in usuarios_mais_similares:
+#         videos_similares = VideoInteraction.objects.filter(
+#             user=usuario_similar, rating=1
+#         ).select_related('video')
         
-        for rating in videos_similares:
-            if not VideoInteraction.objects.filter(user=usuario, video=rating.video).exists():
-                if rating.video not in recomendados:
-                    recomendados[rating.video] = 0
-                recomendados[rating.video] += score * calcular_ranking(rating.video)
+#         for rating in videos_similares:
+#             if not VideoInteraction.objects.filter(user=usuario, video=rating.video).exists():
+#                 if rating.video not in recomendados:
+#                     recomendados[rating.video] = 0
+#                 recomendados[rating.video] += score * calcular_ranking(rating.video)
 
-    recomendados_ordenados = sorted(recomendados.items(), key=lambda x: x[1], reverse=True)
+#     recomendados_ordenados = sorted(recomendados.items(), key=lambda x: x[1], reverse=True)
 
-    for video, _ in recomendados_ordenados:
-        video.method = "user_based"
+#     for video, _ in recomendados_ordenados:
+#         video.method = "user_based"
         
-    videos_ranqueados = [video for video, _ in recomendados_ordenados]
-    return filtrar_videos(videos_ranqueados, usuario.userprofile)
+#     videos_ranqueados = [video for video, _ in recomendados_ordenados]
+#     return filtrar_videos(videos_ranqueados, usuario.userprofile)
 
 def recomendar_videos_itens_based(usuario):
     """
