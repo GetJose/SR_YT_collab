@@ -11,20 +11,20 @@ class Playlist(models.Model):
         descricao (str): Descrição opcional da playlist.
         usuario (User): Usuário que criou a playlist.
         data_criacao (DateTime): Data e hora da criação da playlist.
-        nivel_acesso (str): Define o nível de acesso da playlist ('publica' ou 'privada').
+        nivel_acesso (str): Define o nível de acesso da playlist ('publica' ou 'restrita').
     """
     PUBLICA = 'publica'
-    PRIVADA = 'privada'
+    RESTRITO= 'Restrito'
     NIVEIS_ACESSO = [
         (PUBLICA, 'Pública'),
-        (PRIVADA, 'Privada')
+        (RESTRITO, 'Restrito')
     ]
 
     nome = models.CharField(max_length=255)
     descricao = models.TextField(blank=True, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="playlists")
     data_criacao = models.DateTimeField(auto_now_add=True)
-    nivel_acesso = models.CharField(max_length=10, choices=NIVEIS_ACESSO, default=PRIVADA)
+    nivel_acesso = models.CharField(max_length=10, choices=NIVEIS_ACESSO, default=RESTRITO)
 
     def __str__(self):
         return self.nome
